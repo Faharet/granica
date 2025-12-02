@@ -1,97 +1,211 @@
-# Form Management System Demo
+# Granica - Система управления арендой электровелосипедов
 
-A simple Django-based form management system with manager and submitter roles. Built with Django and django-daisy for a clean, modern interface.
+Веб-приложение для управления парком электровелосипедов, бронированием и арендой. Построено на Django с использованием django-daisy для современного интерфейса.
 
-## Features
+## Основные возможности
 
-- **Role-based Access Control**: Two user types:
-  - Managers: Can view and manage all form submissions
-  - Submitters: Can submit new forms
-- **Clean Interface**: Built with django-daisy UI components
-- **Secure**: Proper authentication and authorization
-- **Mobile-friendly**: Responsive design
+- **Управление велосипедами**
+  - Каталог моделей электровелосипедов с характеристиками
+  - Учёт конкретных велосипедов с серийными номерами
+  - Мониторинг статуса (доступен, забронирован, в аренде, в ремонте)
+  - Отслеживание технического обслуживания
+  - GPS-трекинг велосипедов
+  - Управление фотографиями моделей
 
-## Quick Start
+- **Система бронирования**
+  - Бронирование велосипедов пользователями
+  - Обработка запросов менеджерами
+  - Отслеживание статусов бронирования
+  - Комментарии пользователей и менеджеров
 
-1. Clone the repository:
+- **Управление арендой**
+  - Оформление договоров аренды
+  - Контроль депозитов и штрафов
+  - Отслеживание просроченных аренд
+  - История аренд пользователей
+
+- **Профили пользователей**
+  - Расширенные профили с личными данными
+  - Загрузка документов удостоверяющих личность
+  - Контактная информация
+  - Информация о близких родственниках
+
+- **Многоязычность**
+  - Поддержка русского, казахского и английского языков
+  - Локализация интерфейса
+
+## Технологический стек
+
+- **Backend**: Django 5.2+
+- **UI**: django-daisy (современный UI framework)
+- **База данных**: PostgreSQL
+- **Хранилище файлов**: MinIO
+- **Дополнительно**: 
+  - django-phonenumber-field для работы с номерами телефонов
+  - python-dotenv для управления конфигурацией
+
+## Быстрый старт
+
+### 1. Клонирование репозитория
+
 ```bash
-git clone https://github.com/yourusername/deli-bike-admin.git
-cd deli-bike-admin
+git clone https://github.com/Faharet/granica.git
+cd granica
 ```
 
-2. Create and activate a virtual environment:
+### 2. Создание виртуального окружения
+
 ```bash
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# OR
 venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/Mac
 ```
 
-3. Install dependencies:
+### 3. Установка зависимостей
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your settings
+### 4. Настройка переменных окружения
+
+Создайте файл `.env` в корне проекта:
+
+```env
+# Django настройки
+DJANGO_SECRET_KEY=your-secret-key-here
+DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+
+# База данных PostgreSQL
+DB_NAME=granica
+DB_USER=postgres
+DB_PASSWORD=your-password
+DB_HOST=localhost
+DB_PORT=5432
+
+# MinIO настройки
+MINIO_ENDPOINT=localhost:9000
+MINIO_ACCESS_KEY=your-access-key
+MINIO_SECRET_KEY=your-secret-key
+MINIO_USE_HTTPS=False
+MINIO_BUCKET_NAME=granica-media
 ```
 
-5. Initialize the database:
+### 5. Инициализация базы данных
+
 ```bash
 python manage.py migrate
 ```
 
-6. Create demo users and sample data:
+### 6. Создание суперпользователя
+
 ```bash
-python manage.py setup_demo
+python manage.py createsuperuser
 ```
 
-7. Run the development server:
+### 7. Компиляция переводов
+
+```bash
+python compile_translations.py
+```
+
+### 8. Сборка CSS (опционально)
+
+```bash
+npm install
+npm run build
+```
+
+### 9. Запуск сервера разработки
+
 ```bash
 python manage.py runserver
 ```
 
-8. Visit http://127.0.0.1:8000/ and log in with demo credentials:
+Откройте браузер и перейдите по адресу http://127.0.0.1:8000/
 
-## Demo Credentials
+## Структура проекта
 
-- Admin User:
-  - Username: admin
-  - Password: admin
+```
+granica/
+├── platform_manager/      # Управление пользователями и профилями
+│   ├── models.py         # User, Profile, AdminUser и др.
+│   ├── views.py          # Представления
+│   └── admin.py          # Настройки админ-панели
+├── bikes_manager/        # Управление велосипедами (архив)
+├── rent_manager/         # Управление арендой и бронированием
+│   ├── models.py         # Contract, Booking, Rental
+│   └── admin.py          # Настройки админ-панели
+├── django_daisy/         # UI компоненты
+├── granica_admin/        # Настройки проекта
+│   ├── settings.py       # Конфигурация Django
+│   └── urls.py           # Маршруты
+└── templates/            # HTML шаблоны
+```
 
-- Manager User:
-  - Username: manager
-  - Password: manager
+## Модели данных
 
-- Submitter User:
-  - Username: submitter
-  - Password: submitter
+### Основные модели:
 
-## Project Structure
+- **User**: Пользователи системы
+- **Profile**: Профили с персональными данными
+- **BicycleModel**: Модели электровелосипедов
+- **Bicycle**: Конкретные велосипеды
+- **Booking**: Бронирования велосипедов
+- **Rental**: Активные аренды
+- **Contract**: Договоры аренды
 
-- `platform_manager/`: Main application
-  - `models.py`: Form response model
-  - `views.py`: Form submission and management views
-  - `admin.py`: Admin interface customization
+## Разработка
 
-## Development
+### Требования
 
-1. Make sure you have Python 3.8+ installed
-2. Install development dependencies:
+- Python 3.10+
+- PostgreSQL 13+
+- MinIO (для хранения файлов)
+- Node.js (для сборки frontend)
+
+### Установка зависимостей для разработки
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## Configuration
+### Миграции базы данных
 
-All configuration is done through environment variables. See `.env.example` for available options.
+```bash
+# Создание новых миграций
+python manage.py makemigrations
 
-## License
+# Применение миграций
+python manage.py migrate
+```
 
-This project is open-source and available under the MIT License.
+### Работа с переводами
 
-## Contributing
+```bash
+# Сбор строк для перевода
+python manage.py makemessages -l ru
+python manage.py makemessages -l kk
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+# Компиляция переводов
+python compile_translations.py
+```
+
+## Конфигурация
+
+Все настройки управляются через переменные окружения в файле `.env`. Основные параметры:
+
+- `DJANGO_SECRET_KEY` - секретный ключ Django
+- `DJANGO_DEBUG` - режим отладки
+- `DJANGO_ALLOWED_HOSTS` - разрешённые хосты
+- `DB_*` - параметры подключения к БД
+- `MINIO_*` - параметры хранилища файлов
+
+## Лицензия
+
+MIT License
+
+## Автор
+
+Faharet - [GitHub](https://github.com/Faharet)
