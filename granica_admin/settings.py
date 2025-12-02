@@ -62,7 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'deli_bike_admin.urls'
+ROOT_URLCONF = 'granica_admin.urls'
 
 TEMPLATES = [
     {
@@ -80,7 +80,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'deli_bike_admin.wsgi.application'
+WSGI_APPLICATION = 'granica_admin.wsgi.application'
 
 
 # Database

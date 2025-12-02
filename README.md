@@ -94,30 +94,39 @@ MINIO_BUCKET_NAME=granica-media
 
 ### 5. Инициализация базы данных
 
+**Вариант A: Пустая база данных**
+
 ```bash
 python manage.py migrate
-```
-
-### 6. Создание суперпользователя
-
-```bash
 python manage.py createsuperuser
 ```
 
-### 7. Компиляция переводов
+**Вариант B: Загрузка готовой базы с демо-данными**
+
+```bash
+# Создание структуры БД
+python manage.py migrate
+
+# Загрузка данных из дампа
+python manage.py loaddata granica_full_dump.json
+```
+
+После загрузки дампа используйте существующих пользователей из базы.
+
+### 6. Компиляция переводов
 
 ```bash
 python compile_translations.py
 ```
 
-### 8. Сборка CSS (опционально)
+### 7. Сборка CSS (опционально)
 
 ```bash
 npm install
 npm run build
 ```
 
-### 9. Запуск сервера разработки
+### 8. Запуск сервера разработки
 
 ```bash
 python manage.py runserver
@@ -191,6 +200,34 @@ python manage.py makemessages -l kk
 # Компиляция переводов
 python compile_translations.py
 ```
+
+### Экспорт/Импорт базы данных
+
+**Создание дампа базы данных:**
+
+```bash
+# Экспорт всех данных в JSON
+python manage.py dumpdata --indent 2 --natural-foreign --natural-primary -e contenttypes -e auth.Permission > granica_full_dump.json
+
+# Экспорт конкретных приложений
+python manage.py dumpdata platform_manager rent_manager --indent 2 > data.json
+```
+
+**Импорт данных:**
+
+```bash
+# Сначала создайте структуру БД
+python manage.py migrate
+
+# Затем загрузите данные
+python manage.py loaddata granica_full_dump.json
+```
+
+**Передача БД другому разработчику:**
+
+1. Создайте дамп (команда выше)
+2. Отправьте файл `granica_full_dump.json` и `.env` (с настройками БД)
+3. Получатель выполняет миграции и загрузку дампа
 
 ## Конфигурация
 
