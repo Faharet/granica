@@ -1,0 +1,31 @@
+{% extends 'platform_manager/base_with_navbar.html' %}
+{% load i18n %}
+
+{% block content %}
+  <h1>{% trans "Form responses" %}</h1>
+  <table class="table table-striped w-full">
+    <thead>
+      <tr>
+        <th>{% trans "ID" %}</th>
+        <th>{% trans "Preview" %}</th>
+        <th>{% trans "Created by" %}</th>
+        <th>{% trans "Created at" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in responses %}
+        <tr>
+          <td><a href="{% url 'platform_manager:form_response_detail' r.id %}">{{ r.id }}</a></td>
+          <td>
+            <a href="{% url 'platform_manager:form_response_detail' r.id %}"><strong>{{ r.full_name_and_birth|default:"—" }}</strong>
+            <div>{{ r.phones_emails|truncatechars:120 }}</div></a>
+          </td>
+          <td>{% if r.created_by %}{{ r.created_by.get_username }}{% else %}—{% endif %}</td>
+          <td>{{ r.created_at }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">{% trans "No responses yet" %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

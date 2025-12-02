@@ -1,0 +1,717 @@
+{% extends 'platform_manager/base_with_navbar.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="p-6">
+    {% if response %}
+      <header class="flex items-start justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold">Ответ на форму</h1>
+          <p class="text-sm text-gray-500">
+            ID: <span class="font-mono">{{ response.id }}</span>
+          </p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost btn-sm"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Back to list' %}</a>
+          <a href="{% url 'platform_manager:form_response_delete' response.id %}" id="delete-link" class="btn btn-error btn-sm"><i class="fa fa-trash mr-2"></i>{% trans 'Delete' %}</a>
+        </div>
+      </header>
+
+      <main class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section class="bg-base-200 p-6 rounded-lg shadow-sm">
+          <h2 class="text-lg font-semibold mb-4">В части биографических данных</h2>
+          <dl class="space-y-3 text-sm">
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">1. ФИО, дата и место рождения</dt>
+              <dd class="flex-1 text-gray-800">
+                {% if response.full_name_and_birth %}
+                  {{ response.full_name_and_birth|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">2. Изменяли ли фамилию/имя/отчество</dt>
+              <dd class="flex-1">
+                {% if response.name_changed %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Причина изменения</dt>
+              <dd class="flex-1 text-gray-800">
+                {% if response.name_change_reason %}
+                  {{ response.name_change_reason|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">3. Телефоны и email</dt>
+              <dd class="flex-1 text-gray-800">
+                {% if response.phones_emails %}
+                  {{ response.phones_emails|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">4. Служба в ВС</dt>
+              <dd class="flex-1">
+                {% if response.military_service %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Детали службы</dt>
+              <dd class="flex-1 text-gray-800">
+                {% if response.military_details %}
+                  {{ response.military_details|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="bg-base-200 p-6 rounded-lg shadow-sm">
+          <h2 class="text-lg font-semibold mb-4">Уголовная и правовая информация</h2>
+          <dl class="space-y-3 text-sm">
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">5. Судимость</dt>
+              <dd class="flex-1">
+                {% if response.criminal_record %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Период и место отбытия наказания</dt>
+              <dd class="flex-1">
+                {% if response.criminal_period_where %}
+                  {{ response.criminal_period_where|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">За какие преступления</dt>
+              <dd class="flex-1">
+                {% if response.criminal_offenses %}
+                  {{ response.criminal_offenses|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">6. Задержания за границей</dt>
+              <dd class="flex-1">
+                {% if response.detained_abroad %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Когда и почему</dt>
+              <dd class="flex-1">
+                {% if response.detained_when_why %}
+                  {{ response.detained_when_why|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Где содержали</dt>
+              <dd class="flex-1">
+                {% if response.detained_where %}
+                  {{ response.detained_where|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="bg-base-200 p-6 rounded-lg shadow-sm">
+          <h2 class="text-lg font-semibold mb-4">Родственники и религия</h2>
+          <dl class="space-y-3 text-sm">
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">7. Родственники в указанных странах</dt>
+              <dd class="flex-1">
+                {% if response.relatives_in_countries %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Детали родственников</dt>
+              <dd class="flex-1">
+                {% if response.relatives_details %}
+                  {{ response.relatives_details|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">8. Разыскиваются ли родственники</dt>
+              <dd class="flex-1">
+                {% if response.relatives_wanted %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Причина розыска</dt>
+              <dd class="flex-1">
+                {% if response.relatives_wanted_reason %}
+                  {{ response.relatives_wanted_reason|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">9. Религиозны</dt>
+              <dd class="flex-1">
+                {% if response.religious %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Мазхаб/взгляды</dt>
+              <dd class="flex-1">
+                {% if response.denomination %}
+                  {{ response.denomination|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="bg-base-200 p-6 rounded-lg shadow-sm">
+          <h2 class="text-lg font-semibold mb-4">Поездки и депортации</h2>
+          <dl class="space-y-3 text-sm">
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">10. Посещали указанные страны</dt>
+              <dd class="flex-1">
+                {% if response.visited_countries %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Детали визитов</dt>
+              <dd class="flex-1">
+                {% if response.visited_countries_details %}
+                  {{ response.visited_countries_details|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">11. Депортация/выдворение</dt>
+              <dd class="flex-1">
+                {% if response.deported %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Детали депортации</dt>
+              <dd class="flex-1">
+                {% if response.deportation_details %}
+                  {{ response.deportation_details|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">12. Причина не пропуска</dt>
+              <dd class="flex-1">
+                {% if response.not_allowed_reason %}
+                  {{ response.not_allowed_reason|linebreaksbr }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">13. Когда в последний раз были на родине</dt>
+              <dd class="flex-1">
+                {% if response.last_time_in_homeland %}
+                  {{ response.last_time_in_homeland }}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- Border Officer Assessment Section -->
+        {% if response.officer_assessment %}
+          <section class="bg-base-200 p-6 rounded-lg shadow-sm md:col-span-2">
+            <h2 class="text-lg font-semibold mb-4">Оценка пограничника</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Question 14: Radical Internet (65 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.radical_internet %}
+                  border-error
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">14. Состоит в радикальных интернет-сообществах</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.radical_internet %}
+                        badge-error
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.radical_internet %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.radical_internet %}
+                        +65
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.radical_internet_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.radical_internet_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 15: Radical Religious Ideology (45 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.radical_religious_ideology %}
+                  border-error
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">15. Сторонник радикальных религиозных течений</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.radical_religious_ideology %}
+                        badge-error
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.radical_religious_ideology %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.radical_religious_ideology %}
+                        +45
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.radical_religious_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.radical_religious_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 16: Document Issues (20 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.document_issues %}
+                  border-warning
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">16. Признаки в документах</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.document_issues %}
+                        badge-warning
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.document_issues %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.document_issues %}
+                        +20
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.document_issues_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.document_issues_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 17: Religious Deviations (15 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.religious_deviations %}
+                  border-warning
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">17. Религиозные отклонения</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.religious_deviations %}
+                        badge-warning
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.religious_deviations %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.religious_deviations %}
+                        +15
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.religious_deviations_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.religious_deviations_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 18: Suspicious Mobile Content (15 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.suspicious_mobile_content %}
+                  border-warning
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">18. Сомнительный контент на мобильных устройствах</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.suspicious_mobile_content %}
+                        badge-warning
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.suspicious_mobile_content %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.suspicious_mobile_content %}
+                        +15
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.suspicious_mobile_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.suspicious_mobile_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 19: Suspicious Behavior (15 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.suspicious_behavior %}
+                  border-warning
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">19. Подозрительное поведение</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.suspicious_behavior %}
+                        badge-warning
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.suspicious_behavior %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.suspicious_behavior %}
+                        +15
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.suspicious_behavior_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.suspicious_behavior_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 20: Psychological Issues (15 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.psychological_issues %}
+                  border-warning
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">20. Психологические отклонения</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.psychological_issues %}
+                        badge-warning
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.psychological_issues %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.psychological_issues %}
+                        +15
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.psychological_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.psychological_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 21: Relatives MTO (10 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.relatives_mto %}
+                  border-info
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">21. Родственники с близкими связями с МТО</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.relatives_mto %}
+                        badge-info
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.relatives_mto %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.relatives_mto %}
+                        +10
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.relatives_mto_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.relatives_mto_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 22: Criminal Element (10 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.criminal_element %}
+                  border-info
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">22. Криминально-ориентированный элемент</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.criminal_element %}
+                        badge-info
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.criminal_element %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.criminal_element %}
+                        +10
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.criminal_element_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.criminal_element_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+
+              <!-- Question 23: Violence Traces (10 points) -->
+              <div class="border-l-4 {% if response.officer_assessment.violence_traces %}
+                  border-info
+                {% else %}
+                  border-gray-300
+                {% endif %} pl-4 py-2">
+                <div class="flex items-center justify-between mb-1">
+                  <dt class="text-sm font-medium text-gray-700">23. Следы насильственных действий на теле</dt>
+                  <div class="flex items-center gap-2">
+                    <span class="badge badge-sm {% if response.officer_assessment.violence_traces %}
+                        badge-info
+                      {% else %}
+                        badge-outline
+                      {% endif %}">
+                      {% if response.officer_assessment.violence_traces %}
+                        Да
+                      {% else %}
+                        Нет
+                      {% endif %}
+                    </span>
+                    <span class="text-xs font-bold text-gray-500">
+                      {% if response.officer_assessment.violence_traces %}
+                        +10
+                      {% else %}
+                        0
+                      {% endif %}баллов
+                    </span>
+                  </div>
+                </div>
+                {% if response.officer_assessment.violence_traces_details %}
+                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.violence_traces_details|linebreaksbr }}</dd>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Additional Notes -->
+            {% if response.officer_assessment.notes %}
+              <div class="mt-4 p-4 bg-white rounded-lg">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Дополнительные заметки пограничника:</h3>
+                <p class="text-sm text-gray-600">{{ response.officer_assessment.notes|linebreaksbr }}</p>
+              </div>
+            {% endif %}
+          </section>
+        {% endif %}
+      </main>
+
+      <!-- Threat Assessment Card -->
+      <section class="mb-6">
+        <div class="alert {% if response.threat_level == 'Высокий' %}
+            alert-error
+          {% elif response.threat_level == 'Средний' %}
+            alert-warning
+          {% else %}
+            alert-success
+          {% endif %} shadow-lg">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <h3 class="font-bold text-lg">Уровень опасности: {{ response.threat_level }}</h3>
+              <div class="text-sm">
+                Общий балл: <span class="font-bold">{{ response.total_score }}</span> из 100
+              </div>
+              <div class="text-xs mt-1 opacity-80">
+                {% if response.threat_level == 'Низкий' %}
+                  0-29 баллов - Низкий уровень опасности
+                {% elif response.threat_level == 'Средний' %}
+                  30-59 баллов - Средний уровень опасности
+                {% else %}
+                  60+ баллов - Высокий уровень опасности
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-gray-500">Создано: {{ response.created_at|date:'d/m/Y H:i' }}</div>
+        <div class="text-sm text-gray-500">&nbsp;</div>
+      </footer>
+
+      <script>
+        ;(function () {
+          var del = document.getElementById('delete-link')
+          if (!del) return
+          del.addEventListener('click', function (e) {
+            var ok = confirm('Вы действительно хотите удалить этот ответ? Это действие нельзя отменить.')
+            if (!ok) {
+              e.preventDefault()
+            }
+          })
+        })()
+      </script>
+    {% else %}
+      <p>
+        {% trans 'Response not found' %}
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}

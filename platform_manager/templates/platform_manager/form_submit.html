@@ -1,0 +1,756 @@
+{% extends 'platform_manager/base_with_navbar.html' %}
+{% load i18n %}
+
+{% block content %}
+  <style>
+    input[type='checkbox'] {
+      width: 1.5rem;
+      height: 1.5rem;
+      flex-shrink: 0;
+    }
+  </style>
+  <div class="p-6 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-semibold mb-4">{% trans 'Submit form' %}</h1>
+
+    <!-- Progress indicator -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium">{% trans 'Total' %} {{ total_steps }}</span>
+        <span class="text-sm font-medium">{% trans 'Question' %} {{ current_step }}</span>
+        <span class="text-sm text-gray-500">{% widthratio current_step total_steps 100 %}%</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-primary h-2 rounded-full transition-all duration-300" style="width: {% widthratio current_step total_steps 100 %}%"></div>
+      </div>
+    </div>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+      <input type="hidden" name="current_step" value="{{ current_step }}" />
+
+      <!-- Step 1 -->
+      {% if current_step == 1 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <h2 class="text-xl font-bold mb-4">{% trans 'Biographical data section' %}</h2>
+          <div class="mb-4">
+            <label class="block font-semibold mb-2">{% trans '1. State your last name, first name, patronymic, date and place of birth' %}</label>
+            {{ form.full_name_and_birth }}
+          </div>
+        </section>
+      {% endif %}
+
+      <!-- Step 2 -->
+      {% if current_step == 2 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.name_changed }}
+              <span class="label-text text-lg">{% trans '2. Have you previously changed your last name, first name, patronymic?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="name-change-reason" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'If yes: state the reason for the change' %}</label>
+            {{ form.name_change_reason }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="name_changed"]')
+            const reasonDiv = document.getElementById('name-change-reason')
+            if (checkbox) {
+              if (checkbox.checked) reasonDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                reasonDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 3 -->
+      {% if current_step == 3 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="block font-semibold text-lg mb-2">{% trans '3. State your mobile phone numbers and email addresses' %}</label>
+            {{ form.phones_emails }}
+          </div>
+        </section>
+      {% endif %}
+
+      <!-- Step 4 -->
+      {% if current_step == 4 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.military_service }}
+              <span class="label-text text-lg">{% trans '4. Have you served in the Armed Forces?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="military-details" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'If yes: In which country and which troops did you serve?' %}</label>
+            {{ form.military_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="military_service"]')
+            const detailsDiv = document.getElementById('military-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 5 -->
+      {% if current_step == 5 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <h2 class="text-xl font-bold mb-4">{% trans 'Criminal and legal information' %}</h2>
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.criminal_record }}
+              <span class="label-text text-lg">{% trans '5. Do you have a criminal record?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4 space-y-4" id="criminal-details" style="display: none;">
+            <div>
+              <label class="block font-medium mb-2">{% trans 'a) period and where did you serve the sentence?' %}</label>
+              {{ form.criminal_period_where }}
+            </div>
+            <div>
+              <label class="block font-medium mb-2">{% trans 'b) for what crimes?' %}</label>
+              {{ form.criminal_offenses }}
+            </div>
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="criminal_record"]')
+            const detailsDiv = document.getElementById('criminal-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 6 -->
+      {% if current_step == 6 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.detained_abroad }}
+              <span class="label-text text-lg">{% trans '6. Have you been detained by law enforcement agencies of a foreign state?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4 space-y-4" id="detained-details" style="display: none;">
+            <div>
+              <label class="block font-medium mb-2">{% trans 'a) when and for what reason were you detained?' %}</label>
+              {{ form.detained_when_why }}
+            </div>
+            <div>
+              <label class="block font-medium mb-2">{% trans 'b) where were you held?' %}</label>
+              {{ form.detained_where }}
+            </div>
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="detained_abroad"]')
+            const detailsDiv = document.getElementById('detained-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 7 -->
+      {% if current_step == 7 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.relatives_in_countries }}
+              <span class="label-text text-lg">{% trans '7. Are any of your relatives or acquaintances in the listed countries?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="relatives-details" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'a) state full name, b) when did they leave, c) what do they do' %}</label>
+            {{ form.relatives_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="relatives_in_countries"]')
+            const detailsDiv = document.getElementById('relatives-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 8 -->
+      {% if current_step == 8 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.relatives_wanted }}
+              <span class="label-text text-lg">{% trans '8. Is any of your relatives wanted by law enforcement agencies?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="relatives-wanted-details" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'If yes: For what reason?' %}</label>
+            {{ form.relatives_wanted_reason }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="relatives_wanted"]')
+            const detailsDiv = document.getElementById('relatives-wanted-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 9 -->
+      {% if current_step == 9 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <h2 class="text-xl font-bold mb-4">{% trans 'Religion' %}</h2>
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.religious }}
+              <span class="label-text text-lg">{% trans '9. Are you religious?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="religious-details" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'If yes: which madhhab do you follow?' %}</label>
+            {{ form.denomination }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="religious"]')
+            const detailsDiv = document.getElementById('religious-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 10 -->
+      {% if current_step == 10 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <h2 class="text-xl font-bold mb-4">{% trans 'Places of stay and travel' %}</h2>
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.visited_countries }}
+              <span class="label-text text-lg">{% trans '10. Have you visited the listed countries?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="visited-details" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'a) when and purpose of the trip; b) duration of stay' %}</label>
+            {{ form.visited_countries_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="visited_countries"]')
+            const detailsDiv = document.getElementById('visited-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 11 -->
+      {% if current_step == 11 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="label cursor-pointer gap-3 justify-start">
+              {{ form.deported }}
+              <span class="label-text text-lg">{% trans '11. Have you been deported / expelled?' %}</span>
+            </label>
+          </div>
+          <div class="mt-4" id="deported-details" style="display: none;">
+            <label class="block font-medium mb-2">{% trans 'If yes: when and reasons for deportation' %}</label>
+            {{ form.deportation_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="deported"]')
+            const detailsDiv = document.getElementById('deported-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 12 -->
+      {% if current_step == 12 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="block font-medium text-lg mb-2">{% trans '12. If not allowed entry to the destination state - state the reason for not being allowed' %}</label>
+            {{ form.not_allowed_reason }}
+          </div>
+        </section>
+      {% endif %}
+
+      <!-- Step 13 -->
+      {% if current_step == 13 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <label class="block font-medium text-lg mb-2">{% trans '13. When was the last time you were in your homeland?' %}</label>
+            {{ form.last_time_in_homeland }}
+          </div>
+        </section>
+      {% endif %}
+
+      <!-- Оценка пограничника начинается с шага 14 -->
+
+      <!-- Step 14: Радикальные интернет-сообщества -->
+      {% if current_step == 14 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="alert alert-info mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{% trans 'Border Officer Assessment. The following questions are filled in by the border officer based on inspection.' %}</span>
+          </div>
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.radical_internet }}
+              <label for="id_radical_internet" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '14. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content' %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-1 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <p>{% trans '- the phone contains religious photo/video files (for example, the flag of DAESH, KTD, HTS, Al-Qaeda and other terrorist organizations; photo and video materials of combat scenes, persons in military equipment, in masks and with weapons in their hands);' %}</p>
+              <p>{% trans '- the phone contains photo/video files of radical content, including those saved in the \'search history\' of well-known mobile browsers \'YouTube\', \'Google\', \'Safari\' (materials with calls for armed clashes, moving to Muslim countries, accusations of disbelief, accusations of secular states of disbelief, statements about government representatives as \'taghuts\', ideas about the need to help allegedly oppressed Muslims in foreign countries);' %}</p>
+              <p>{% trans '- viewing in well-known mobile browsers \'YouTube\', \'Google\', \'Safari\' lectures of radical sheikhs: \'Arslan Bulgarsky\', \'Abu Zubeir Dagestani\', \'Abu Qaqqa Dagestani\', \'Abdullah Kosteksky\', \'Faruk Shami\', \'Tokhir domla\', \'Abdulaziz domla\', \'Abu Saloh\', \'Akhliddin Novkatiy\', \'Abdulloh Bukhoriy\', \'Sodik Samarkandi\', \'Abdulloh Zufar\', \'Abu Walid\', \'Saad Mukhtor\', \'Abdulhadiy domla\', \'Abdullah abu Abdur-rahman Moldavsky\', \'Ahmad Abu Abdurahman Medinsky\', \'Nadir abu Kholid\', \'Said Buryatsky\';' %}</p>
+              <p>{% trans '- member of radical Internet communities, messengers (group names may vary, but the content is exclusively aimed at calls to commit any actions, deeds, condemnation, etc. on a religious basis, ideas about the need for violent overthrow of the leadership of those states where Muslims are allegedly oppressed).' %}</p>
+            </div>
+          </div>
+          <div class="mt-4" id="radical-internet-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Details:' %}</label>
+            {{ assessment_form.radical_internet_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="radical_internet"]')
+            const detailsDiv = document.getElementById('radical-internet-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 15: Радикальная религиозная идеология -->
+      {% if current_step == 15 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.radical_religious_ideology }}
+              <label for="id_radical_religious_ideology" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '15. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)' %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <p>
+                <strong>{% trans 'External signs:' %}</strong>
+              </p>
+              <ul class="list-disc ml-5 space-y-1">
+                <li>- ношение беспорядочной бороды (без усов) и укороченных штанов. У женщин – использование религиозного одеяния в виде «никаба» или «хиджаба», как правило, черного цвета;</li>
+                <li>- потемнение на лбу от постоянного совершения намаза;</li>
+                <li>- исходящий резкий запах «миска» на основе эфирных масел;</li>
+              </ul>
+              <p class="mt-2">
+                <strong>{% trans 'Behavioral signs:' %}</strong>
+              </p>
+              <ul class="list-disc ml-5 space-y-1">
+                <li>- вынашивает намерения по выезду в зоны террористической активности с целью примкнуть к рядам МТО за рубежом;</li>
+                <li>- называет Казахстан «тагутским государством», а представителей власти «тагутами», намеревается совершить «хиджру» в т.н. мусульманские страны; – открыто называет лиц, не читающих намаз, «кафирами»;</li>
+                <li>- ведет себя агрессивно, демонстративно показывает свою пренебрежительность и ненависть к представителям других религий и верующим, которые исповедуют традиционный ислам;</li>
+                <li>- отправляет намаз отдельно в узких группах, в том числе вне мечетей, отказываясь от их посещения;</li>
+                <li>- не сближается с «жамагатом», держится обособленно со своими «единоверцами»;</li>
+                <li>- совершает т.н. «укороченный» намаз, при «кияме» (стояние в намазе) руки скрещивает на уровне груди, широко расставляет ноги, при чтении «аттахият» поднимает указательный палец на всем протяжении молитвы, перед «рукух» (поясной поклон) и «саджда» (земной поклон) поднимают руки, громко произносят «аминь»;</li>
+                <li>- при приветствии и обращении к своим сторонникам использует слово «ахи» (мой брат), омовение ног заменяет их протиранием (масих тарту).</li>
+                <li>- в вопросах религии требует доводы и доказательства, не признают «мазхабы», придерживаются норм Корана и Сунны;</li>
+                <li>- в случае отправления намаза в мечетях игнорируют проповеди имамов, чтобы не усомниться в своих убеждениях;</li>
+                <li>- разорвал связи с родственниками вследствие неприятия ими его/ее религиозных взглядов;</li>
+                <li>- высказывает идеи о необходимости оказания помощи якобы притесняемым в зарубежных государствах «единоверцам» и членам МТО/РЭО, свержения руководства их государств, а также об объединении всех единоверцев в борьбе против общих «врагов ислама»</li>
+                <li>- критикуют приверженцев «мадхализма» за принцип «подчинения правителю», в т.ч. королю КСА;</li>
+                <li>- поддерживает контакты с родственниками и близкими связями, причастными к МТО, в т.ч. принимающими прямое участие либо оказывающими пособническую деятельность.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-4" id="radical-religious-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.radical_religious_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="radical_religious_ideology"]')
+            const detailsDiv = document.getElementById('radical-religious-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 16: Признаки в документах -->
+      {% if current_step == 16 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.document_issues }}
+              <label for="id_document_issues" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '16. Signs in documents:' %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-1 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <ul class="list-disc ml-5 space-y-1">
+                <li>- находился более одного месяца или депортирован из Турции (основной признак);</li>
+                <li>- на фотографиях в документах, удостоверяющих личность изображены с бородой (для мужчин), в религиозном одеянии (для женщин), а при опросе указанные признаки отсутствуют;</li>
+                <li>- прибыл по свидетельству на возвращение в Казахстан 2004, 2009 годов, в которых отсутствуют элементы защиты;</li>
+                <li>- возможно, передвигаются по одному без членов семьи либо сопровождения, а также пересекают границу с недавно изготовленным паспортом (1-2 года);</li>
+                <li>- прибыл на территорию Казахстана через третьи страны (Азербайджан, Белоруссия, Грузия, Малайзия, Норвегия, Польша, Украина, Турция, Россия, Южная Корея);</li>
+                <li>- является выходцем из Гусарского района Азербайджана и этническим лезгином;</li>
+                <li>- использовал поддельные паспортаРумынии, Болгарии, Израиля, Германии, Испании, Греции, Украины, Таджикистана, Кыргызстана, Узбекистана, России;</li>
+                <li>- несоответствие внешности обладателя паспорта с признаками характерными по месту жительства;</li>
+                <li>- при опросе владелец фальшивого паспорта плохо разбирается или совсем не знает географические названия населенных пунктов страны гражданства;</li>
+                <li>- владелец паспорта слабо либо вообще не владеет языком гражданства;</li>
+                <li>- закрыт въезд и депортирован из России, Украины, Азербайджана, стран Европы;</li>
+                <li>- ранее находился, а также депортирован из Сирии, Афганистана, Ирана, Ирака, Йемена, Египта, КСА, Южной Кореи, Украины;</li>
+                <li>- пересек государственную границу в обход пунктов пропуска (отсутствие дата штампа о пересечении границы);</li>
+                <li>- длительное время отсутствовал на родине и не планировал туда возвращаться;</li>
+                <li>- находился без документов, подтверждающих личность, при этом представлялся данными другого человека (личность до настоящего времени не подтверждена) либо прибыл в страну с измененными установочными данными в паспорте.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-4" id="document-issues-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.document_issues_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="document_issues"]')
+            const detailsDiv = document.getElementById('document-issues-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 17: Религиозные отклонения -->
+      {% if current_step == 17 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.religious_deviations }}
+              <label for="id_religious_deviations" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '17. In personal belongings:' %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <ul class="list-disc ml-5 space-y-1">
+                <li>- отрицает отношение к религии, однако при себе имеет религиозные вещи (четки, молитвенный коврик, «миск» (мусульманский парфюм), «мисвак» (палочка для чистки зубов), литературу «Книга единобожия», «Таухид», «Три основы», «Ахлю сунна уаль-Джамаа» и т.п.).</li>
+                <li>- имеет при себе элементы военной экипировки, туристического снаряжения, а также минимальное количество ручной клади и денежные средства, не соответствующие заработку, заявленным целям поездки;</li>
+                <li>- располагает крупными финансовыми средствами, при этом нигде не работает.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-4" id="religious-deviations-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.religious_deviations_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="religious_deviations"]')
+            const detailsDiv = document.getElementById('religious-deviations-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 18: Сомнительный контент -->
+      {% if current_step == 18 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.mobile_device_content }}
+              <label for="id_mobile_device_content" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '18. In mobile devices:' %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <p>- телефон отсутствует / отказывается предоставлять / в телефоне (смартфоне) стерты контакты, архивы сообщений, фото и видео информация;</p>
+              <p>- в мобильном телефоне (смартфоне) сохранены турецкие, сирийские либо афганские абоненты;</p>
+              <p>- наличие нескольких средств связи (мобильных телефонов, контактных номеров);</p>
+              <p>- наличие загруженных мусульманских мобильных приложений («Кибла», «Sajda» и т.д.).</p>
+            </div>
+          </div>
+          <div class="mt-4" id="suspicious-mobile-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.suspicious_mobile_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="suspicious_mobile_content"]')
+            const detailsDiv = document.getElementById('suspicious-mobile-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 19: Подозрительное поведение -->
+      {% if current_step == 19 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.suspicious_behavior }}
+              <label for="id_suspicious_behavior" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '19. In behavior:' %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <ul class="list-disc ml-5 space-y-1">
+                <li>- в беседе часто употребляющие религиозные термины (к примеру: «ахи», «субханалла», «иншаллах», «аузубиллях», «астагфируллах», «альхамдулиллях» и т.п.);</li>
+                <li>- в ходе контактов проявлял нервозность, допускал неточности либо доводил противоречивые сведения в биографических данных;</li>
+                <li>- не смог внятно ответить на вопрос о цели прибытия в РК;</li>
+                <li>- проявлял агрессивное поведение в ходе опроса, пренебрежительное отношение к сотрудникам правоохранительных органов;</li>
+                <li>- часто меняет места жительства и работы;</li>
+                <li>- часто меняет сим-карты и мобильные аппараты, оставляет телефон, в том числе с доступом к интернету, по месту жительства;</li>
+                <li>- слабо ориентируются в пребывающей местности (к примеру, постоянно пользуются приложениями-навигаторами);</li>
+                <li>- контраст загара на лице (к примеру, лицо не так загорелое, как область вокруг глаз, образовавшееся в результате ношения никаба либо сообщает, что проживала в стране с жарким климатом, но загар отсутствует);</li>
+                <li>- в беседах часто использует условности, звонки осуществляет исключительно через мобильные приложения;</li>
+                <li>- пытался незаконно зарегистрироваться в органах миграции (в том числе через посредников);</li>
+                <li>- скрывает встречающих лиц, не может назвать их имена, не знает их контактные данные;</li>
+                <li>- проявлял признаки волнения в ходе прохождения паспортного контроля;</li>
+                <li>- осведомлён о событиях, происходящих в зонах локальных конфликтов.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-4" id="suspicious-behavior-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.suspicious_behavior_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="suspicious_behavior"]')
+            const detailsDiv = document.getElementById('suspicious-behavior-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 20: Психологические отклонения -->
+      {% if current_step == 20 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.psychological_issues }}
+              <label for="id_psychological_issues" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '20. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person.' %}</label>
+            </div>
+          </div>
+          <div class="mt-4" id="psychological-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.psychological_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="psychological_issues"]')
+            const detailsDiv = document.getElementById('psychological-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 21: Родственники с МТО -->
+      {% if current_step == 21 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.mto_relatives }}
+              <label for="id_mto_relatives" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">21.</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+              <p>- родственники и близкие связи причастны к МТО, но не поддерживает с ними связь;</p>
+              <p>- проверяемое лицо является криминально-ориентированным элементом (ранее судим, лидер либо член ОПГ и т.д.);</p>
+            </div>
+          </div>
+          <div class="mt-4" id="relatives-mto-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.relatives_mto_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="relatives_mto"]')
+            const detailsDiv = document.getElementById('relatives-mto-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 22: Криминальный элемент -->
+      {% if current_step == 22 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.criminal_element }}
+              <label for="id_criminal_element" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans "22. Presence of contacts with Kazakhstani 'non-Madhalists'" %}</label>
+            </div>
+          </div>
+          <div class="mt-4" id="criminal-element-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.criminal_element_details }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="criminal_element"]')
+            const detailsDiv = document.getElementById('criminal-element-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Step 23: Следы насилия -->
+      {% if current_step == 23 %}
+        <section class="bg-base-200 p-6 rounded-lg">
+          <div class="mb-4">
+            <div class="flex items-start gap-3">
+              {{ assessment_form.violence_traces }}
+              <label for="id_violence_traces" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '23. On exposed parts of the body, there are traces of gunshot and shrapnel wounds.' %}</label>
+            </div>
+          </div>
+          <div class="mt-4" id="violence-traces-details" style="display: none;">
+            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
+            {{ assessment_form.violence_traces_details }}
+          </div>
+          <div class="mt-6">
+            <label class="block font-semibold mb-2">{% trans 'Additional notes:' %}</label>
+            {{ assessment_form.notes }}
+          </div>
+        </section>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.querySelector('input[name="violence_traces"]')
+            const detailsDiv = document.getElementById('violence-traces-details')
+            if (checkbox) {
+              if (checkbox.checked) detailsDiv.style.display = 'block'
+              checkbox.addEventListener('change', function () {
+                detailsDiv.style.display = this.checked ? 'block' : 'none'
+              })
+            }
+          })
+        </script>
+      {% endif %}
+
+      <!-- Navigation buttons -->
+      <div class="flex justify-between items-center pt-6">
+        {% if current_step > 1 %}
+          <button type="submit" name="action" value="previous" class="btn btn-outline"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Previous' %}</button>
+        {% else %}
+          <div></div>
+        {% endif %}
+
+        {% if current_step < total_steps %}
+          <button type="submit" name="action" value="next" class="btn btn-primary">{% trans 'Next' %}<i class="fa fa-arrow-right ml-2"></i></button>
+        {% else %}
+          <button type="submit" name="action" value="submit" class="btn btn-success"><i class="fa fa-check mr-2"></i>{% trans 'Send' %}</button>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <style>
+    /* Custom styles for form fields */
+    textarea,
+    input[type='text'],
+    input[type='date'] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    input[type='checkbox'] {
+      width: 0.75rem;
+      height: 0.75rem;
+      cursor: pointer;
+    }
+  </style>
+{% endblock %}

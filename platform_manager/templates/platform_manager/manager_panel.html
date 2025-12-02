@@ -1,0 +1,69 @@
+{% extends 'platform_manager/base_with_navbar.html' %}
+{% load i18n %}
+
+{% block content %}
+  <div class="p-6">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold">{% trans "Manager panel" %}</h1>
+      <p class="text-sm text-gray-600">{% trans "Quick links for managers and submitters" %}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Submit form card (available for all authenticated users) -->
+      <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+          <div class="flex items-center gap-4">
+            <div class="text-3xl text-primary"><i class="fa-solid fa-file-pen"></i></div>
+            <div>
+              <h2 class="card-title">{% trans "Submit form" %}</h2>
+              <p class="text-sm text-gray-600">{% trans "Create a new form response" %}</p>
+            </div>
+          </div>
+          <div class="card-actions mt-4">
+            <a class="btn btn-primary" href="{% url 'platform_manager:form_submit' %}">{% trans "Open form" %}</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- View responses card (only for managers) -->
+  {% if is_manager %}
+      <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+          <div class="flex items-center gap-4">
+            <div class="text-3xl text-secondary"><i class="fa-solid fa-list-check"></i></div>
+            <div>
+              <h2 class="card-title">{% trans "View responses" %}</h2>
+              <p class="text-sm text-gray-600">{% trans "See all submitted form responses" %}</p>
+            </div>
+          </div>
+          <div class="card-actions mt-4">
+            <a class="btn btn-outline" href="{% url 'platform_manager:form_responses' %}">{% trans "Open list" %}</a>
+          </div>
+        </div>
+      </div>
+  {% endif %}
+
+      <!-- Admin link card (optional) -->
+      {% if request.user.is_staff %}
+      <div class="card bg-base-100 shadow-md">
+        <div class="card-body">
+          <div class="flex items-center gap-4">
+            <div class="text-3xl text-info"><i class="fa-solid fa-cubes-stacked"></i></div>
+            <div>
+              <h2 class="card-title">{% trans "Admin site" %}</h2>
+              <p class="text-sm text-gray-600">{% trans "Open Django admin (staff only)" %}</p>
+            </div>
+          </div>
+          <div class="card-actions mt-4">
+            <a class="btn" href="/admin/">{% trans "Open admin" %}</a>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="mt-8 text-sm text-gray-600">
+      <p>{% trans "If you don't see an expected item, check your group membership or contact an admin." %}</p>
+    </div>
+  </div>
+{% endblock %}

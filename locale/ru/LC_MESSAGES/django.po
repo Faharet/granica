@@ -1,0 +1,331 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 20:37+0500\n"
+"PO-Revision-Date: 2025-12-02 12:00+0600\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Russian <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100>=14)? 2 : 3);\n"
+
+#: .\platform_manager\navigation.py:12
+msgid "Submit Form"
+msgstr "Отправить форму"
+
+#: .\platform_manager\navigation.py:21
+msgid "View Responses"
+msgstr "Просмотреть ответы"
+
+#: .\platform_manager\templates\platform_manager\form_response_confirm_delete.html:6
+msgid "Confirm delete"
+msgstr "Подтвердите удаление"
+
+#: .\platform_manager\templates\platform_manager\form_response_confirm_delete.html:7
+msgid ""
+"Are you sure you want to delete this response? This action cannot be undone."
+msgstr ""
+"Вы уверены, что хотите удалить этот ответ? Это действие нельзя отменить."
+
+#: .\platform_manager\templates\platform_manager\form_response_confirm_delete.html:11
+msgid "Yes, delete"
+msgstr "Да, удалить"
+
+#: .\platform_manager\templates\platform_manager\form_response_confirm_delete.html:12
+msgid "Cancel"
+msgstr "Отмена"
+
+#: .\platform_manager\templates\platform_manager\form_response_detail.html:13
+msgid "Back to list"
+msgstr "Вернуться к списку"
+
+#: .\platform_manager\templates\platform_manager\form_response_detail.html:14
+msgid "Delete"
+msgstr "Удалить"
+
+#: .\platform_manager\templates\platform_manager\form_response_detail.html:178
+msgid "Response not found"
+msgstr "Ответ не найден"
+
+#: .\platform_manager\templates\platform_manager\form_responses_list.html:5
+msgid "Form responses"
+msgstr "Ответы формы"
+
+#: .\platform_manager\templates\platform_manager\form_responses_list.html:9
+msgid "ID"
+msgstr "ID"
+
+#: .\platform_manager\templates\platform_manager\form_responses_list.html:10
+msgid "Preview"
+msgstr "Предпросмотр"
+
+#: .\platform_manager\templates\platform_manager\form_responses_list.html:11
+msgid "Created by"
+msgstr "Создано"
+
+#: .\platform_manager\templates\platform_manager\form_responses_list.html:12
+msgid "Created at"
+msgstr "Дата создания"
+
+#: .\platform_manager\templates\platform_manager\form_responses_list.html:27
+msgid "No responses yet"
+msgstr "Ответов пока нет"
+
+#: .\platform_manager\templates\platform_manager\form_submit.html:6
+#: .\platform_manager\templates\platform_manager\manager_panel.html:23
+msgid "Submit form"
+msgstr "Отправить форму"
+
+#: .\platform_manager\templates\platform_manager\form_submit.html:151
+msgid "Send"
+msgstr "Отправить"
+
+#: .\platform_manager\templates\platform_manager\form_submitted.html:5
+msgid "Thank you"
+msgstr "Спасибо"
+
+#: .\platform_manager\templates\platform_manager\form_submitted.html:6
+msgid "Your response has been saved."
+msgstr "Ваш ответ сохранен."
+
+#: .\platform_manager\templates\platform_manager\form_submitted.html:7
+msgid "The border officer will review your answers and assess the threat level."
+msgstr "Пограничник проверит ваши ответы и оценит уровень опасности."
+
+#: .\platform_manager\templates\platform_manager\form_submitted.html:8
+msgid "Submit another"
+msgstr "Отправить еще один"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:8
+msgid "Manager panel"
+msgstr "Панель управления"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:9
+msgid "Quick links for managers and submitters"
+msgstr "Быстрые ссылки для менеджеров и отправителей"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:12
+msgid "Logout"
+msgstr "Выход"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:24
+msgid "Create a new form response"
+msgstr "Создать новый ответ формы"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:28
+msgid "Open form"
+msgstr "Открыть форму"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:40
+msgid "View responses"
+msgstr "Просмотреть ответы"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:41
+msgid "See all submitted form responses"
+msgstr "Посмотреть все отправленные ответы"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:45
+msgid "Open list"
+msgstr "Открыть список"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:58
+msgid "Admin site"
+msgstr "Сайт администратора"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:59
+msgid "Open Django admin (staff only)"
+msgstr "Открыть админ-панель Django (только для персонала)"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:63
+msgid "Open admin"
+msgstr "Открыть админку"
+
+#: .\platform_manager\templates\platform_manager\manager_panel.html:71
+msgid ""
+"If you don't see an expected item, check your group membership or contact an "
+"admin."
+msgstr ""
+"Если вы не видите ожидаемый элемент, проверьте членство в группе или обратитесь к администратору."
+
+#: .\templates\admin\base_site.html:4 .\templates\admin\base_site.html:11
+#: .\templates\admin\base_site.html:23 .\templates\admin\parts\navbar.html:7
+msgid "Site Panel"
+msgstr "Панель сайта"
+
+#: .\templates\admin\base_site.html:9
+msgid "Granica"
+msgstr "Granica"
+
+#: .\templates\admin\parts\navbar.html:13
+msgid "Log out"
+msgstr "Выйти"
+
+#: .\templates\admin\parts\navbar.html:15
+msgid "Log in"
+msgstr "Войти"
+
+#: Form labels and sections
+msgid "Biographical data section"
+msgstr "В части биографических данных"
+
+msgid "1. State your last name, first name, patronymic, date and place of birth"
+msgstr "1. Назовите Ваши фамилию, имя, отчество, дату и место рождения"
+
+msgid "2. Have you previously changed your last name, first name, patronymic?"
+msgstr "2. Изменяли ли Вы ранее фамилию, имя, отчество?"
+
+msgid "If yes: state the reason for the change"
+msgstr "При положительном ответе: назовите причину изменения"
+
+msgid "3. State your mobile phone numbers and email addresses"
+msgstr "3. Назовите номера Ваших мобильных телефонов, электронные адреса"
+
+msgid "4. Have you served in the Armed Forces?"
+msgstr "4. Вы проходили службу в Вооруженных Силах?"
+
+msgid "If yes: In which country and which troops did you serve?"
+msgstr "В случае положительного ответа: В какой стране и каких войсках служили?"
+
+msgid "Criminal and legal information"
+msgstr "Уголовная и правовая информация"
+
+msgid "5. Do you have a criminal record?"
+msgstr "5. Имеете ли судимость?"
+
+msgid "a) period and where did you serve the sentence?"
+msgstr "a) период и где отбывали наказание?"
+
+msgid "b) for what crimes?"
+msgstr "b) за какие преступления?"
+
+msgid "6. Have you been detained by law enforcement agencies of a foreign state?"
+msgstr "6. Задерживались ли вы правоохранительными органами иностранного государства?"
+
+msgid "a) when and for what reason were you detained?"
+msgstr "a) когда и по какой причине Вас задержали?"
+
+msgid "b) where were you held?"
+msgstr "b) где Вас содержали?"
+
+msgid "7. Are any of your relatives or acquaintances in the listed countries?"
+msgstr "7. Находится ли кто-нибудь из родственников либо знакомых в перечисленных странах?"
+
+msgid "a) state full name, b) when did they leave, c) what do they do"
+msgstr "a) назовите Ф.И.О., b) когда выехали, c) чем занимаются"
+
+msgid "8. Is any of your relatives wanted by law enforcement agencies?"
+msgstr "8. Разыскивается ли кто-нибудь из Ваших родственников правоохранительными органами?"
+
+msgid "If yes: For what reason?"
+msgstr "При положительном ответе: По какой причине?"
+
+msgid "Religion"
+msgstr "Вероисповедание"
+
+msgid "9. Are you religious?"
+msgstr "9. Вы религиозны?"
+
+msgid "If yes: which madhhab do you follow?"
+msgstr "Если да: какого мазхаба Вы придерживаетесь?"
+
+msgid "Places of stay and travel"
+msgstr "Места пребывания и поездки"
+
+msgid "10. Have you visited the listed countries?"
+msgstr "10. Посещали ли перечисленные страны?"
+
+msgid "a) when and purpose of the trip; b) duration of stay"
+msgstr "a) когда и цель поездки; b) срок нахождения"
+
+msgid "11. Have you been deported / expelled?"
+msgstr "11. Вас депортировали / выдворили?"
+
+msgid "If yes: when and reasons for deportation"
+msgstr "При положительном ответе: когда и причины депортации"
+
+msgid "12. If not allowed entry to the destination state - state the reason for not being allowed"
+msgstr "12. Если не пропущен на территорию государства следования — назовите причину не пропуска"
+
+msgid "13. When was the last time you were in your homeland?"
+msgstr "Г13. Когда в последний раз были на родине?"
+
+msgid "Question"
+msgstr "Вопрос"
+
+msgid "of"
+msgstr "из"
+
+msgid "Previous"
+msgstr "Назад"
+
+msgid "Next"
+msgstr "Далее"
+
+msgid "Total"
+msgstr "Всего"
+
+msgid "Border Officer Assessment. The following questions are filled in by the border officer based on inspection."
+msgstr "Оценка пограничника. Следующие вопросы заполняются пограничником на основе проверки."
+
+msgid "14. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content"
+msgstr "14. Состоит в радикальных Интернет сообществах и мессенджерах, ориентированы на радикальных идеологов, в телефоне имеются фото/видео файлы радикального содержания"
+
+msgid "15. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)"
+msgstr "15. Религиозен, с признаками сторонника радикальных идей (явные признаки сторонника немадхалитской идеологии, а также поддерживающего идеологию терроризма и религиозного экстремизма лица)"
+
+msgid "16. Signs in documents:"
+msgstr "16. Признаки в документах:"
+
+msgid "17. In personal belongings:"
+msgstr "17. В личных вещах:"
+
+msgid "18. In mobile devices:"
+msgstr "18. В мобильных устройствах:"
+
+msgid "19. In behavior:"
+msgstr "19. В поведении:"
+
+msgid "20. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person."
+msgstr "20. Наблюдаются психологические отклонения (свидетельствующие о возможных психических заболеваниях лица) в совокупности с глубокой религиозностью лица."
+
+msgid "22. Presence of contacts with Kazakhstani 'non-Madhalists'"
+msgstr "22. Наличие контактов с казахстанскими «немадхалитами»"
+
+msgid "23. On exposed parts of the body, there are traces of gunshot and shrapnel wounds."
+msgstr "23. На открытых частях тела, которого имеются следы огнестрельных и осколочных ранений."
+
+msgid "Details:"
+msgstr "Детали:"
+
+msgid "Additional notes:"
+msgstr "Дополнительные заметки:"
+
+# Question 14 descriptions
+msgid "- the phone contains religious photo/video files (for example, the flag of DAESH, KTD, HTS, Al-Qaeda and other terrorist organizations; photo and video materials of combat scenes, persons in military equipment, in masks and with weapons in their hands);"
+msgstr "- в телефоне имеются религиозные фото/видео файлы (к примеру, флаг ДАИШ, КТД, ХТШ, Аль-Каиды и др. террористических организаций; фото-видеоматериалы боевых сцен, лиц в военной экипировке, в масках и с оружием в руках);"
+
+msgid "- the phone contains photo/video files of radical content, including those saved in the 'search history' of well-known mobile browsers 'YouTube', 'Google', 'Safari' (materials with calls for armed clashes, moving to Muslim countries, accusations of disbelief, accusations of secular states of disbelief, statements about government representatives as 'taghuts', ideas about the need to help allegedly oppressed Muslims in foreign countries);"
+msgstr "- в телефоне имеются фото/видео файлы радикального содержания, в том числе, сохраненные в «истории поиска» известных мобильных браузеров «YouTube», «Google», «Safari» (материалы с призывами к вооруженным столкновениям, осуществлению переезда в мусульманские страны, обвинения в неверии, обвинение светских государств в неверии, высказывание о представителях власти как о «тагутах», идеи о необходимости оказания помощи якобы притесняемым мусульманам в зарубежных государствах);"
+
+msgid "- viewing in well-known mobile browsers 'YouTube', 'Google', 'Safari' lectures of radical sheikhs: 'Arslan Bulgarsky', 'Abu Zubeir Dagestani', 'Abu Qaqqa Dagestani', 'Abdullah Kosteksky', 'Faruk Shami', 'Tokhir domla', 'Abdulaziz domla', 'Abu Saloh', 'Akhliddin Novkatiy', 'Abdulloh Bukhoriy', 'Sodik Samarkandi', 'Abdulloh Zufar', 'Abu Walid', 'Saad Mukhtor', 'Abdulhadiy domla', 'Abdullah abu Abdur-rahman Moldavsky', 'Ahmad Abu Abdurahman Medinsky', 'Nadir abu Kholid', 'Said Buryatsky';"
+msgstr "- просмотр в известных мобильных браузерах «YouTube», «Google», «Safari» лекции радикальных шейхов: «Арслан Булгарский», «Абу Зубейр Дагестани», «Абу Къакъа Дагестани», «Абдуллах Костекский», «Фарук Шами», «Тохир домла», «Абдулазиз домла», «Абу Салох», «Ахлиддин Новкатий», «Абдуллох Бухорий», «Содик Самарканди», «Абдуллох Зуфар», «Абу Валид», «Саад Мухтор», «Абдулхадий домла», «Абдуллах абу Абдур-рахман Молдавский», «Ахмад Абу Абдурахман Мединский», «Надир абу Холид», «Саид Бурятский»;"
+
+msgid "- member of radical Internet communities, messengers (group names may vary, but the content is exclusively aimed at calls to commit any actions, deeds, condemnation, etc. on a religious basis, ideas about the need for violent overthrow of the leadership of those states where Muslims are allegedly oppressed)."
+msgstr "- состоит в радикальных Интернет сообществах, мессенджерах (названия групп могут быть различным, но содержание исключительно направлено к призывам к совершению каких-либо действий, поступков, осуждению и т.д. на религиозной основе, идеи о необходимости насильственного свержения руководства тех государств, где якобы притесняются мусульмане)."
+
+# Question 15 headers and descriptions
+msgid "External signs:"
+msgstr "Внешние признаки:"
+
+msgid "Behavioral signs:"
+msgstr "Признаки поведения:"

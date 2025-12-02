@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ site_title|default:_('Site Panel') }}{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name">
+        {% if user.is_staff %}
+            <a href="{% url 'admin:index' %}">{{ site_title|default:_('Granica') }}</a>
+        {% else %}
+            <a href="{% url 'manager_panel' %}">{{ site_title|default:_('Site Panel') }}</a>
+        {% endif %}
+    </h1>
+{% endblock %}
+
+{% block extrastyle %}
+    <style>
+        /* Custom branding styles for Site Panel */
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Welcome to {{ site_title|default:_('Site Panel') }}</h1>
+{% endblock %}

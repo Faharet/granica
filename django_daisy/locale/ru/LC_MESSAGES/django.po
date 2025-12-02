@@ -1,0 +1,1078 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-02 20:37+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: .\django_daisy\logentry_admin.py:27
+#: .\django_daisy\templates\admin\actions.html:5
+#: .\django_daisy\templates\admin\index.html:24
+#: .\django_daisy\templates\admin\object_history.html:27
+msgid "Action"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:24
+msgid "Light"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:25
+msgid "Dark"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:26
+msgid "CMYK"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:27
+msgid "Dracula"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:28
+msgid "Lemonade"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:29
+msgid "Halloween"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:30
+msgid "Garden"
+msgstr ""
+
+#: .\django_daisy\module_settings.py:35
+msgid "Authentication"
+msgstr ""
+
+#: .\django_daisy\templates\admin\404.html:4
+#: .\django_daisy\templates\admin\404.html:8
+msgid "Page not found"
+msgstr ""
+
+#: .\django_daisy\templates\admin\404.html:10
+msgid "Weâre sorry, but the requested page could not be found."
+msgstr ""
+
+#: .\django_daisy\templates\admin\500.html:6
+#: .\django_daisy\templates\admin\app_index.html:11
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:15
+#: .\django_daisy\templates\admin\object_history.html:7
+#: .\django_daisy\templates\admin\registration\password_reset_complete.html:6
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:6
+#: .\django_daisy\templates\admin\registration\password_reset_done.html:6
+#: .\django_daisy\templates\admin\registration\password_reset_form.html:6
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:6
+#: .\django_daisy\templates\admin_doc\index.html:6
+#: .\django_daisy\templates\admin_doc\missing_docutils.html:6
+#: .\django_daisy\templates\admin_doc\model_detail.html:20
+#: .\django_daisy\templates\admin_doc\model_index.html:8
+#: .\django_daisy\templates\admin_doc\template_detail.html:6
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:7
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:7
+#: .\django_daisy\templates\admin_doc\view_detail.html:6
+#: .\django_daisy\templates\admin_doc\view_index.html:7
+#: .\django_daisy\templates\registration\password_reset_complete.html:6
+#: .\django_daisy\templates\registration\password_reset_confirm.html:6
+#: .\django_daisy\templates\registration\password_reset_done.html:6
+#: .\django_daisy\templates\registration\password_reset_form.html:6
+msgid "Home"
+msgstr ""
+
+#: .\django_daisy\templates\admin\500.html:7
+msgid "Server error"
+msgstr ""
+
+#: .\django_daisy\templates\admin\500.html:11
+msgid "Server error (500)"
+msgstr ""
+
+#: .\django_daisy\templates\admin\500.html:14
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: .\django_daisy\templates\admin\500.html:15
+msgid ""
+"Thereâs been an error. Itâs been reported to the site administrators via "
+"email and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: .\django_daisy\templates\admin\actions.html:18
+msgid "Run the selected action"
+msgstr ""
+
+#: .\django_daisy\templates\admin\actions.html:19
+msgid "Go"
+msgstr ""
+
+#: .\django_daisy\templates\admin\auth\user\add_form.html:6
+msgid ""
+"First, enter a username and password. Then, youâll be able to edit more user "
+"options."
+msgstr ""
+
+#: .\django_daisy\templates\admin\auth\user\add_form.html:8
+msgid "Enter a username and password."
+msgstr ""
+
+#: .\django_daisy\templates\admin\auth\user\change_password.html:19
+#: .\django_daisy\templates\admin\change_form.html:18
+#: .\django_daisy\templates\admin\change_form_full.html:17
+#: .\django_daisy\templates\admin\change_list.html:35
+#: .\django_daisy\templates\admin\delete_confirmation.html:15
+#: .\django_daisy\templates\admin\import_export\base.html:13
+msgid "Dashboard"
+msgstr ""
+
+#: .\django_daisy\templates\admin\auth\user\change_password.html:31
+#: .\django_daisy\templates\admin\auth\user\change_password.html:79
+msgid "Change password"
+msgstr ""
+
+#: .\django_daisy\templates\admin\auth\user\change_password.html:49
+#: .\django_daisy\templates\admin\change_list.html:51
+#: .\django_daisy\templates\admin\login.html:28
+#: .\django_daisy\templates\admin\registration\password_change_form.html:15
+#: .\django_daisy\templates\registration\password_change_form.html:15
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\django_daisy\templates\admin\auth\user\change_password.html:50
+#: .\django_daisy\templates\admin\registration\password_change_form.html:16
+#: .\django_daisy\templates\registration\password_change_form.html:16
+msgid "Please correct the errors below."
+msgstr ""
+
+#: .\django_daisy\templates\admin\auth\user\change_password.html:54
+#, python-format
+msgid ""
+"Enter a new password for the user\n"
+"                            <strong>%(username)s</strong>."
+msgstr ""
+
+#: .\django_daisy\templates\admin\base.html:62
+#: .\django_daisy\templates\admin\base_site.html:4
+msgid "Django site admin"
+msgstr ""
+
+#: .\django_daisy\templates\admin\base.html:162
+msgid "loading"
+msgstr ""
+
+#: .\django_daisy\templates\admin\base.html:165
+#: .\django_daisy\templates\admin\submit_line.html:13
+#: .\django_daisy\templates\admin\submit_line.html:62
+#: .\django_daisy\templates\admin\submit_line.html:110
+#: .\django_daisy\templates\admin\submit_line.html:120
+#: .\django_daisy\templates\admin\submit_line.html:163
+#: .\django_daisy\templates\admin\submit_line_full.html:13
+#: .\django_daisy\templates\admin\submit_line_full.html:57
+#: .\django_daisy\templates\admin\submit_line_full.html:66
+#: .\django_daisy\templates\admin\submit_line_full.html:109
+msgid "Close"
+msgstr ""
+
+#: .\django_daisy\templates\admin\base_site.html:8
+#: .\django_daisy\templates\admin\base_site.html:19
+msgid "Django administration"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_form.html:27
+#: .\django_daisy\templates\admin\change_form_full.html:26
+#, python-format
+msgid ""
+"Add %(name)s\n"
+"                "
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_form.html:75
+#: .\django_daisy\templates\admin\change_form_full.html:73
+msgid ""
+"Please correct the error\n"
+"                                        below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\django_daisy\templates\admin\change_form_object_tools.html:6
+#: .\django_daisy\templates\admin\form_history_tools.html:6
+#: .\django_daisy\templates\admin\includes\object_history_summary.html:10
+#: .\django_daisy\templates\admin\index.html:16
+#: .\django_daisy\templates\admin\object_history.html:11
+msgid "History"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_form_object_tools.html:12
+#: .\django_daisy\templates\admin\edit_inline\stacked.html:51
+#: .\django_daisy\templates\admin\edit_inline\tabular.html:64
+#: .\django_daisy\templates\admin\form_history_tools.html:10
+msgid "View on site"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list.html:89
+#: .\django_daisy\templates\admin\submit_line.html:8
+#: .\django_daisy\templates\admin\submit_line.html:26
+#: .\django_daisy\templates\admin\submit_line.html:74
+#: .\django_daisy\templates\admin\submit_line.html:171
+#: .\django_daisy\templates\admin\submit_line_full.html:8
+#: .\django_daisy\templates\admin\submit_line_full.html:25
+#: .\django_daisy\templates\admin\submit_line_full.html:116
+msgid "Save"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list.html:136
+#: .\django_daisy\templates\admin\change_list.html:138
+msgid "Filter"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list.html:146
+#: .\django_daisy\templates\admin\change_list.html:152
+msgid "Show counts"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list.html:164
+msgid "Clear all filters"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list_object_tools.html:8
+#: .\django_daisy\templates\admin\delete_confirmation.html:22
+#: .\django_daisy\templates\admin\list_navigate_tools.html:7
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list_results.html:26
+msgid "Remove from sorting"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list_results.html:44
+msgid "Toggle sorting"
+msgstr ""
+
+#: .\django_daisy\templates\admin\change_list_results.html:49
+#, python-format
+msgid "Sorting priority: %(priority_number)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_confirmation.html:32
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s'\n"
+"                would result in deleting related objects, but your account "
+"doesn't have permission to delete the\n"
+"                following types of objects:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_confirmation.html:41
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s'\n"
+"                would require deleting the following protected related "
+"objects:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_confirmation.html:50
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s '%(escaped_object)s'? "
+"All of the following related items will be deleted:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_confirmation.html:56
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:49
+msgid "Objects"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_confirmation.html:64
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:64
+msgid "Yes, Iâm sure"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_confirmation.html:65
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:65
+msgid "No, take me back"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:19
+msgid "Delete multiple objects"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:28
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would result in\n"
+"                    deleting related objects, but\n"
+"                    your account doesn't have permission to delete the "
+"following types of\n"
+"                    objects:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:36
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would require\n"
+"                    deleting the following protected\n"
+"                    related objects:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\delete_selected_confirmation.html:43
+#, python-format
+msgid ""
+"Are you sure you want to delete the selected %(objects_name)s? All of the "
+"following objects and their related items will be deleted:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\edit_inline\stacked.html:41
+#: .\django_daisy\templates\admin\edit_inline\tabular.html:58
+#: .\django_daisy\templates\admin\edit_inline\tabular_flex.html:34
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:24
+msgid "Change"
+msgstr ""
+
+#: .\django_daisy\templates\admin\edit_inline\stacked.html:43
+#: .\django_daisy\templates\admin\edit_inline\tabular.html:59
+#: .\django_daisy\templates\admin\edit_inline\tabular_flex.html:36
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:55
+msgid "View"
+msgstr ""
+
+#: .\django_daisy\templates\admin\edit_inline\tabular.html:20
+#: .\django_daisy\templates\admin\edit_inline\tabular_flex.html:7
+msgid "Original"
+msgstr ""
+
+#: .\django_daisy\templates\admin\edit_inline\tabular.html:34
+#: .\django_daisy\templates\admin\edit_inline\tabular_flex.html:17
+msgid "Delete?"
+msgstr ""
+
+#: .\django_daisy\templates\admin\filter.html:6
+#, python-format
+msgid "%(filter_title)s "
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\change_form.html:8
+#: .\django_daisy\templates\admin\import_export\change_list_export_item.html:6
+#: .\django_daisy\templates\admin\import_export\export.html:12
+#: .\django_daisy\templates\admin\import_export\export.html:138
+msgid "Export"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\change_list_import_item.html:6
+#: .\django_daisy\templates\admin\import_export\import.html:22
+msgid "Import"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\export.html:29
+msgid "Form Errors"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\export.html:46
+#, python-format
+msgid ""
+"\n"
+"                            Export %(len)s selected item.\n"
+"                        "
+msgid_plural ""
+"\n"
+"                            Export %(len)s selected items.\n"
+"                        "
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\django_daisy\templates\admin\import_export\export.html:70
+msgid "This exporter will export the following fields: "
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:43
+msgid ""
+"Below is a preview of data to be imported. If you are satisfied with the "
+"results, click 'Confirm import'"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:55
+msgid "Confirm import"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:117
+msgid "Submit"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:135
+#: .\django_daisy\templates\admin\import_export\import.html:208
+msgid "Errors"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:156
+msgid "Line"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:188
+msgid "Some rows failed to validate"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:199
+msgid ""
+"Please correct these errors in your data where possible, then reupload it "
+"using the form above."
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:207
+msgid "Row"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:225
+msgid "errors"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:249
+msgid "General Errors"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:282
+msgid "Preview"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:290
+msgid "Status"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:301
+msgid "New"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:303
+msgid "Skipped"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:305
+#: .\django_daisy\templates\admin\submit_line.html:56
+#: .\django_daisy\templates\admin\submit_line.html:104
+#: .\django_daisy\templates\admin\submit_line.html:152
+#: .\django_daisy\templates\admin\submit_line_full.html:51
+#: .\django_daisy\templates\admin\submit_line_full.html:98
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:46
+msgid "Delete"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\import.html:307
+msgid "Update"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\resource_fields_list.html:7
+msgid "This exporter will export the following fields:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\import_export\resource_fields_list.html:9
+msgid "This importer will import the following fields:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\includes\object_delete_summary.html:3
+msgid "Summary"
+msgstr ""
+
+#: .\django_daisy\templates\admin\includes\object_history_summary.html:34
+msgid "ago"
+msgstr ""
+
+#: .\django_daisy\templates\admin\includes\object_history_summary.html:49
+msgid "No recent changes found"
+msgstr ""
+
+#: .\django_daisy\templates\admin\index.html:17
+#: .\django_daisy\templates\admin\pagination.html:42
+msgid "Show all"
+msgstr ""
+
+#: .\django_daisy\templates\admin\index.html:23
+msgid "In"
+msgstr ""
+
+#: .\django_daisy\templates\admin\index.html:25
+msgid "At Time"
+msgstr ""
+
+#: .\django_daisy\templates\admin\index.html:26
+msgid "Admin"
+msgstr ""
+
+#: .\django_daisy\templates\admin\login.html:44
+msgid "Admin Login"
+msgstr ""
+
+#: .\django_daisy\templates\admin\login.html:48
+#, python-format
+msgid ""
+"You are authenticated as %(username)s, but are not authorized to access this "
+"page. Would you like to login to a different account?"
+msgstr ""
+
+#: .\django_daisy\templates\admin\login.html:80
+msgid "Forgotten your password or username?"
+msgstr ""
+
+#: .\django_daisy\templates\admin\login.html:86
+#: .\django_daisy\templates\admin\parts\navbar.html:42
+#: .\django_daisy\templates\admin\registration\password_reset_complete.html:18
+#: .\django_daisy\templates\registration\password_reset_complete.html:18
+msgid "Log in"
+msgstr ""
+
+#: .\django_daisy\templates\admin\object_history.html:25
+msgid "Date/time"
+msgstr ""
+
+#: .\django_daisy\templates\admin\object_history.html:26
+msgid "User"
+msgstr ""
+
+#: .\django_daisy\templates\admin\object_history.html:57
+msgid "entry"
+msgid_plural "entries"
+msgstr[0] ""
+msgstr[1] ""
+
+#: .\django_daisy\templates\admin\object_history.html:61
+msgid ""
+"This object doesnât have a change history. It probably wasnât added via this "
+"admin site."
+msgstr ""
+
+#: .\django_daisy\templates\admin\pagination.html:9
+msgid "Previous"
+msgstr ""
+
+#: .\django_daisy\templates\admin\pagination.html:13
+msgid "Next"
+msgstr ""
+
+#: .\django_daisy\templates\admin\pagination.html:39
+#, python-format
+msgid ""
+"%(full_result_count)s total\n"
+"                        "
+msgstr ""
+
+#: .\django_daisy\templates\admin\parts\navbar.html:7
+#: .\django_daisy\templates\admin\parts\sidebar.html:4
+msgid "Site admin"
+msgstr ""
+
+#: .\django_daisy\templates\admin\parts\navbar.html:40
+msgid "Log out"
+msgstr ""
+
+#: .\django_daisy\templates\admin\parts\sidebar.html:21
+msgid "No apps available"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\logged_out.html:13
+#: .\django_daisy\templates\registration\logged_out.html:13
+msgid "Logged Out"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\logged_out.html:14
+#: .\django_daisy\templates\registration\logged_out.html:14
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\logged_out.html:17
+#: .\django_daisy\templates\registration\logged_out.html:16
+msgid "Log in again"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_change_done.html:9
+#: .\django_daisy\templates\registration\password_change_done.html:9
+msgid "Your password was changed."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_change_form.html:20
+#: .\django_daisy\templates\registration\password_change_form.html:20
+msgid ""
+"Please enter your old password, for securityâs sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_change_form.html:74
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:31
+#: .\django_daisy\templates\registration\password_change_form.html:74
+#: .\django_daisy\templates\registration\password_reset_confirm.html:31
+msgid "Change my password"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_complete.html:7
+#: .\django_daisy\templates\admin\registration\password_reset_done.html:7
+#: .\django_daisy\templates\admin\registration\password_reset_form.html:7
+#: .\django_daisy\templates\registration\password_reset_complete.html:7
+#: .\django_daisy\templates\registration\password_reset_done.html:7
+#: .\django_daisy\templates\registration\password_reset_form.html:7
+msgid "Password reset"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_complete.html:16
+#: .\django_daisy\templates\registration\password_reset_complete.html:16
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:7
+#: .\django_daisy\templates\registration\password_reset_confirm.html:7
+msgid "Password reset confirmation"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:17
+#: .\django_daisy\templates\registration\password_reset_confirm.html:17
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:23
+#: .\django_daisy\templates\registration\password_reset_confirm.html:23
+msgid "New password:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:28
+#: .\django_daisy\templates\registration\password_reset_confirm.html:28
+msgid "Confirm password:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_confirm.html:37
+#: .\django_daisy\templates\registration\password_reset_confirm.html:37
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_done.html:15
+#: .\django_daisy\templates\registration\password_reset_done.html:15
+msgid ""
+"Weâve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_done.html:17
+#: .\django_daisy\templates\registration\password_reset_done.html:17
+msgid ""
+"If you donât receive an email, please make sure youâve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_email.html:2
+#: .\django_daisy\templates\registration\password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_email.html:4
+#: .\django_daisy\templates\registration\password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_email.html:8
+#: .\django_daisy\templates\registration\password_reset_email.html:8
+msgid "Your username, in case youâve forgotten:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_email.html:10
+#: .\django_daisy\templates\registration\password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_email.html:12
+#: .\django_daisy\templates\registration\password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_form.html:15
+#: .\django_daisy\templates\registration\password_reset_form.html:15
+msgid ""
+"Forgotten your password? Enter your email address below, and weâll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_form.html:21
+#: .\django_daisy\templates\registration\password_reset_form.html:21
+msgid "Email address:"
+msgstr ""
+
+#: .\django_daisy\templates\admin\registration\password_reset_form.html:24
+#: .\django_daisy\templates\registration\password_reset_form.html:24
+msgid "Reset my password"
+msgstr ""
+
+#: .\django_daisy\templates\admin\search_form.html:22
+msgid "Search along"
+msgstr ""
+
+#: .\django_daisy\templates\admin\search_form.html:27
+msgid "Search"
+msgstr ""
+
+#: .\django_daisy\templates\admin\submit_line.html:34
+#: .\django_daisy\templates\admin\submit_line.html:82
+#: .\django_daisy\templates\admin\submit_line.html:132
+#: .\django_daisy\templates\admin\submit_line_full.html:33
+#: .\django_daisy\templates\admin\submit_line_full.html:82
+msgid "Save and continue editing"
+msgstr ""
+
+#: .\django_daisy\templates\admin\submit_line.html:35
+#: .\django_daisy\templates\admin\submit_line.html:83
+#: .\django_daisy\templates\admin\submit_line.html:133
+#: .\django_daisy\templates\admin\submit_line_full.html:34
+#: .\django_daisy\templates\admin\submit_line_full.html:83
+msgid "Save and view"
+msgstr ""
+
+#: .\django_daisy\templates\admin\submit_line.html:42
+#: .\django_daisy\templates\admin\submit_line.html:94
+#: .\django_daisy\templates\admin\submit_line.html:140
+#: .\django_daisy\templates\admin\submit_line_full.html:41
+#: .\django_daisy\templates\admin\submit_line_full.html:90
+msgid "Save and add another"
+msgstr ""
+
+#: .\django_daisy\templates\admin\submit_line.html:48
+#: .\django_daisy\templates\admin\submit_line.html:89
+#: .\django_daisy\templates\admin\submit_line.html:146
+#: .\django_daisy\templates\admin\submit_line_full.html:21
+#: .\django_daisy\templates\admin\submit_line_full.html:76
+msgid "Save as new"
+msgstr ""
+
+#: .\django_daisy\templates\admin\submit_line.html:126
+#: .\django_daisy\templates\admin\submit_line_full.html:72
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:14
+msgid "Options"
+msgstr ""
+
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:23
+#, python-format
+msgid "Change selected %(model)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:34
+#, python-format
+msgid "Add another %(model)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:35
+msgid "Add"
+msgstr ""
+
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:45
+#, python-format
+msgid "Delete selected %(model)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin\widgets\related_widget_wrapper.html:54
+#, python-format
+msgid "View selected %(model)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:9
+#: .\django_daisy\templates\admin_doc\index.html:8
+#: .\django_daisy\templates\admin_doc\index.html:12
+#: .\django_daisy\templates\admin_doc\index.html:16
+#: .\django_daisy\templates\admin_doc\missing_docutils.html:8
+#: .\django_daisy\templates\admin_doc\missing_docutils.html:15
+#: .\django_daisy\templates\admin_doc\model_detail.html:22
+#: .\django_daisy\templates\admin_doc\model_index.html:10
+#: .\django_daisy\templates\admin_doc\template_detail.html:8
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:10
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:9
+#: .\django_daisy\templates\admin_doc\view_detail.html:7
+#: .\django_daisy\templates\admin_doc\view_index.html:10
+msgid "Documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:11
+#: .\django_daisy\templates\admin_doc\index.html:40
+msgid "Bookmarklets"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:15
+msgid "Documentation Bookmarklets"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:18
+msgid ""
+"\n"
+"        To install bookmarklets, drag the link to your bookmarks toolbar, or "
+"right-click\n"
+"        the link and add it to your bookmarks. You can now select the "
+"bookmarklet\n"
+"        from any page in the site.\n"
+"    "
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:28
+msgid "Documentation for this page"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\bookmarklets.html:31
+msgid ""
+"Jumps you from any page to the documentation for the view that generates "
+"that page."
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:20
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:11
+msgid "Tags"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:21
+msgid "List of all the template tags and their functions."
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:25
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:12
+msgid "Filters"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:26
+msgid ""
+"Filters are actions which can be applied to variables in a template to alter "
+"the output."
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:30
+#: .\django_daisy\templates\admin_doc\model_detail.html:24
+#: .\django_daisy\templates\admin_doc\model_index.html:12
+#: .\django_daisy\templates\admin_doc\model_index.html:16
+msgid "Models"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:31
+msgid ""
+"Models are descriptions of all the objects in the system and their "
+"associated fields. Each model has a list of fields which can be accessed as "
+"template variables."
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:35
+#: .\django_daisy\templates\admin_doc\view_detail.html:8
+#: .\django_daisy\templates\admin_doc\view_index.html:12
+#: .\django_daisy\templates\admin_doc\view_index.html:16
+msgid "Views"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:36
+msgid ""
+"Each page on the public site is generated by a view. The view defines which "
+"template is used to generate the page and which objects are available to "
+"that template."
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\index.html:41
+msgid "Tools for your browser to quickly access admin functionality."
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\missing_docutils.html:12
+msgid "Please install docutils"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\missing_docutils.html:19
+#, python-format
+msgid ""
+"\n"
+"                The admin documentation system requires Pythonâs\n"
+"                <a class=\"text-blue-500 hover:underline\" href=\"%(link)s"
+"\">docutils</a> library.\n"
+"            "
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\missing_docutils.html:26
+#, python-format
+msgid ""
+"\n"
+"                Please ask your administrators to install\n"
+"                <a class=\"text-blue-500 hover:underline\" href=\"%(link)s"
+"\">docutils</a>.\n"
+"            "
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:29
+#, python-format
+msgid "Model: %(name)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:38
+msgid "Fields"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:43
+msgid "Field"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:44
+msgid "Type"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:45
+#: .\django_daisy\templates\admin_doc\model_detail.html:68
+msgid "Description"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:61
+msgid "Methods with arguments"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:66
+msgid "Method"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:67
+msgid "Arguments"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_detail.html:86
+msgid "Back to Model documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_index.html:19
+msgid "Model Documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\model_index.html:44
+msgid "Model Groups"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_detail.html:10
+msgid "Templates"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_detail.html:16
+#, python-format
+msgid "Template: %(name)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_detail.html:19
+#, python-format
+msgid "Template: <q>%(name)s</q>"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_detail.html:21
+#, python-format
+msgid "Search path for template <q>%(name)s</q>:"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_detail.html:27
+msgid "(does not exist)"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_detail.html:34
+msgid "Back to Documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:16
+msgid "Template Filters"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:19
+msgid "Template Filter Documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:26
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:57
+msgid "Built-in filters"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_filter_index.html:30
+#, python-format
+msgid ""
+"\n"
+"                            To use these filters, put <code class=\"text-"
+"blue-500\">%(code)s</code> in your template\n"
+"                            before using the filter.\n"
+"                        "
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:15
+msgid "Template Tags"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:18
+msgid "Template Tag Documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:25
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:54
+msgid "Built-in tags"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\template_tag_index.html:29
+#, python-format
+msgid ""
+"\n"
+"            To use these tags, put <code class=\"text-blue-500\">%(code)s</"
+"code> in your template before using the tag.\n"
+"          "
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_detail.html:12
+#, python-format
+msgid "View: %(name)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_detail.html:23
+msgid "Context:"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_detail.html:28
+msgid "Templates:"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_detail.html:32
+msgid "Back to View documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_index.html:19
+msgid "View Documentation"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_index.html:25
+msgid "Jump to Namespace"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_index.html:31
+msgid "Empty namespace"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_index.html:44
+#, python-format
+msgid ""
+"Views by namespace\n"
+"                            %(name)s"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_index.html:47
+msgid "Views by empty namespace"
+msgstr ""
+
+#: .\django_daisy\templates\admin_doc\view_index.html:57
+#, python-format
+msgid ""
+"\n"
+"                                View function: <code>%(full_name)s</code>. "
+"Name: <code>%(url_name)s</code>.\n"
+"                            "
+msgstr ""

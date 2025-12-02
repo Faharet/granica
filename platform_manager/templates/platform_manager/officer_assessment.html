@@ -1,0 +1,264 @@
+{% extends 'platform_manager/base_with_navbar.html' %}
+{% load i18n %}
+
+{% block content %}
+<style>
+  input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+</style>
+
+<div class="p-6 max-w-6xl mx-auto">
+  <header class="mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Оценка пограничника</h1>
+        <p class="text-sm text-gray-500 mt-1">Ответ: {{ response.full_name_and_birth|truncatewords:5 }}</p>
+      </div>
+      <a href="{% url 'platform_manager:form_response_detail' response.id %}" class="btn btn-ghost btn-sm">
+        <i class="fa fa-arrow-left mr-2"></i>Вернуться к ответу
+      </a>
+    </div>
+  </header>
+
+  <div class="alert alert-info mb-6">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <div>
+      <h3 class="font-bold">Бальная шкала оценки</h3>
+      <div class="text-sm">
+        <strong>Низкий:</strong> 0-29 баллов | <strong>Средний:</strong> 30-59 баллов | <strong>Высокий:</strong> 60+ баллов
+      </div>
+    </div>
+  </div>
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Criterion 1: 65 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-error">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-error badge-lg">65 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.radical_internet }}
+            <span class="label-text text-lg font-semibold">1. Состоит в радикальных интернет-сообществах и мессенджерах</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Ориентированы на радикальные идеологии, фото/видео материалы экстремистского содержания</p>
+        </div>
+      </div>
+      <div class="mt-4" id="radical-internet-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.radical_internet_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 2: 45 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-warning">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-warning badge-lg">45 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.radical_religious_ideology }}
+            <span class="label-text text-lg font-semibold">2. Является сторонником радикальных религиозных течений</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Салафизм, ваххабизм и другие радикальные идеологии</p>
+        </div>
+      </div>
+      <div class="mt-4" id="radical-religious-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.radical_religious_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 3: 20 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-orange-500">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-lg" style="background-color: #f97316; color: white;">20 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.document_issues }}
+            <span class="label-text text-lg font-semibold">3. Признаки в документах</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Депортация, запрет въезда, борода на паспорте, другая страна рождения, паспорт другой страны</p>
+        </div>
+      </div>
+      <div class="mt-4" id="document-issues-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.document_issues_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 4: 15 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-yellow-500">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-lg" style="background-color: #eab308; color: white;">15 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.religious_deviations }}
+            <span class="label-text text-lg font-semibold">4. Религиозные отклонения/неопределенность</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Исповедует религию с отклонениями от традиционного ислама</p>
+        </div>
+      </div>
+      <div class="mt-4" id="religious-deviations-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.religious_deviations_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 5: 15 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-yellow-500">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-lg" style="background-color: #eab308; color: white;">15 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.suspicious_mobile_content }}
+            <span class="label-text text-lg font-semibold">5. Сомнительный контент на мобильных устройствах</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Фото/видео экстремистского содержания, контакты с сомнительными лицами</p>
+        </div>
+      </div>
+      <div class="mt-4" id="suspicious-mobile-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.suspicious_mobile_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 6: 15 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-yellow-500">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-lg" style="background-color: #eab308; color: white;">15 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.suspicious_behavior }}
+            <span class="label-text text-lg font-semibold">6. Подозрительное поведение</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Использует религиозные термины, агрессивное поведение, неадекватные реакции</p>
+        </div>
+      </div>
+      <div class="mt-4" id="suspicious-behavior-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.suspicious_behavior_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 7: 15 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-yellow-500">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-lg" style="background-color: #eab308; color: white;">15 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.psychological_issues }}
+            <span class="label-text text-lg font-semibold">7. Психологические отклонения</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Неадекватные реакции, признаки психических расстройств</p>
+        </div>
+      </div>
+      <div class="mt-4" id="psychological-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.psychological_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 8: 10 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-info">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-info badge-lg">10 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.relatives_mto }}
+            <span class="label-text text-lg font-semibold">8. Родственники с близкими связями с МТО</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Ранее судимы или члены ООН</p>
+        </div>
+      </div>
+      <div class="mt-4" id="relatives-mto-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.relatives_mto_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 9: 10 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-info">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-info badge-lg">10 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.criminal_element }}
+            <span class="label-text text-lg font-semibold">9. Криминально-ориентированный элемент</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Ранее судим, связь с ООН и т.д.</p>
+        </div>
+      </div>
+      <div class="mt-4" id="criminal-element-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.criminal_element_details }}
+      </div>
+    </section>
+
+    <!-- Criterion 10: 10 points -->
+    <section class="bg-base-200 p-6 rounded-lg border-l-4 border-info">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="badge badge-info badge-lg">10 баллов</div>
+        <div class="flex-1">
+          <label class="label cursor-pointer gap-3 justify-start">
+            {{ form.violence_traces }}
+            <span class="label-text text-lg font-semibold">10. Следы насильственных действий на теле</span>
+          </label>
+          <p class="text-sm text-gray-600 mt-2">Открытые части тела с повреждениями, характерные травмы</p>
+        </div>
+      </div>
+      <div class="mt-4" id="violence-traces-details" style="display: none;">
+        <label class="block font-medium mb-2 text-sm">Детали:</label>
+        {{ form.violence_traces_details }}
+      </div>
+    </section>
+
+    <!-- Additional notes -->
+    <section class="bg-base-200 p-6 rounded-lg">
+      <label class="block font-semibold mb-2">Дополнительные заметки:</label>
+      {{ form.notes }}
+    </section>
+
+    <!-- Submit buttons -->
+    <div class="flex gap-4 justify-end">
+      <a href="{% url 'platform_manager:form_response_detail' response.id %}" class="btn btn-ghost">Отмена</a>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-save mr-2"></i>Сохранить оценку
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const checkboxes = [
+    {checkbox: 'id_radical_internet', details: 'radical-internet-details'},
+    {checkbox: 'id_radical_religious_ideology', details: 'radical-religious-details'},
+    {checkbox: 'id_document_issues', details: 'document-issues-details'},
+    {checkbox: 'id_religious_deviations', details: 'religious-deviations-details'},
+    {checkbox: 'id_suspicious_mobile_content', details: 'suspicious-mobile-details'},
+    {checkbox: 'id_suspicious_behavior', details: 'suspicious-behavior-details'},
+    {checkbox: 'id_psychological_issues', details: 'psychological-details'},
+    {checkbox: 'id_relatives_mto', details: 'relatives-mto-details'},
+    {checkbox: 'id_criminal_element', details: 'criminal-element-details'},
+    {checkbox: 'id_violence_traces', details: 'violence-traces-details'},
+  ];
+
+  checkboxes.forEach(item => {
+    const checkbox = document.getElementById(item.checkbox);
+    const detailsDiv = document.getElementById(item.details);
+    
+    if (checkbox && detailsDiv) {
+      if (checkbox.checked) detailsDiv.style.display = 'block';
+      
+      checkbox.addEventListener('change', function() {
+        detailsDiv.style.display = this.checked ? 'block' : 'none';
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Form - Form Management Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="drawer lg:drawer-open">
+        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content flex flex-col">
+            <!-- Top navbar for mobile -->
+            <div class="navbar bg-base-100 lg:hidden">
+                <div class="flex-none">
+                    <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button">
+                        <i class="fas fa-bars"></i>
+                    </label>
+                </div>
+                <div class="flex-1">
+                    <span class="text-xl">Submit Form</span>
+                </div>
+            </div>
+            
+            <!-- Main content -->
+            <div class="p-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold">Submit New Form</h1>
+                    <div class="alert alert-info w-auto shadow-lg">
+                        <i class="fas fa-info-circle"></i>
+                        <span>This is a static demo page</span>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div class="card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <form>
+                            <div class="form-control w-full">
+                                <label class="label">
+                                    <span class="label-text">First Name</span>
+                                </label>
+                                <input type="text" placeholder="Enter first name" class="input input-bordered w-full" />
+                            </div>
+
+                            <div class="form-control w-full mt-4">
+                                <label class="label">
+                                    <span class="label-text">Last Name</span>
+                                </label>
+                                <input type="text" placeholder="Enter last name" class="input input-bordered w-full" />
+                            </div>
+
+                            <div class="card-actions justify-end mt-6">
+                                <button type="button" class="btn btn-primary" onclick="showSubmitAlert()">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="drawer-side">
+            <label for="my-drawer-2" class="drawer-overlay"></label>
+            <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+                <!-- App title -->
+                <div class="mb-4">
+                    <h1 class="text-2xl font-bold">Form Management</h1>
+                    <p class="text-sm opacity-70">Submit Form</p>
+                </div>
+
+                <!-- Navigation -->
+                <ul class="menu bg-base-200 rounded-box">
+                    <li>
+                        <a href="manager-panel.html">
+                            <i class="fas fa-list"></i>
+                            View Responses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="form-submit.html" class="active">
+                            <i class="fas fa-file-alt"></i>
+                            Submit Form
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="divider"></div>
+
+                <!-- Demo controls -->
+                <ul class="menu bg-base-200 rounded-box">
+                    <li>
+                        <a href="login.html">
+                            <i class="fas fa-user-circle"></i>
+                            Switch User
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../index.html">
+                            <i class="fas fa-home"></i>
+                            Back to Overview
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSubmitAlert() {
+            alert('This is a static demo. In the real application, this would submit the form.');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Panel - Form Management Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="drawer lg:drawer-open">
+        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content flex flex-col">
+            <!-- Top navbar for mobile -->
+            <div class="navbar bg-base-100 lg:hidden">
+                <div class="flex-none">
+                    <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button">
+                        <i class="fas fa-bars"></i>
+                    </label>
+                </div>
+                <div class="flex-1">
+                    <span class="text-xl">Manager Panel</span>
+                </div>
+            </div>
+            
+            <!-- Main content -->
+            <div class="p-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-bold">Form Responses</h1>
+                    <div class="alert alert-info w-auto shadow-lg">
+                        <i class="fas fa-info-circle"></i>
+                        <span>This is a static demo page</span>
+                    </div>
+                </div>
+
+                <!-- Stats cards -->
+                <div class="stats shadow mb-6 w-full">
+                    <div class="stat">
+                        <div class="stat-title">Total Responses</div>
+                        <div class="stat-value">89</div>
+                        <div class="stat-desc">↗︎ 400 (22%)</div>
+                    </div>
+                    
+                    <div class="stat">
+                        <div class="stat-title">New Responses</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-desc">Last 24 hours</div>
+                    </div>
+                    
+                    <div class="stat">
+                        <div class="stat-title">Response Rate</div>
+                        <div class="stat-value">86%</div>
+                        <div class="stat-desc">↗︎ 14%</div>
+                    </div>
+                </div>
+
+                <!-- Responses table -->
+                <div class="overflow-x-auto bg-base-100 rounded-lg shadow">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Submitted By</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>John</td>
+                                <td>Doe</td>
+                                <td>submitter1</td>
+                                <td>2025-11-06</td>
+                                <td>
+                                    <button class="btn btn-square btn-ghost btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-square btn-ghost btn-sm text-error">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Jane</td>
+                                <td>Smith</td>
+                                <td>submitter2</td>
+                                <td>2025-11-06</td>
+                                <td>
+                                    <button class="btn btn-square btn-ghost btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-square btn-ghost btn-sm text-error">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Add more sample rows here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-center mt-4">
+                    <div class="join">
+                        <button class="join-item btn">1</button>
+                        <button class="join-item btn btn-active">2</button>
+                        <button class="join-item btn">3</button>
+                        <button class="join-item btn">4</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="drawer-side">
+            <label for="my-drawer-2" class="drawer-overlay"></label>
+            <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+                <!-- App title -->
+                <div class="mb-4">
+                    <h1 class="text-2xl font-bold">Form Management</h1>
+                    <p class="text-sm opacity-70">Manager View</p>
+                </div>
+
+                <!-- Navigation -->
+                <ul class="menu bg-base-200 rounded-box">
+                    <li>
+                        <a href="manager-panel.html" class="active">
+                            <i class="fas fa-list"></i>
+                            View Responses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="form-submit.html">
+                            <i class="fas fa-file-alt"></i>
+                            Submit Form
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="divider"></div>
+
+                <!-- Demo controls -->
+                <ul class="menu bg-base-200 rounded-box">
+                    <li>
+                        <a href="login.html">
+                            <i class="fas fa-user-circle"></i>
+                            Switch User
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../index.html">
+                            <i class="fas fa-home"></i>
+                            Back to Overview
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Management System Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="drawer lg:drawer-open">
+        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content flex flex-col">
+            <!-- Page content here -->
+            <div class="navbar bg-base-100 lg:hidden">
+                <div class="flex-none">
+                    <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button">
+                        <i class="fas fa-bars"></i>
+                    </label>
+                </div>
+                <div class="flex-1">
+                    <span class="text-xl">Form Management Demo</span>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <h1 class="text-2xl font-bold mb-6">Welcome to Form Management System Demo</h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Live Demo Card -->
+                    <div class="card bg-primary text-primary-content">
+                        <div class="card-body">
+                            <h2 class="card-title">👉 Try Live Demo</h2>
+                            <p>Experience the system with demo accounts:</p>
+                            <div class="mt-2">
+                                <div class="badge badge-secondary">admin/admin</div>
+                                <div class="badge badge-secondary">manager/manager</div>
+                                <div class="badge badge-secondary">submitter/submitter</div>
+                            </div>
+                            <div class="card-actions justify-end mt-4">
+                                <a href="demo/login.html" class="btn">Launch Demo</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features Card -->
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="card-body">
+                            <h2 class="card-title">✨ Key Features</h2>
+                            <ul class="list-disc list-inside">
+                                <li>Role-based access control</li>
+                                <li>Clean, modern interface</li>
+                                <li>Form submission system</li>
+                                <li>Response management</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Source Code Card -->
+                    <div class="card bg-accent text-accent-content">
+                        <div class="card-body">
+                            <h2 class="card-title">💻 Get the Code</h2>
+                            <p>Check out the source code on GitHub:</p>
+                            <div class="card-actions justify-end">
+                                <a href="https://github.com/yourusername/deli-bike-admin" target="_blank" class="btn">View Source</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshots Section -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold mb-4">Screenshots</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card bg-base-100 shadow-xl">
+                            <figure><img src="assets/manager-panel.png" alt="Manager Panel" /></figure>
+                            <div class="card-body">
+                                <h3 class="card-title">Manager Panel</h3>
+                                <p>View and manage all form submissions</p>
+                            </div>
+                        </div>
+                        <div class="card bg-base-100 shadow-xl">
+                            <figure><img src="assets/form-submit.png" alt="Form Submission" /></figure>
+                            <div class="card-body">
+                                <h3 class="card-title">Form Submission</h3>
+                                <p>Clean and simple form interface</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documentation Section -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold mb-4">Documentation</h2>
+                    <div class="prose max-w-none">
+                        <h3>Setup Instructions</h3>
+                        <p>Follow these steps to run the system locally:</p>
+                        <pre class="bg-base-200 p-4 rounded-lg overflow-x-auto"><code>git clone https://github.com/yourusername/deli-bike-admin.git
+cd deli-bike-admin
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# OR
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py setup_demo
+python manage.py runserver</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+        <!-- Sidebar -->
+        <div class="drawer-side">
+            <label for="my-drawer-2" class="drawer-overlay"></label> 
+            <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+                <div class="mb-4">
+                    <h1 class="text-2xl font-bold">Form Management</h1>
+                    <p class="text-sm opacity-70">Demo System</p>
+                </div>
+                
+                <ul class="menu bg-base-200">
+                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Overview</a></li>
+                    <li><a href="demo/login.html"><i class="fas fa-play"></i> Try Demo</a></li>
+                    <li><a href="#screenshots"><i class="fas fa-image"></i> Screenshots</a></li>
+                    <li><a href="#setup"><i class="fas fa-cog"></i> Setup Guide</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
