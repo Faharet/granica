@@ -7,13 +7,12 @@
       <header class="flex items-start justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold">Ответ на форму</h1>
-          <p class="text-sm text-gray-500">
-            ID: <span class="font-mono">{{ response.id }}</span>
-          </p>
         </div>
         <div class="flex items-center space-x-3">
           <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost btn-sm"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Back to list' %}</a>
+          {% if can_delete %}
           <a href="{% url 'platform_manager:form_response_delete' response.id %}" id="delete-link" class="btn btn-error btn-sm"><i class="fa fa-trash mr-2"></i>{% trans 'Delete' %}</a>
+          {% endif %}
         </div>
       </header>
 
@@ -675,7 +674,7 @@
             <div>
               <h3 class="font-bold text-lg">Уровень опасности: {{ response.threat_level }}</h3>
               <div class="text-sm">
-                Общий балл: <span class="font-bold">{{ response.total_score }}</span> из 230
+                Общий балл: <span class="font-bold">{{ response.total_score }}</span> из 220
               </div>
               <div class="text-xs mt-1 opacity-80">
                 {% if response.threat_level == 'Низкий' %}

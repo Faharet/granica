@@ -10,4 +10,5 @@ urlpatterns = [
 	path('responses/<uuid:pk>/', views.FormResponseDetailView.as_view(), name='form_response_detail'),
 	path('responses/<uuid:pk>/delete/', views.FormResponseDeleteView.as_view(), name='form_response_delete'),
 	path('responses/<uuid:pk>/assess/', views.OfficerAssessmentView.as_view(), name='officer_assessment'),
+	path('logout/', views.logout_view, name='logout'),
 ]

@@ -331,3 +331,112 @@ msgstr "Қосымша ескертпелер:"
 
 msgid "Additional notes:"
 msgstr "Қосымша ескертпелер:"
+
+# New translations for filters and dashboard
+msgid "Total"
+msgstr "Барлығы"
+
+msgid "Reset"
+msgstr "Тазалау"
+
+msgid "Date from"
+msgstr "Күні бастап"
+
+msgid "Date to"
+msgstr "Күні дейін"
+
+msgid "Created by"
+msgstr "Жасаған"
+
+msgid "All"
+msgstr "Барлығы"
+
+msgid "Threat level"
+msgstr "Қауіп деңгейі"
+
+msgid "Low"
+msgstr "Төмен"
+
+msgid "Medium"
+msgstr "Орташа"
+
+msgid "High"
+msgstr "Жоғары"
+
+msgid "Threat Level Distribution"
+msgstr "Қауіп деңгейлері бойынша бөлу"
+
+msgid "Top Submitters"
+msgstr "Үздік жасаушылар"
+
+msgid "Summary"
+msgstr "Қорытынды"
+
+msgid "Total Responses"
+msgstr "Барлық жауаптар"
+
+msgid "High Risk"
+msgstr "Жоғары қауіп"
+
+msgid "of total"
+msgstr "жалпыдан"
+
+msgid "No data"
+msgstr "Деректер жоқ"
+
+msgid "Apply"
+msgstr "Қолдану"
+
+msgid "Min score"
+msgstr "Мин. ұпай"
+
+msgid "Max score"
+msgstr "Макс. ұпай"
+
+msgid "View your submitted forms"
+msgstr "Жіберілген формаларды қарау"
+
+msgid "My Forms"
+msgstr "Менің формаларым"
+
+msgid "Full Name"
+msgstr "Толық аты-жөні"
+
+msgid "Score"
+msgstr "Ұпай"
+
+msgid "points"
+msgstr "ұпай"
+
+msgid "Back to panel"
+msgstr "Панельге оралу"
+
+msgid "Form responses"
+msgstr "Форма жауаптары"
+
+msgid "Created at"
+msgstr "Жасалған күні"
+
+msgid "View your submitted forms"
+msgstr "Жіберілген формаларды қарау"
+
+msgid "My Forms"
+msgstr "Менің формаларым"
+
+msgid "Full Name"
+msgstr "Толық аты-жөні"
+
+msgid "Score"
+msgstr "Ұпай"
+
+msgid "points"
+msgstr "ұпай"
+
+msgid "Back to panel"
+msgstr "Панельге оралу"
+
+msgid "Form responses"
+msgstr "Форма жауаптары"
+
+msgid "Created at"
+msgstr "Жасалған күні"

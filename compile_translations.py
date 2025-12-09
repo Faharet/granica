@@ -2,8 +2,8 @@ import os
 import polib
 
 # Compile Russian translations
-ru_po_path = r'c:\Users\Farkhad\Desktop\deli-bike-admin-main\locale\ru\LC_MESSAGES\django.po'
-ru_mo_path = r'c:\Users\Farkhad\Desktop\deli-bike-admin-main\locale\ru\LC_MESSAGES\django.mo'
+ru_po_path = r'c:\Users\Farkhad\Desktop\granica\locale\ru\LC_MESSAGES\django.po'
+ru_mo_path = r'c:\Users\Farkhad\Desktop\granica\locale\ru\LC_MESSAGES\django.mo'
 
 try:
     po = polib.pofile(ru_po_path)
@@ -13,8 +13,8 @@ except Exception as e:
     print(f"✗ Error compiling Russian: {e}")
 
 # Compile Kazakh translations
-kk_po_path = r'c:\Users\Farkhad\Desktop\deli-bike-admin-main\locale\kk\LC_MESSAGES\django.po'
-kk_mo_path = r'c:\Users\Farkhad\Desktop\deli-bike-admin-main\locale\kk\LC_MESSAGES\django.mo'
+kk_po_path = r'c:\Users\Farkhad\Desktop\granica\locale\kk\LC_MESSAGES\django.po'
+kk_mo_path = r'c:\Users\Farkhad\Desktop\granica\locale\kk\LC_MESSAGES\django.mo'
 
 try:
     po = polib.pofile(kk_po_path)

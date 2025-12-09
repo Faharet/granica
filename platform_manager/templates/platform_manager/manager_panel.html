@@ -25,15 +25,18 @@
         </div>
       </div>
 
-      <!-- View responses card (only for managers) -->
-  {% if is_manager %}
+      <!-- View responses card -->
       <div class="card bg-base-100 shadow-md">
         <div class="card-body">
           <div class="flex items-center gap-4">
             <div class="text-3xl text-secondary"><i class="fa-solid fa-list-check"></i></div>
             <div>
               <h2 class="card-title">{% trans "View responses" %}</h2>
+              {% if is_manager %}
               <p class="text-sm text-gray-600">{% trans "See all submitted form responses" %}</p>
+              {% else %}
+              <p class="text-sm text-gray-600">{% trans "View your submitted forms" %}</p>
+              {% endif %}
             </div>
           </div>
           <div class="card-actions mt-4">
@@ -41,25 +44,7 @@
           </div>
         </div>
       </div>
-  {% endif %}
 
-      <!-- Admin link card (optional) -->
-      {% if request.user.is_staff %}
-      <div class="card bg-base-100 shadow-md">
-        <div class="card-body">
-          <div class="flex items-center gap-4">
-            <div class="text-3xl text-info"><i class="fa-solid fa-cubes-stacked"></i></div>
-            <div>
-              <h2 class="card-title">{% trans "Admin site" %}</h2>
-              <p class="text-sm text-gray-600">{% trans "Open Django admin (staff only)" %}</p>
-            </div>
-          </div>
-          <div class="card-actions mt-4">
-            <a class="btn" href="/admin/">{% trans "Open admin" %}</a>
-          </div>
-        </div>
-      </div>
-      {% endif %}
     </div>
 
     <div class="mt-8 text-sm text-gray-600">

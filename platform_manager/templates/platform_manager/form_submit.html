@@ -24,9 +24,12 @@
       </div>
     </div>
 
-    <form method="post" class="space-y-6">
+    <form method="post" class="space-y-6" style="min-height: 400px; display: flex; flex-direction: column;">
       {% csrf_token %}
       <input type="hidden" name="current_step" value="{{ current_step }}" />
+
+      <!-- Form content container with flex-grow -->
+      <div style="flex-grow: 1;">
 
       <!-- Step 1 -->
       {% if current_step == 1 %}
@@ -521,8 +524,8 @@
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
-              {{ assessment_form.mobile_device_content }}
-              <label for="id_mobile_device_content" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '18. In mobile devices:' %}</label>
+              {{ assessment_form.suspicious_mobile_content }}
+              <label for="id_suspicious_mobile_content" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '18. In mobile devices:' %}</label>
             </div>
             <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
               <p>- телефон отсутствует / отказывается предоставлять / в телефоне (смартфоне) стерты контакты, архивы сообщений, фото и видео информация;</p>
@@ -628,8 +631,8 @@
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
-              {{ assessment_form.mto_relatives }}
-              <label for="id_mto_relatives" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">21.</label>
+              {{ assessment_form.relatives_mto }}
+              <label for="id_relatives_mto" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">21.</label>
             </div>
             <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
               <p>- родственники и близкие связи причастны к МТО, но не поддерживает с ними связь;</p>
@@ -715,8 +718,10 @@
         </script>
       {% endif %}
 
-      <!-- Navigation buttons -->
-      <div class="flex justify-between items-center pt-6">
+      </div><!-- End of form content container -->
+
+      <!-- Navigation buttons - stays at consistent position -->
+      <div class="flex justify-between items-center pt-6" style="flex-shrink: 0;">
         {% if current_step > 1 %}
           <button type="submit" name="action" value="previous" class="btn btn-outline"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Previous' %}</button>
         {% else %}

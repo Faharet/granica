@@ -34,7 +34,7 @@
         
         {% if user.is_authenticated %}
             <span class="text-sm">{{ user.get_username }}</span>
-            <form method="post" action="{% url 'admin:logout' %}" class="inline-block">
+            <form method="post" action="{% url 'platform_manager:logout' %}" class="inline-block">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline btn-sm">{% trans "Log out" %}</button>
             </form>

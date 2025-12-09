@@ -329,3 +329,88 @@ msgstr "Внешние признаки:"
 
 msgid "Behavioral signs:"
 msgstr "Признаки поведения:"
+
+# New translations for filters and dashboard
+msgid "Total"
+msgstr "Всего"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Date from"
+msgstr "Дата с"
+
+msgid "Date to"
+msgstr "Дата по"
+
+msgid "Created by"
+msgstr "Создано"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Threat level"
+msgstr "Уровень угрозы"
+
+msgid "Low"
+msgstr "Низкий"
+
+msgid "Medium"
+msgstr "Средний"
+
+msgid "High"
+msgstr "Высокий"
+
+msgid "Threat Level Distribution"
+msgstr "Распределение по уровням угрозы"
+
+msgid "Top Submitters"
+msgstr "Топ создателей"
+
+msgid "Summary"
+msgstr "Сводка"
+
+msgid "Total Responses"
+msgstr "Всего ответов"
+
+msgid "High Risk"
+msgstr "Высокий риск"
+
+msgid "of total"
+msgstr "от общего"
+
+msgid "No data"
+msgstr "Нет данных"
+
+msgid "Apply"
+msgstr "Применить"
+
+msgid "Min score"
+msgstr "Мин. балл"
+
+msgid "Max score"
+msgstr "Макс. балл"
+
+msgid "View your submitted forms"
+msgstr "Просмотреть ваши отправленные формы"
+
+msgid "My Forms"
+msgstr "Мои формы"
+
+msgid "Full Name"
+msgstr "ФИО"
+
+msgid "Score"
+msgstr "Балл"
+
+msgid "points"
+msgstr "баллов"
+
+msgid "Back to panel"
+msgstr "Вернуться в панель"
+
+msgid "Form responses"
+msgstr "Ответы на формы"
+
+msgid "Created at"
+msgstr "Создано"
