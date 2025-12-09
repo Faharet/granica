@@ -32,6 +32,13 @@ DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,test1.thehub.su').split(',')
 
+# CSRF settings for trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://test1.thehub.su',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
 
 # Application definition
 
