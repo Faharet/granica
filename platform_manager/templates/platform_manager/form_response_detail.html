@@ -10,6 +10,12 @@
         </div>
         <div class="flex items-center space-x-3">
           <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost btn-sm"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Back to list' %}</a>
+          {% if is_manager %}
+          <a href="{% url 'platform_manager:export_response_pdf' response.id %}" class="btn btn-primary btn-sm"><i class="fa fa-file-pdf mr-2"></i>{% trans 'Export PDF' %}</a>
+          {% endif %}
+          {% if can_edit %}
+          <a href="{% url 'platform_manager:form_response_edit' response.id %}" class="btn btn-warning btn-sm"><i class="fa fa-edit mr-2"></i>{% trans 'Edit' %}</a>
+          {% endif %}
           {% if can_delete %}
           <a href="{% url 'platform_manager:form_response_delete' response.id %}" id="delete-link" class="btn btn-error btn-sm"><i class="fa fa-trash mr-2"></i>{% trans 'Delete' %}</a>
           {% endif %}
@@ -27,6 +33,13 @@
                   {{ response.full_name_and_birth|linebreaksbr }}
                 {% else %}
                   <span class="text-gray-400">—</span>
+                {% endif %}
+                {% if response.full_name_photo %}
+                  <div class="mt-2">
+                    <a href="{{ response.full_name_photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
+                      <i class="fa fa-paperclip mr-1"></i>Прикрепленное фото
+                    </a>
+                  </div>
                 {% endif %}
               </dd>
             </div>
@@ -185,7 +198,32 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">8. Разыскиваются ли родственники</dt>
+              <dt class="w-44 text-gray-600">8. Религиозны</dt>
+              <dd class="flex-1">
+                {% if response.religious %}
+                  <span class="badge badge-success badge-sm">Да</span>
+                {% else %}
+                  <span class="badge badge-outline badge-sm">Нет</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">Мазхаб/взгляды</dt>
+              <dd class="flex-1">
+                {% if response.denomination %}
+                  {{ response.get_denomination_display }}
+                  {% if response.denomination == 'other' and response.denomination_other %}
+                    : {{ response.denomination_other }}
+                  {% endif %}
+                {% else %}
+                  <span class="text-gray-400">—</span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <dt class="w-44 text-gray-600">9. Разыскиваются ли родственники</dt>
               <dd class="flex-1">
                 {% if response.relatives_wanted %}
                   <span class="badge badge-success badge-sm">Да</span>
@@ -200,28 +238,6 @@
               <dd class="flex-1">
                 {% if response.relatives_wanted_reason %}
                   {{ response.relatives_wanted_reason|linebreaksbr }}
-                {% else %}
-                  <span class="text-gray-400">—</span>
-                {% endif %}
-              </dd>
-            </div>
-
-            <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">9. Религиозны</dt>
-              <dd class="flex-1">
-                {% if response.religious %}
-                  <span class="badge badge-success badge-sm">Да</span>
-                {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
-                {% endif %}
-              </dd>
-            </div>
-
-            <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Мазхаб/взгляды</dt>
-              <dd class="flex-1">
-                {% if response.denomination %}
-                  {{ response.denomination|linebreaksbr }}
                 {% else %}
                   <span class="text-gray-400">—</span>
                 {% endif %}
@@ -335,8 +351,39 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.radical_internet_content or response.officer_assessment.radical_internet_sheikhs %}
+                  <dd class="text-sm mt-2 space-y-2">
+                    {% if response.officer_assessment.radical_internet_content %}
+                      <div>
+                        <strong class="text-gray-700">Тип контента:</strong>
+                        <ul class="list-disc list-inside ml-2 text-gray-600">
+                          {% for item in response.officer_assessment.get_radical_internet_content_labels %}
+                            <li>{{ item }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% endif %}
+                    {% if response.officer_assessment.radical_internet_sheikhs %}
+                      <div>
+                        <strong class="text-gray-700">Имена шейхов:</strong>
+                        <ul class="list-disc list-inside ml-2 text-gray-600">
+                          {% for item in response.officer_assessment.get_radical_internet_sheikhs_labels %}
+                            <li>{{ item }}</li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% endif %}
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.radical_internet_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.radical_internet_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.radical_internet_details|linebreaksbr }}</dd>
+                {% endif %}
+                {% if response.officer_assessment.radical_internet_photo %}
+                  <dd class="mt-2">
+                    <a href="{{ response.officer_assessment.radical_internet_photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
+                      <i class="fa fa-paperclip mr-1"></i>Прикрепленное фото
+                    </a>
+                  </dd>
                 {% endif %}
               </div>
 
@@ -369,8 +416,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.radical_religious_signs %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Признаки:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_radical_religious_signs_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.radical_religious_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.radical_religious_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.radical_religious_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -403,8 +460,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.document_issues_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Проблемы:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_document_issues_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.document_issues_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.document_issues_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.document_issues_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -437,8 +504,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.religious_deviations_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Отклонения:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_religious_deviations_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.religious_deviations_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.religious_deviations_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.religious_deviations_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -471,8 +548,23 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.suspicious_mobile_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Типы:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_suspicious_mobile_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.suspicious_mobile_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.suspicious_mobile_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.suspicious_mobile_details|linebreaksbr }}</dd>
+                {% endif %}
+                {% if response.officer_assessment.suspicious_mobile_photo %}
+                  <dd class="text-sm text-gray-600 mt-2">
+                    <strong>Фото:</strong> <a href="{{ response.officer_assessment.suspicious_mobile_photo.url }}" target="_blank" class="link link-primary">Прикрепленное фото</a>
+                  </dd>
                 {% endif %}
               </div>
 
@@ -505,8 +597,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.suspicious_behavior_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Поведение:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_suspicious_behavior_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.suspicious_behavior_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.suspicious_behavior_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.suspicious_behavior_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -539,8 +641,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.psychological_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Отклонения:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_psychological_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.psychological_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.psychological_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.psychological_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -573,8 +685,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.relatives_mto_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Тип связи:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_relatives_mto_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.relatives_mto_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.relatives_mto_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.relatives_mto_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -607,8 +729,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.criminal_element_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Тип активности:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_criminal_element_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.criminal_element_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.criminal_element_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.criminal_element_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -641,8 +773,18 @@
                     </span>
                   </div>
                 </div>
+                {% if response.officer_assessment.violence_traces_types %}
+                  <dd class="text-sm mt-2">
+                    <strong class="text-gray-700">Тип следов:</strong>
+                    <ul class="list-disc list-inside ml-2 text-gray-600">
+                      {% for item in response.officer_assessment.get_violence_traces_types_labels %}
+                        <li>{{ item }}</li>
+                      {% endfor %}
+                    </ul>
+                  </dd>
+                {% endif %}
                 {% if response.officer_assessment.violence_traces_details %}
-                  <dd class="text-sm text-gray-600 mt-1 bg-white p-2 rounded">{{ response.officer_assessment.violence_traces_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.violence_traces_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
             </div>
@@ -678,11 +820,11 @@
               </div>
               <div class="text-xs mt-1 opacity-80">
                 {% if response.threat_level == 'Низкий' %}
-                  0-29 баллов - Низкий уровень опасности
+                  0-49 баллов - Низкий уровень опасности
                 {% elif response.threat_level == 'Средний' %}
-                  30-59 баллов - Средний уровень опасности
+                  50-119 баллов - Средний уровень опасности
                 {% else %}
-                  60+ баллов - Высокий уровень опасности
+                  120+ баллов - Высокий уровень опасности
                 {% endif %}
               </div>
             </div>
@@ -695,18 +837,7 @@
         <div class="text-sm text-gray-500">&nbsp;</div>
       </footer>
 
-      <script>
-        ;(function () {
-          var del = document.getElementById('delete-link')
-          if (!del) return
-          del.addEventListener('click', function (e) {
-            var ok = confirm('Вы действительно хотите удалить этот ответ? Это действие нельзя отменить.')
-            if (!ok) {
-              e.preventDefault()
-            }
-          })
-        })()
-      </script>
+
     {% else %}
       <p>
         {% trans 'Response not found' %}

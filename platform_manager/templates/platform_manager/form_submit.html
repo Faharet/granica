@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <form method="post" class="space-y-6" style="min-height: 400px; display: flex; flex-direction: column;">
+    <form method="post" enctype="multipart/form-data" class="space-y-6" style="min-height: 400px; display: flex; flex-direction: column;">
       {% csrf_token %}
       <input type="hidden" name="current_step" value="{{ current_step }}" />
 
@@ -38,6 +38,15 @@
           <div class="mb-4">
             <label class="block font-semibold mb-2">{% trans '1. State your last name, first name, patronymic, date and place of birth' %}</label>
             {{ form.full_name_and_birth }}
+          </div>
+          <div class="mb-4">
+            <label class="block font-medium mb-2">{% trans 'Attach photo of document (optional)' %}</label>
+            <div class="form-control">
+              {{ form.full_name_photo }}
+              <label class="label">
+                <span class="label-text-alt text-gray-500">{% trans 'Supported formats: JPG, PNG, PDF' %}</span>
+              </label>
+            </div>
           </div>
         </section>
       {% endif %}
@@ -177,41 +186,15 @@
         </script>
       {% endif %}
 
+
+
       <!-- Step 7 -->
       {% if current_step == 7 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <label class="label cursor-pointer gap-3 justify-start">
-              {{ form.relatives_in_countries }}
-              <span class="label-text text-lg">{% trans '7. Are any of your relatives or acquaintances in the listed countries?' %}</span>
-            </label>
-          </div>
-          <div class="mt-4" id="relatives-details" style="display: none;">
-            <label class="block font-medium mb-2">{% trans 'a) state full name, b) when did they leave, c) what do they do' %}</label>
-            {{ form.relatives_details }}
-          </div>
-        </section>
-        <script>
-          document.addEventListener('DOMContentLoaded', function () {
-            const checkbox = document.querySelector('input[name="relatives_in_countries"]')
-            const detailsDiv = document.getElementById('relatives-details')
-            if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
-              checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
-              })
-            }
-          })
-        </script>
-      {% endif %}
-
-      <!-- Step 8 -->
-      {% if current_step == 8 %}
-        <section class="bg-base-200 p-6 rounded-lg">
-          <div class="mb-4">
-            <label class="label cursor-pointer gap-3 justify-start">
               {{ form.relatives_wanted }}
-              <span class="label-text text-lg">{% trans '8. Is any of your relatives wanted by law enforcement agencies?' %}</span>
+              <span class="label-text text-lg">{% trans '7. Are any of your relatives sought by police?' %}</span>
             </label>
           </div>
           <div class="mt-4" id="relatives-wanted-details" style="display: none;">
@@ -233,48 +216,73 @@
         </script>
       {% endif %}
 
-      <!-- Step 9 -->
-      {% if current_step == 9 %}
+      <!-- Step 8 -->
+      {% if current_step == 8 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <h2 class="text-xl font-bold mb-4">{% trans 'Religion' %}</h2>
           <div class="mb-4">
             <label class="label cursor-pointer gap-3 justify-start">
               {{ form.religious }}
-              <span class="label-text text-lg">{% trans '9. Are you religious?' %}</span>
+              <span class="label-text text-lg">{% trans '8. Are you religious?' %}</span>
             </label>
           </div>
-          <div class="mt-4" id="religious-details" style="display: none;">
-            <label class="block font-medium mb-2">{% trans 'If yes: which madhhab do you follow?' %}</label>
-            {{ form.denomination }}
+          <div class="mt-4 space-y-4" id="religious-details" style="display: none;">
+            <div>
+              <label class="block font-medium mb-2">{% trans 'If yes: which madhhab do you follow?' %}</label>
+              {{ form.denomination }}
+            </div>
+            <div id="denomination-other-field" style="display: none;">
+              <label class="block font-medium mb-2">Укажите свой вариант:</label>
+              {{ form.denomination_other }}
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="religious"]')
             const detailsDiv = document.getElementById('religious-details')
+            const denominationSelect = document.querySelector('select[name="denomination"]')
+            const otherField = document.getElementById('denomination-other-field')
+            
             if (checkbox) {
               if (checkbox.checked) detailsDiv.style.display = 'block'
               checkbox.addEventListener('change', function () {
                 detailsDiv.style.display = this.checked ? 'block' : 'none'
               })
             }
+            
+            if (denominationSelect && otherField) {
+              // Show/hide "other" field based on selection
+              if (denominationSelect.value === 'other') {
+                otherField.style.display = 'block'
+              }
+              denominationSelect.addEventListener('change', function () {
+                otherField.style.display = this.value === 'other' ? 'block' : 'none'
+              })
+            }
           })
         </script>
       {% endif %}
 
-      <!-- Step 10 -->
-      {% if current_step == 10 %}
+      <!-- Step 9 -->
+      {% if current_step == 9 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <h2 class="text-xl font-bold mb-4">{% trans 'Places of stay and travel' %}</h2>
           <div class="mb-4">
             <label class="label cursor-pointer gap-3 justify-start">
               {{ form.visited_countries }}
-              <span class="label-text text-lg">{% trans '10. Have you visited the listed countries?' %}</span>
+              <span class="label-text text-lg">{% trans '9. Have you visited the listed countries?' %}</span>
             </label>
           </div>
-          <div class="mt-4" id="visited-details" style="display: none;">
-            <label class="block font-medium mb-2">{% trans 'a) when and purpose of the trip; b) duration of stay' %}</label>
-            {{ form.visited_countries_details }}
+          <div class="mt-4 space-y-4" id="visited-details" style="display: none;">
+            <div>
+              <label class="block font-medium mb-2">{% trans 'a) when and purpose of the trip' %}</label>
+              {{ form.visited_when_purpose }}
+            </div>
+            <div>
+              <label class="block font-medium mb-2">{% trans 'b) duration of stay' %}</label>
+              {{ form.visited_duration }}
+            </div>
           </div>
         </section>
         <script>
@@ -291,13 +299,13 @@
         </script>
       {% endif %}
 
-      <!-- Step 11 -->
-      {% if current_step == 11 %}
+      <!-- Step 10 -->
+      {% if current_step == 10 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <label class="label cursor-pointer gap-3 justify-start">
               {{ form.deported }}
-              <span class="label-text text-lg">{% trans '11. Have you been deported / expelled?' %}</span>
+              <span class="label-text text-lg">{% trans '10. Have you been deported / expelled?' %}</span>
             </label>
           </div>
           <div class="mt-4" id="deported-details" style="display: none;">
@@ -319,30 +327,30 @@
         </script>
       {% endif %}
 
-      <!-- Step 12 -->
-      {% if current_step == 12 %}
+      <!-- Step 11 -->
+      {% if current_step == 11 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
-            <label class="block font-medium text-lg mb-2">{% trans '12. If not allowed entry to the destination state - state the reason for not being allowed' %}</label>
+            <label class="block font-medium text-lg mb-2">{% trans '11. If not allowed entry to the destination state - state the reason for not being allowed' %}</label>
             {{ form.not_allowed_reason }}
           </div>
         </section>
       {% endif %}
 
-      <!-- Step 13 -->
-      {% if current_step == 13 %}
+      <!-- Step 12 -->
+      {% if current_step == 12 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
-            <label class="block font-medium text-lg mb-2">{% trans '13. When was the last time you were in your homeland?' %}</label>
+            <label class="block font-medium text-lg mb-2">{% trans '12. When was the last time you were in your homeland?' %}</label>
             {{ form.last_time_in_homeland }}
           </div>
         </section>
       {% endif %}
 
-      <!-- Оценка пограничника начинается с шага 14 -->
+      <!-- Оценка пограничника начинается с шага 13 -->
 
-      <!-- Step 14: Радикальные интернет-сообщества -->
-      {% if current_step == 14 %}
+      <!-- Step 13: Сомнительный контент -->
+      {% if current_step == 13 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="alert alert-info mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6">
@@ -352,44 +360,80 @@
           </div>
           <div class="mb-4">
             <div class="flex items-start gap-3">
-              {{ assessment_form.radical_internet }}
-              <label for="id_radical_internet" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '14. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content' %}</label>
+              {{ assessment_form.suspicious_mobile_content }}
+              <label for="id_suspicious_mobile_content" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '13. In mobile devices:' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-1 max-h-96 overflow-y-auto p-2 bg-white rounded">
-              <p>{% trans '- the phone contains religious photo/video files (for example, the flag of DAESH, KTD, HTS, Al-Qaeda and other terrorist organizations; photo and video materials of combat scenes, persons in military equipment, in masks and with weapons in their hands);' %}</p>
-              <p>{% trans '- the phone contains photo/video files of radical content, including those saved in the \'search history\' of well-known mobile browsers \'YouTube\', \'Google\', \'Safari\' (materials with calls for armed clashes, moving to Muslim countries, accusations of disbelief, accusations of secular states of disbelief, statements about government representatives as \'taghuts\', ideas about the need to help allegedly oppressed Muslims in foreign countries);' %}</p>
-              <p>{% trans '- viewing in well-known mobile browsers \'YouTube\', \'Google\', \'Safari\' lectures of radical sheikhs: \'Arslan Bulgarsky\', \'Abu Zubeir Dagestani\', \'Abu Qaqqa Dagestani\', \'Abdullah Kosteksky\', \'Faruk Shami\', \'Tokhir domla\', \'Abdulaziz domla\', \'Abu Saloh\', \'Akhliddin Novkatiy\', \'Abdulloh Bukhoriy\', \'Sodik Samarkandi\', \'Abdulloh Zufar\', \'Abu Walid\', \'Saad Mukhtor\', \'Abdulhadiy domla\', \'Abdullah abu Abdur-rahman Moldavsky\', \'Ahmad Abu Abdurahman Medinsky\', \'Nadir abu Kholid\', \'Said Buryatsky\';' %}</p>
-              <p>{% trans '- member of radical Internet communities, messengers (group names may vary, but the content is exclusively aimed at calls to commit any actions, deeds, condemnation, etc. on a religious basis, ideas about the need for violent overthrow of the leadership of those states where Muslims are allegedly oppressed).' %}</p>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded" id="suspicious-mobile-description">
+              <p>- телефон отсутствует / отказывается предоставлять / в телефоне (смартфоне) стерты контакты, архивы сообщений, фото и видео информация;</p>
+              <p>- в мобильном телефоне (смартфоне) сохранены турецкие, сирийские либо афганские абоненты;</p>
+              <p>- наличие нескольких средств связи (мобильных телефонов, контактных номеров);</p>
+              <p>- наличие загруженных мусульманских мобильных приложений («Кибла», «Sajda» и т.д.).</p>
             </div>
           </div>
-          <div class="mt-4" id="radical-internet-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Details:' %}</label>
-            {{ assessment_form.radical_internet_details }}
+          <div class="mt-4" id="suspicious-mobile-details" style="display: none;">
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип подозрительного контента в телефоне:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.suspicious_mobile_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.suspicious_mobile_details }}
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Attach photo (optional):' %}</label>
+                <div class="form-control">
+                  {{ assessment_form.suspicious_mobile_photo }}
+                  <label class="label">
+                    <span class="label-text-alt text-gray-500">{% trans 'Supported formats: JPG, PNG, PDF' %}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
-            const checkbox = document.querySelector('input[name="radical_internet"]')
-            const detailsDiv = document.getElementById('radical-internet-details')
+            const checkbox = document.querySelector('input[name="suspicious_mobile_content"]')
+            const detailsDiv = document.getElementById('suspicious-mobile-details')
+            const descriptionDiv = document.getElementById('suspicious-mobile-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 15: Радикальная религиозная идеология -->
-      {% if current_step == 15 %}
+      <!-- Step 14: Радикальная религиозная идеология -->
+      {% if current_step == 14 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.radical_religious_ideology }}
-              <label for="id_radical_religious_ideology" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '15. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)' %}</label>
+              <label for="id_radical_religious_ideology" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '14. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded" id="radical-religious-description">
               <p>
                 <strong>{% trans 'External signs:' %}</strong>
               </p>
@@ -419,33 +463,59 @@
             </div>
           </div>
           <div class="mt-4" id="radical-religious-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.radical_religious_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Внешние и поведенческие признаки:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.radical_religious_signs %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.radical_religious_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="radical_religious_ideology"]')
             const detailsDiv = document.getElementById('radical-religious-details')
+            const descriptionDiv = document.getElementById('radical-religious-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 16: Признаки в документах -->
-      {% if current_step == 16 %}
+      <!-- Step 15: Признаки в документах -->
+      {% if current_step == 15 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.document_issues }}
-              <label for="id_document_issues" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '16. Signs in documents:' %}</label>
+              <label for="id_document_issues" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '15. Signs in documents:' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-1 max-h-96 overflow-y-auto p-2 bg-white rounded">
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-1 max-h-96 overflow-y-auto p-2 bg-white rounded" id="document-issues-description">
               <ul class="list-disc ml-5 space-y-1">
                 <li>- находился более одного месяца или депортирован из Турции (основной признак);</li>
                 <li>- на фотографиях в документах, удостоверяющих личность изображены с бородой (для мужчин), в религиозном одеянии (для женщин), а при опросе указанные признаки отсутствуют;</li>
@@ -458,7 +528,7 @@
                 <li>- при опросе владелец фальшивого паспорта плохо разбирается или совсем не знает географические названия населенных пунктов страны гражданства;</li>
                 <li>- владелец паспорта слабо либо вообще не владеет языком гражданства;</li>
                 <li>- закрыт въезд и депортирован из России, Украины, Азербайджана, стран Европы;</li>
-                <li>- ранее находился, а также депортирован из Сирии, Афганистана, Ирана, Ирака, Йемена, Египта, КСА, Южной Кореи, Украины;</li>
+                <li>- ранее вы или ваши родственники были депортированы из Сирии, Афганистана, Ирана, Ирака, Йемена, Египта, КСА, Южной Кореи, Украины;</li>
                 <li>- пересек государственную границу в обход пунктов пропуска (отсутствие дата штампа о пересечении границы);</li>
                 <li>- длительное время отсутствовал на родине и не планировал туда возвращаться;</li>
                 <li>- находился без документов, подтверждающих личность, при этом представлялся данными другого человека (личность до настоящего времени не подтверждена) либо прибыл в страну с измененными установочными данными в паспорте.</li>
@@ -466,33 +536,59 @@
             </div>
           </div>
           <div class="mt-4" id="document-issues-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.document_issues_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип проблемы с документами:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.document_issues_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.document_issues_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="document_issues"]')
             const detailsDiv = document.getElementById('document-issues-details')
+            const descriptionDiv = document.getElementById('document-issues-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 17: Религиозные отклонения -->
-      {% if current_step == 17 %}
+      <!-- Step 16: Религиозные отклонения -->
+      {% if current_step == 16 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.religious_deviations }}
-              <label for="id_religious_deviations" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '17. In personal belongings:' %}</label>
+              <label for="id_religious_deviations" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '16. Deviation from traditional religious norms:' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded" id="religious-deviations-description">
               <ul class="list-disc ml-5 space-y-1">
                 <li>- отрицает отношение к религии, однако при себе имеет религиозные вещи (четки, молитвенный коврик, «миск» (мусульманский парфюм), «мисвак» (палочка для чистки зубов), литературу «Книга единобожия», «Таухид», «Три основы», «Ахлю сунна уаль-Джамаа» и т.п.).</li>
                 <li>- имеет при себе элементы военной экипировки, туристического снаряжения, а также минимальное количество ручной клади и денежные средства, не соответствующие заработку, заявленным целям поездки;</li>
@@ -501,67 +597,141 @@
             </div>
           </div>
           <div class="mt-4" id="religious-deviations-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.religious_deviations_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип отклонения в личных вещах:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.religious_deviations_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.religious_deviations_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="religious_deviations"]')
             const detailsDiv = document.getElementById('religious-deviations-details')
+            const descriptionDiv = document.getElementById('religious-deviations-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 18: Сомнительный контент -->
-      {% if current_step == 18 %}
+      <!-- Step 17: Радикальные интернет-сообщества -->
+      {% if current_step == 17 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
-              {{ assessment_form.suspicious_mobile_content }}
-              <label for="id_suspicious_mobile_content" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '18. In mobile devices:' %}</label>
+              {{ assessment_form.radical_internet }}
+              <label for="id_radical_internet" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '17. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
-              <p>- телефон отсутствует / отказывается предоставлять / в телефоне (смартфоне) стерты контакты, архивы сообщений, фото и видео информация;</p>
-              <p>- в мобильном телефоне (смартфоне) сохранены турецкие, сирийские либо афганские абоненты;</p>
-              <p>- наличие нескольких средств связи (мобильных телефонов, контактных номеров);</p>
-              <p>- наличие загруженных мусульманских мобильных приложений («Кибла», «Sajda» и т.д.).</p>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-1 max-h-96 overflow-y-auto p-2 bg-white rounded" id="radical-internet-description">
+              <p>{% trans '- the phone contains religious photo/video files (for example, the flag of DAESH, KTD, HTS, Al-Qaeda and other terrorist organizations; photo and video materials of combat scenes, persons in military equipment, in masks and with weapons in their hands);' %}</p>
+              <p>{% trans '- the phone contains photo/video files of radical content, including those saved in the \'search history\' of well-known mobile browsers \'YouTube\', \'Google\', \'Safari\' (materials with calls for armed clashes, moving to Muslim countries, accusations of disbelief, accusations of secular states of disbelief, statements about government representatives as \'taghuts\', ideas about the need to help allegedly oppressed Muslims in foreign countries);' %}</p>
+              <p>{% trans '- viewing in well-known mobile browsers \'YouTube\', \'Google\', \'Safari\' lectures of radical sheikhs: \'Arslan Bulgarsky\', \'Abu Zubeir Dagestani\', \'Abu Qaqqa Dagestani\', \'Abdullah Kosteksky\', \'Faruk Shami\', \'Tokhir domla\', \'Abdulaziz domla\', \'Abu Saloh\', \'Akhliddin Novkatiy\', \'Abdulloh Bukhoriy\', \'Sodik Samarkandi\', \'Abdulloh Zufar\', \'Abu Walid\', \'Saad Mukhtor\', \'Abdulhadiy domla\', \'Abdullah abu Abdur-rahman Moldavsky\', \'Ahmad Abu Abdurahman Medinsky\', \'Nadir abu Kholid\', \'Said Buryatsky\';' %}</p>
+              <p>{% trans '- member of radical Internet communities, messengers (group names may vary, but the content is exclusively aimed at calls to commit any actions, deeds, condemnation, etc. on a religious basis, ideas about the need for violent overthrow of the leadership of those states where Muslims are allegedly oppressed).' %}</p>
             </div>
           </div>
-          <div class="mt-4" id="suspicious-mobile-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.suspicious_mobile_details }}
+          <div class="mt-4" id="radical-internet-details" style="display: none;">
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип радикального контента:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.radical_internet_content %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2">Лекции каких радикальных шейхов:</label>
+                <div class="grid grid-cols-2 gap-2 ml-4">
+                  {% for choice in assessment_form.radical_internet_sheikhs %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.radical_internet_details }}
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Attach photo (optional):' %}</label>
+                <div class="form-control">
+                  {{ assessment_form.radical_internet_photo }}
+                  <label class="label">
+                    <span class="label-text-alt text-gray-500">{% trans 'Supported formats: JPG, PNG, PDF' %}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
-            const checkbox = document.querySelector('input[name="suspicious_mobile_content"]')
-            const detailsDiv = document.getElementById('suspicious-mobile-details')
+            const checkbox = document.querySelector('input[name="radical_internet"]')
+            const detailsDiv = document.getElementById('radical-internet-details')
+            const descriptionDiv = document.getElementById('radical-internet-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 19: Подозрительное поведение -->
-      {% if current_step == 19 %}
+      <!-- Step 18: Подозрительное поведение -->
+      {% if current_step == 18 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.suspicious_behavior }}
-              <label for="id_suspicious_behavior" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '19. In behavior:' %}</label>
+              <label for="id_suspicious_behavior" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '18. In behavior:' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded" id="suspicious-behavior-description">
               <ul class="list-disc ml-5 space-y-1">
                 <li>- в беседе часто употребляющие религиозные термины (к примеру: «ахи», «субханалла», «иншаллах», «аузубиллях», «астагфируллах», «альхамдулиллях» и т.п.);</li>
                 <li>- в ходе контактов проявлял нервозность, допускал неточности либо доводил противоречивые сведения в биографических данных;</li>
@@ -580,36 +750,78 @@
             </div>
           </div>
           <div class="mt-4" id="suspicious-behavior-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.suspicious_behavior_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип подозрительного поведения:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.suspicious_behavior_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.suspicious_behavior_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="suspicious_behavior"]')
             const detailsDiv = document.getElementById('suspicious-behavior-details')
+            const descriptionDiv = document.getElementById('suspicious-behavior-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 20: Психологические отклонения -->
-      {% if current_step == 20 %}
+      <!-- Step 19: Психологические отклонения -->
+      {% if current_step == 19 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.psychological_issues }}
-              <label for="id_psychological_issues" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '20. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person.' %}</label>
+              <label for="id_psychological_issues" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '19. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person.' %}</label>
             </div>
           </div>
           <div class="mt-4" id="psychological-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.psychological_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип психологических отклонений:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.psychological_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.psychological_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
@@ -626,78 +838,150 @@
         </script>
       {% endif %}
 
-      <!-- Step 21: Родственники с МТО -->
-      {% if current_step == 21 %}
+      <!-- Step 20: Родственники с МТО -->
+      {% if current_step == 20 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.relatives_mto }}
-              <label for="id_relatives_mto" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">21.</label>
+              <label for="id_relatives_mto" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '20. Criminally-oriented elements' %}</label>
             </div>
-            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded">
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded" id="relatives-mto-description">
               <p>- родственники и близкие связи причастны к МТО, но не поддерживает с ними связь;</p>
-              <p>- проверяемое лицо является криминально-ориентированным элементом (ранее судим, лидер либо член ОПГ и т.д.);</p>
+              <p>- родственники и близкие связи причастны к МТО, в т.ч. принимающие прямое участие либо оказывающие пособническую деятельность;</p>
+              <p>- проверяемое лицо поддерживает контакты с родственниками и близкими связями, причастными к МТО;</p>
             </div>
           </div>
           <div class="mt-4" id="relatives-mto-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.relatives_mto_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип связей с МТО:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.relatives_mto_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2">Тип криминальной активности:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.criminal_element_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.relatives_mto_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="relatives_mto"]')
             const detailsDiv = document.getElementById('relatives-mto-details')
+            const descriptionDiv = document.getElementById('relatives-mto-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 22: Криминальный элемент -->
-      {% if current_step == 22 %}
+      <!-- Step 21: Криминальный элемент -->
+      {% if current_step == 21 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.criminal_element }}
-              <label for="id_criminal_element" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans "22. Presence of contacts with Kazakhstani 'non-Madhalists'" %}</label>
+              <label for="id_criminal_element" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans "21. Presence of contacts with Kazakhstani 'non-Madhalists'" %}</label>
+            </div>
+            <div class="text-sm text-gray-600 mt-3 ml-8 space-y-2 max-h-96 overflow-y-auto p-2 bg-white rounded" id="criminal-element-description">
+              <p>- наличие контактов с казахстанскими «немадхалитами»</p>
             </div>
           </div>
           <div class="mt-4" id="criminal-element-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.criminal_element_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.criminal_element_details }}
+              </div>
+            </div>
           </div>
         </section>
         <script>
           document.addEventListener('DOMContentLoaded', function () {
             const checkbox = document.querySelector('input[name="criminal_element"]')
             const detailsDiv = document.getElementById('criminal-element-details')
+            const descriptionDiv = document.getElementById('criminal-element-description')
             if (checkbox) {
-              if (checkbox.checked) detailsDiv.style.display = 'block'
+              if (checkbox.checked) {
+                detailsDiv.style.display = 'block'
+                descriptionDiv.style.display = 'none'
+              }
               checkbox.addEventListener('change', function () {
-                detailsDiv.style.display = this.checked ? 'block' : 'none'
+                if (this.checked) {
+                  detailsDiv.style.display = 'block'
+                  descriptionDiv.style.display = 'none'
+                } else {
+                  detailsDiv.style.display = 'none'
+                  descriptionDiv.style.display = 'block'
+                }
               })
             }
           })
         </script>
       {% endif %}
 
-      <!-- Step 23: Следы насилия -->
-      {% if current_step == 23 %}
+      <!-- Step 22: Следы насилия -->
+      {% if current_step == 22 %}
         <section class="bg-base-200 p-6 rounded-lg">
           <div class="mb-4">
             <div class="flex items-start gap-3">
               {{ assessment_form.violence_traces }}
-              <label for="id_violence_traces" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '23. On exposed parts of the body, there are traces of gunshot and shrapnel wounds.' %}</label>
+              <label for="id_violence_traces" class="label-text text-lg font-semibold cursor-pointer" style="flex: 1;">{% trans '22. On exposed parts of the body, there are traces of gunshot and shrapnel wounds.' %}</label>
             </div>
           </div>
           <div class="mt-4" id="violence-traces-details" style="display: none;">
-            <label class="block font-medium mb-2 text-sm">{% trans 'Детали:' %}</label>
-            {{ assessment_form.violence_traces_details }}
+            <div class="space-y-4">
+              <div>
+                <label class="block font-medium mb-2">Тип следов насилия:</label>
+                <div class="space-y-2 ml-4">
+                  {% for choice in assessment_form.violence_traces_types %}
+                    <label class="flex items-start gap-2 cursor-pointer">
+                      {{ choice.tag }}
+                      <span class="text-sm">{{ choice.choice_label }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+              
+              <div>
+                <label class="block font-medium mb-2 text-sm">{% trans 'Additional details:' %}</label>
+                {{ assessment_form.violence_traces_details }}
+              </div>
+            </div>
           </div>
           <div class="mt-6">
             <label class="block font-semibold mb-2">{% trans 'Additional notes:' %}</label>

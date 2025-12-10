@@ -217,14 +217,8 @@ msgstr "a) когда и по какой причине Вас задержал�
 msgid "b) where were you held?"
 msgstr "b) где Вас содержали?"
 
-msgid "7. Are any of your relatives or acquaintances in the listed countries?"
-msgstr "7. Находится ли кто-нибудь из родственников либо знакомых в перечисленных странах?"
-
-msgid "a) state full name, b) when did they leave, c) what do they do"
-msgstr "a) назовите Ф.И.О., b) когда выехали, c) чем занимаются"
-
-msgid "8. Is any of your relatives wanted by law enforcement agencies?"
-msgstr "8. Разыскивается ли кто-нибудь из Ваших родственников правоохранительными органами?"
+msgid "7. Are any of your relatives sought by police?"
+msgstr "7. Разыскивается ли кто-нибудь из Ваших родственников правоохранительными органами?"
 
 msgid "If yes: For what reason?"
 msgstr "При положительном ответе: По какой причине?"
@@ -232,8 +226,8 @@ msgstr "При положительном ответе: По какой прич
 msgid "Religion"
 msgstr "Вероисповедание"
 
-msgid "9. Are you religious?"
-msgstr "9. Вы религиозны?"
+msgid "8. Are you religious?"
+msgstr "8. Вы религиозны?"
 
 msgid "If yes: which madhhab do you follow?"
 msgstr "Если да: какого мазхаба Вы придерживаетесь?"
@@ -241,23 +235,23 @@ msgstr "Если да: какого мазхаба Вы придерживает
 msgid "Places of stay and travel"
 msgstr "Места пребывания и поездки"
 
-msgid "10. Have you visited the listed countries?"
-msgstr "10. Посещали ли перечисленные страны?"
+msgid "9. Have you visited the listed countries?"
+msgstr "9. Посещали ли перечисленные страны?"
 
 msgid "a) when and purpose of the trip; b) duration of stay"
 msgstr "a) когда и цель поездки; b) срок нахождения"
 
-msgid "11. Have you been deported / expelled?"
-msgstr "11. Вас депортировали / выдворили?"
+msgid "10. Have you been deported / expelled?"
+msgstr "10. Вас депортировали / выдворили?"
 
 msgid "If yes: when and reasons for deportation"
 msgstr "При положительном ответе: когда и причины депортации"
 
-msgid "12. If not allowed entry to the destination state - state the reason for not being allowed"
-msgstr "12. Если не пропущен на территорию государства следования — назовите причину не пропуска"
+msgid "11. If not allowed entry to the destination state - state the reason for not being allowed"
+msgstr "11. Если не пропущен на территорию государства следования — назовите причину не пропуска"
 
-msgid "13. When was the last time you were in your homeland?"
-msgstr "Г13. Когда в последний раз были на родине?"
+msgid "12. When was the last time you were in your homeland?"
+msgstr "12. Когда в последний раз были на родине?"
 
 msgid "Question"
 msgstr "Вопрос"
@@ -277,35 +271,41 @@ msgstr "Всего"
 msgid "Border Officer Assessment. The following questions are filled in by the border officer based on inspection."
 msgstr "Оценка пограничника. Следующие вопросы заполняются пограничником на основе проверки."
 
-msgid "14. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content"
-msgstr "14. Состоит в радикальных Интернет сообществах и мессенджерах, ориентированы на радикальных идеологов, в телефоне имеются фото/видео файлы радикального содержания"
+msgid "13. In mobile devices:"
+msgstr "13. В мобильных устройствах:"
 
-msgid "15. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)"
-msgstr "15. Религиозен, с признаками сторонника радикальных идей (явные признаки сторонника немадхалитской идеологии, а также поддерживающего идеологию терроризма и религиозного экстремизма лица)"
+msgid "14. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)"
+msgstr "14. Религиозен, с признаками сторонника радикальных идей (явные признаки сторонника немадхалитской идеологии, а также поддерживающего идеологию терроризма и религиозного экстремизма лица)"
 
-msgid "16. Signs in documents:"
-msgstr "16. Признаки в документах:"
+msgid "15. Signs in documents:"
+msgstr "15. Признаки в документах:"
 
-msgid "17. In personal belongings:"
-msgstr "17. В личных вещах:"
+msgid "16. Deviation from traditional religious norms:"
+msgstr "16. Отклонение от религиозных норм:"
 
-msgid "18. In mobile devices:"
-msgstr "18. В мобильных устройствах:"
+msgid "17. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content"
+msgstr "17. Состоит в радикальных Интернет сообществах и мессенджерах, ориентированы на радикальных идеологов, в телефоне имеются фото/видео файлы радикального содержания"
 
-msgid "19. In behavior:"
-msgstr "19. В поведении:"
+msgid "18. In behavior:"
+msgstr "18. В поведении:"
 
-msgid "20. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person."
-msgstr "20. Наблюдаются психологические отклонения (свидетельствующие о возможных психических заболеваниях лица) в совокупности с глубокой религиозностью лица."
+msgid "19. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person."
+msgstr "19. Наблюдаются психологические отклонения (свидетельствующие о возможных психических заболеваниях лица) в совокупности с глубокой религиозностью лица."
 
-msgid "22. Presence of contacts with Kazakhstani 'non-Madhalists'"
-msgstr "22. Наличие контактов с казахстанскими «немадхалитами»"
+msgid "20. Criminally-oriented elements"
+msgstr "20. Элементы криминальной направленности"
 
-msgid "23. On exposed parts of the body, there are traces of gunshot and shrapnel wounds."
-msgstr "23. На открытых частях тела, которого имеются следы огнестрельных и осколочных ранений."
+msgid "21. Presence of contacts with Kazakhstani 'non-Madhalists'"
+msgstr "21. Наличие контактов с казахстанскими \"немадхалистами\""
+
+msgid "22. On exposed parts of the body, there are traces of gunshot and shrapnel wounds."
+msgstr "22. На открытых частях тела, которого имеются следы огнестрельных и осколочных ранений."
 
 msgid "Details:"
 msgstr "Детали:"
+
+msgid "Additional details:"
+msgstr "Дополнительные детали:"
 
 msgid "Additional notes:"
 msgstr "Дополнительные заметки:"
@@ -336,6 +336,12 @@ msgstr "Всего"
 
 msgid "Reset"
 msgstr "Сбросить"
+
+msgid "Search by name"
+msgstr "Поиск по ФИО"
+
+msgid "Enter full name..."
+msgstr "Введите ФИО..."
 
 msgid "Date from"
 msgstr "Дата с"
@@ -414,3 +420,30 @@ msgstr "Ответы на формы"
 
 msgid "Created at"
 msgstr "Создано"
+
+msgid "Export PDF"
+msgstr "Экспорт в PDF"
+
+msgid "Attach photo of document (optional)"
+msgstr "Прикрепите фото документа (опционально)"
+
+msgid "a) state full name"
+msgstr "а) укажите ФИО"
+
+msgid "b) when did they leave"
+msgstr "б) когда выехали"
+
+msgid "c) what do they do"
+msgstr "в) чем занимаются"
+
+msgid "a) when and purpose of the trip"
+msgstr "а) когда и цель поездки"
+
+msgid "b) duration of stay"
+msgstr "б) срок пребывания"
+
+msgid "Attach photo (optional):"
+msgstr "Прикрепите фото (опционально):"
+
+msgid "Supported formats: JPG, PNG, PDF"
+msgstr "Поддерживаемые форматы: JPG, PNG, PDF"

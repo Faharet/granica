@@ -35,4 +35,4 @@ urlpatterns += i18n_patterns(
     path('panel/', DashboardView.as_view(), name='manager_panel'),
     path('', RedirectView.as_view(url='/admin/', permanent=True)),
     prefix_default_language=True,
-) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

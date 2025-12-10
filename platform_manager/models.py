@@ -276,6 +276,7 @@ class FormResponse(models.Model):
 
     # 1. Biographical: full name, date and place of birth
     full_name_and_birth = models.TextField(blank=True, verbose_name="ФИО, дата и место рождения")
+    full_name_photo = models.ImageField(upload_to='form_responses/q1/', blank=True, null=True, verbose_name="Фото документа (вопрос 1)")
 
     # 2. Name changes
     name_changed = models.BooleanField(default=False, verbose_name="Изменяли ли имя/фамилию/отчество")
@@ -300,6 +301,9 @@ class FormResponse(models.Model):
 
     # 7. Relatives/friends in specific countries
     relatives_in_countries = models.BooleanField(default=False, verbose_name="Есть ли родственники/знакомые в указанных странах")
+    relatives_full_name = models.TextField(blank=True, verbose_name="а) укажите ФИО")
+    relatives_when_left = models.TextField(blank=True, verbose_name="б) когда выехали")
+    relatives_occupation = models.TextField(blank=True, verbose_name="в) чем занимаются")
     relatives_details = models.TextField(blank=True, verbose_name="Детали (ФИО, когда выехали, чем занимаются)")
 
     # 8. Relatives wanted by authorities
@@ -308,10 +312,21 @@ class FormResponse(models.Model):
 
     # 9. Religion
     religious = models.BooleanField(default=False, verbose_name="Религиозны ли вы")
-    denomination = models.CharField(max_length=255, blank=True, verbose_name="Мазхаб/религиозные взгляды")
+    MADHHAB_CHOICES = [
+        ('hanafi', 'Ханафитский'),
+        ('maliki', 'Маликитский'),
+        ('shafii', 'Шафиитский'),
+        ('hanbali', 'Ханбалитский'),
+        ('ahlu_sunna', 'Ахлю Сунна'),
+        ('other', 'Свой вариант'),
+    ]
+    denomination = models.CharField(max_length=255, blank=True, choices=MADHHAB_CHOICES, verbose_name="Мазхаб/религиозные взгляды")
+    denomination_other = models.CharField(max_length=255, blank=True, verbose_name="Свой вариант мазхаба")
 
     # 10. Visits to listed countries
     visited_countries = models.BooleanField(default=False, verbose_name="Посещали ли указанные страны")
+    visited_when_purpose = models.TextField(blank=True, verbose_name="а) когда и цель поездки")
+    visited_duration = models.TextField(blank=True, verbose_name="б) срок пребывания")
     visited_countries_details = models.TextField(blank=True, verbose_name="Детали визитов (когда, цель, срок)")
 
     # 11. Deportation
@@ -322,7 +337,7 @@ class FormResponse(models.Model):
     not_allowed_reason = models.TextField(blank=True, verbose_name="Причина не пропуска в пункт назначения")
 
     # 13. Last time in homeland
-    last_time_in_homeland = models.CharField(max_length=255, blank=True, verbose_name="Когда в последний раз были на родине")
+    last_time_in_homeland = models.CharField(max_length=255, blank=True, verbose_name="13. Когда в последний раз были на родине")
 
     # Basic metadata
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='form_responses', verbose_name="Пользователь")
@@ -365,10 +380,10 @@ class FormResponse(models.Model):
         # Update total score
         self.total_score = score
         
-        # Determine threat level
-        if score >= 60:
+        # Determine threat level: 0-49 Low, 50-119 Medium, 120+ High
+        if score >= 120:
             self.threat_level = "Высокий"
-        elif score >= 30:
+        elif score >= 50:
             self.threat_level = "Средний"
         else:
             self.threat_level = "Низкий"
@@ -387,43 +402,56 @@ class BorderOfficerAssessment(models.Model):
     
     # 1. Радикальные интернет-сообщества (65 баллов)
     radical_internet = models.BooleanField(default=False, verbose_name="1. Состоит в радикальных интернет-сообществах")
-    radical_internet_details = models.TextField(blank=True, verbose_name="Детали")
+    radical_internet_content = JSONField(default=list, blank=True, verbose_name="Тип контента")  # Список выбранных типов контента
+    radical_internet_sheikhs = JSONField(default=list, blank=True, verbose_name="Радикальные шейхи")  # Список выбранных шейхов
+    radical_internet_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
+    radical_internet_photo = models.ImageField(upload_to='assessments/q14/', blank=True, null=True, verbose_name="Фото (вопрос 14)")
     
     # 2. Религиозная идеология - сторонник радикальных течений (45 баллов)
     radical_religious_ideology = models.BooleanField(default=False, verbose_name="2. Является сторонником радикальных религиозных течений")
-    radical_religious_details = models.TextField(blank=True, verbose_name="Детали")
+    radical_religious_signs = JSONField(default=list, blank=True, verbose_name="Внешние признаки")  # Список признаков
+    radical_religious_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 3. Признаки в документах (20 баллов)
     document_issues = models.BooleanField(default=False, verbose_name="3. Признаки в документах (депортация, запрет въезда)")
-    document_issues_details = models.TextField(blank=True, verbose_name="Детали")
+    document_issues_types = JSONField(default=list, blank=True, verbose_name="Типы проблем")  # Список типов проблем
+    document_issues_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 4. Религия - отклонения (15 баллов)
     religious_deviations = models.BooleanField(default=False, verbose_name="4. Религиозные отклонения/неопределенность")
-    religious_deviations_details = models.TextField(blank=True, verbose_name="Детали")
+    religious_deviations_types = JSONField(default=list, blank=True, verbose_name="Типы отклонений")  # Список типов
+    religious_deviations_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 5. Мобильные устройства - сомнительный контент (15 баллов)
     suspicious_mobile_content = models.BooleanField(default=False, verbose_name="5. Сомнительный контент на мобильных устройствах")
-    suspicious_mobile_details = models.TextField(blank=True, verbose_name="Детали")
+    suspicious_mobile_types = JSONField(default=list, blank=True, verbose_name="Типы контента")  # Список типов
+    suspicious_mobile_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
+    suspicious_mobile_photo = models.FileField(upload_to='assessments/suspicious_mobile/', blank=True, null=True, verbose_name="Фото подозрительного контента")
     
     # 6. Поведение - религиозные термины, агрессия (15 баллов)
     suspicious_behavior = models.BooleanField(default=False, verbose_name="6. Подозрительное поведение (религиозные термины, агрессия)")
-    suspicious_behavior_details = models.TextField(blank=True, verbose_name="Детали")
+    suspicious_behavior_types = JSONField(default=list, blank=True, verbose_name="Типы поведения")  # Список типов
+    suspicious_behavior_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 7. Психологические отклонения (15 баллов)
     psychological_issues = models.BooleanField(default=False, verbose_name="7. Психологические отклонения")
-    psychological_details = models.TextField(blank=True, verbose_name="Детали")
+    psychological_types = JSONField(default=list, blank=True, verbose_name="Типы отклонений")  # Список типов
+    psychological_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 8. Родственники с МТО связями (10 баллов)
     relatives_mto = models.BooleanField(default=False, verbose_name="8. Родственники с близкими связями с МТО")
-    relatives_mto_details = models.TextField(blank=True, verbose_name="Детали")
+    relatives_mto_types = JSONField(default=list, blank=True, verbose_name="Типы связей")  # Список типов
+    relatives_mto_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 9. Криминально-ориентированный элемент (10 баллов)
     criminal_element = models.BooleanField(default=False, verbose_name="9. Криминально-ориентированный элемент")
-    criminal_element_details = models.TextField(blank=True, verbose_name="Детали")
+    criminal_element_types = JSONField(default=list, blank=True, verbose_name="Типы криминала")  # Список типов
+    criminal_element_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # 10. Следы насильственных действий на теле (10 баллов)
     violence_traces = models.BooleanField(default=False, verbose_name="10. Следы насильственных действий на теле")
-    violence_traces_details = models.TextField(blank=True, verbose_name="Детали")
+    violence_traces_types = JSONField(default=list, blank=True, verbose_name="Типы следов")  # Список типов
+    violence_traces_details = models.TextField(blank=True, verbose_name="Дополнительные детали")
     
     # Scoring
     total_score = models.IntegerField(default=0, verbose_name="Общий балл")
@@ -466,15 +494,81 @@ class BorderOfficerAssessment(models.Model):
         
         self.total_score = score
         
-        # Determine threat level
-        if score >= 60:
+        # Determine threat level: 0-49 Low, 50-120 Medium, 121+ High
+        if score >= 121:
             self.threat_level = "Высокий"
-        elif score >= 30:
+        elif score >= 50:
             self.threat_level = "Средний"
         else:
             self.threat_level = "Низкий"
         
         return score
+    
+    def get_radical_internet_content_labels(self):
+        """Get readable labels for radical internet content"""
+        from .choices import RADICAL_CONTENT_CHOICES
+        choices_dict = dict(RADICAL_CONTENT_CHOICES)
+        return [choices_dict.get(value, value) for value in self.radical_internet_content]
+    
+    def get_radical_internet_sheikhs_labels(self):
+        """Get readable labels for radical sheikhs"""
+        from .choices import RADICAL_SHEIKH_CHOICES
+        choices_dict = dict(RADICAL_SHEIKH_CHOICES)
+        return [choices_dict.get(value, value) for value in self.radical_internet_sheikhs]
+    
+    def get_radical_religious_signs_labels(self):
+        """Get readable labels for radical religious signs"""
+        from .choices import RADICAL_RELIGIOUS_SIGNS
+        choices_dict = dict(RADICAL_RELIGIOUS_SIGNS)
+        return [choices_dict.get(value, value) for value in self.radical_religious_signs]
+    
+    def get_document_issues_types_labels(self):
+        """Get readable labels for document issues types"""
+        from .choices import DOCUMENT_ISSUES_TYPES
+        choices_dict = dict(DOCUMENT_ISSUES_TYPES)
+        return [choices_dict.get(value, value) for value in self.document_issues_types]
+    
+    def get_religious_deviations_types_labels(self):
+        """Get readable labels for religious deviations types"""
+        from .choices import RELIGIOUS_DEVIATIONS_TYPES
+        choices_dict = dict(RELIGIOUS_DEVIATIONS_TYPES)
+        return [choices_dict.get(value, value) for value in self.religious_deviations_types]
+    
+    def get_suspicious_mobile_types_labels(self):
+        """Get readable labels for suspicious mobile types"""
+        from .choices import SUSPICIOUS_MOBILE_TYPES
+        choices_dict = dict(SUSPICIOUS_MOBILE_TYPES)
+        return [choices_dict.get(value, value) for value in self.suspicious_mobile_types]
+    
+    def get_suspicious_behavior_types_labels(self):
+        """Get readable labels for suspicious behavior types"""
+        from .choices import SUSPICIOUS_BEHAVIOR_TYPES
+        choices_dict = dict(SUSPICIOUS_BEHAVIOR_TYPES)
+        return [choices_dict.get(value, value) for value in self.suspicious_behavior_types]
+    
+    def get_psychological_types_labels(self):
+        """Get readable labels for psychological types"""
+        from .choices import PSYCHOLOGICAL_TYPES
+        choices_dict = dict(PSYCHOLOGICAL_TYPES)
+        return [choices_dict.get(value, value) for value in self.psychological_types]
+    
+    def get_relatives_mto_types_labels(self):
+        """Get readable labels for relatives MTO types"""
+        from .choices import RELATIVES_MTO_TYPES
+        choices_dict = dict(RELATIVES_MTO_TYPES)
+        return [choices_dict.get(value, value) for value in self.relatives_mto_types]
+    
+    def get_criminal_element_types_labels(self):
+        """Get readable labels for criminal element types"""
+        from .choices import CRIMINAL_ELEMENT_TYPES
+        choices_dict = dict(CRIMINAL_ELEMENT_TYPES)
+        return [choices_dict.get(value, value) for value in self.criminal_element_types]
+    
+    def get_violence_traces_types_labels(self):
+        """Get readable labels for violence traces types"""
+        from .choices import VIOLENCE_TRACES_TYPES
+        choices_dict = dict(VIOLENCE_TRACES_TYPES)
+        return [choices_dict.get(value, value) for value in self.violence_traces_types]
     
     def __str__(self):
         return f"Оценка для {self.form_response} - {self.threat_level} ({self.total_score} баллов)"

@@ -3,13 +3,18 @@
 
 {% block content %}
   <div class="flex items-center justify-between mb-4">
-    <h1>
-      {% if is_manager %}
-        {% trans "Form responses" %}
-      {% else %}
-        {% trans "My Forms" %}
-      {% endif %}
-    </h1>
+    <div class="flex items-center gap-3">
+      <a href="{% url 'manager_panel' %}" class="btn btn-ghost btn-sm">
+        <i class="fa fa-arrow-left mr-1"></i>{% trans "Back to panel" %}
+      </a>
+      <h1>
+        {% if is_manager %}
+          {% trans "Form responses" %}
+        {% else %}
+          {% trans "My Forms" %}
+        {% endif %}
+      </h1>
+    </div>
     <div class="badge badge-lg badge-primary">
       {% trans "Total" %}: {{ page_obj.paginator.count }}
     </div>
@@ -19,6 +24,13 @@
   <div class="bg-base-200 p-4 rounded-lg mb-6">
     <div class="flex items-start gap-4">
       <form method="get" id="filter-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">{% trans "Search by name" %}</span>
+          </label>
+          <input type="text" name="search" value="{{ search }}" placeholder="{% trans 'Enter full name...' %}" class="input input-bordered input-sm filter-input" />
+        </div>
+        
         <div class="form-control">
           <label class="label">
             <span class="label-text">{% trans "Date from" %}</span>

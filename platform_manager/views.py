@@ -37,31 +37,131 @@ class SubmitFormView(View):
 			'form': form,
 			'assessment_form': assessment_form,
 			'current_step': step,
-			'total_steps': 23,
+			'total_steps': 22,
 		}
 		return render(request, self.template_name, context)
 	
 	def post(self, request):
+		import os
+		import base64
+		from django.core.files.storage import default_storage
+		from django.core.files import File
+		from django.core.files.uploadedfile import SimpleUploadedFile
+		
 		current_step = int(request.POST.get('current_step', 1))
 		action = request.POST.get('action', 'next')
 		
 		# Сохраняем данные текущего шага в сессию
 		form_data = request.session.get('form_data', {})
+		file_data = request.session.get('file_data', {})
+		
+		# Handle multiple choice fields (checkboxes)
+		checkbox_fields = [
+			'radical_internet_content', 'radical_internet_sheikhs',
+			'radical_religious_signs', 'document_issues_types',
+			'religious_deviations_types', 'suspicious_mobile_types',
+			'suspicious_behavior_types', 'psychological_types',
+			'relatives_mto_types', 'criminal_element_types',
+			'violence_traces_types'
+		]
+		
+		for key in checkbox_fields:
+			values = request.POST.getlist(key)
+			if values:
+				form_data[key] = values
+		
+		# Handle boolean fields explicitly (checkboxes send 'on' when checked)
+		# Map steps to their boolean fields to avoid overwriting values from other steps
+		step_bool_fields = {
+			2: ['name_changed'],
+			4: ['military_service'],
+			5: ['criminal_record'],
+			6: ['detained_abroad'],
+			7: ['relatives_in_countries'],
+			8: ['religious'],
+			9: ['relatives_wanted'],
+			10: ['visited_countries'],
+			11: ['deported']
+		}
+		
+		# Only update boolean fields that belong to the current step
+		if current_step in step_bool_fields:
+			for field in step_bool_fields[current_step]:
+				form_data[field] = request.POST.get(field) == 'on'
+		
+		# Handle other fields
 		for key, value in request.POST.items():
-			if key not in ['csrfmiddlewaretoken', 'current_step', 'action']:
-				form_data[key] = value
+			if key not in ['csrfmiddlewaretoken', 'current_step', 'action'] and key not in checkbox_fields:
+				# Skip boolean fields - they're handled above
+				if key not in ['name_changed', 'military_service', 'criminal_record', 'detained_abroad',
+					'relatives_in_countries', 'relatives_wanted', 'religious', 'visited_countries', 'deported']:
+					form_data[key] = value
+		
+		# Handle uploaded files - encode as base64 for session storage
+		for key, file in request.FILES.items():
+			file_content = file.read()
+			file_data[key] = {
+				'content': base64.b64encode(file_content).decode('utf-8'),
+				'name': file.name,
+				'content_type': file.content_type
+			}
+		
 		request.session['form_data'] = form_data
+		request.session['file_data'] = file_data
 		
 		if action == 'previous':
 			next_step = max(1, current_step - 1)
 			return redirect(f"{request.path}?step={next_step}")
 		elif action == 'next':
-			next_step = min(23, current_step + 1)
+			next_step = min(22, current_step + 1)
 			return redirect(f"{request.path}?step={next_step}")
 		elif action == 'submit':
 			# Финальная отправка
-			form = FormResponseForm(form_data)
-			assessment_form = BorderOfficerAssessmentForm(form_data)
+			# Decode files from base64
+			saved_file_data = request.session.get('file_data', {})
+			files_dict = {}
+			
+			for key, file_info in saved_file_data.items():
+				if isinstance(file_info, dict) and 'content' in file_info:
+					file_content = base64.b64decode(file_info['content'])
+					files_dict[key] = SimpleUploadedFile(
+						name=file_info['name'],
+						content=file_content,
+						content_type=file_info['content_type']
+					)
+			
+			# Convert boolean values to 'on' for Django form processing
+			form_data_for_submit = form_data.copy()
+			bool_fields = [
+				'name_changed', 'military_service', 'criminal_record', 'detained_abroad',
+				'relatives_in_countries', 'relatives_wanted', 'religious', 'visited_countries', 'deported'
+			]
+			
+			# Clear dependent fields when checkbox is unchecked
+			dependent_fields = {
+				'name_changed': ['name_change_reason'],
+				'military_service': ['military_details'],
+				'criminal_record': ['criminal_period_where', 'criminal_offenses'],
+				'detained_abroad': ['detained_when_why', 'detained_where'],
+				'relatives_in_countries': ['relatives_full_name', 'relatives_when_left', 'relatives_occupation', 'relatives_details'],
+				'relatives_wanted': ['relatives_wanted_reason'],
+				'religious': ['denomination', 'denomination_other'],
+				'visited_countries': ['visited_when_purpose', 'visited_duration', 'visited_countries_details'],
+				'deported': ['deportation_details']
+			}
+			
+			for field in bool_fields:
+				if form_data_for_submit.get(field) is True:
+					form_data_for_submit[field] = 'on'
+				elif field in form_data_for_submit:
+					# If checkbox is False, clear dependent fields
+					if form_data_for_submit.get(field) is False and field in dependent_fields:
+						for dep_field in dependent_fields[field]:
+							form_data_for_submit[dep_field] = ''
+					del form_data_for_submit[field]
+			
+			form = FormResponseForm(form_data_for_submit, files_dict)
+			assessment_form = BorderOfficerAssessmentForm(form_data_for_submit, files_dict)
 			
 			if form.is_valid():
 				instance = form.save(commit=False)
@@ -69,20 +169,29 @@ class SubmitFormView(View):
 					instance.created_by = request.user
 				instance.save()
 				
-				# Create officer assessment if there's assessment data
+				# Always create officer assessment
 				if assessment_form.is_valid():
 					assessment = assessment_form.save(commit=False)
 					assessment.form_response = instance
 					assessment.assessed_by = request.user
 					assessment.calculate_score()
 					assessment.save()
-					
-					# Update response with assessment score
-					instance.total_score = assessment.total_score
-					instance.threat_level = assessment.threat_level
-					instance.save()
+				else:
+					# Create empty assessment if form is invalid (no data filled)
+					assessment = BorderOfficerAssessment.objects.create(
+						form_response=instance,
+						assessed_by=request.user
+					)
+					assessment.calculate_score()
+					assessment.save()
+				
+				# Update response with assessment score
+				instance.total_score = assessment.total_score
+				instance.threat_level = assessment.threat_level
+				instance.save()
 				
 				request.session.pop('form_data', None)
+				request.session.pop('file_data', None)
 				return redirect('platform_manager:form_submitted')
 			else:
 				# Если форма невалидна, вернуться на первый шаг с ошибками
@@ -107,6 +216,17 @@ class ResponsesListView(ListView):
 			queryset = FormResponse.objects.filter(created_by=self.request.user)
 		
 		# Apply filters
+		# Filter by search (full name) - case-insensitive search with proper Unicode handling
+		from django.db.models import Q
+		from django.db.models.functions import Lower
+		search = self.request.GET.get('search')
+		if search:
+			search_term = search.strip().lower()
+			# Use annotate with Lower for proper case-insensitive Unicode search
+			queryset = queryset.annotate(
+				full_name_lower=Lower('full_name_and_birth')
+			).filter(full_name_lower__contains=search_term)
+		
 		# Filter by date range
 		date_from = self.request.GET.get('date_from')
 		date_to = self.request.GET.get('date_to')
@@ -133,6 +253,7 @@ class ResponsesListView(ListView):
 		context['is_manager'] = is_manager(self.request.user)
 		
 		# Add filter values to context for form persistence
+		context['search'] = self.request.GET.get('search', '')
 		context['date_from'] = self.request.GET.get('date_from', '')
 		context['date_to'] = self.request.GET.get('date_to', '')
 		context['created_by'] = self.request.GET.get('created_by', '')
@@ -178,7 +299,7 @@ class FormResponseDetailView(TemplateView):
 
 	def get(self, request, *args, **kwargs):
 		pk = kwargs.get('pk')
-		response = FormResponse.objects.filter(pk=pk).first()
+		response = FormResponse.objects.select_related('officer_assessment').filter(pk=pk).first()
 		
 		# Check access: managers can see all, others can only see their own
 		if response:
@@ -191,24 +312,275 @@ class FormResponseDetailView(TemplateView):
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		pk = kwargs.get('pk')
-		response = FormResponse.objects.filter(pk=pk).first()
+		response = FormResponse.objects.select_related('officer_assessment').filter(pk=pk).first()
 		
 		context['response'] = response
 		context['is_manager'] = is_manager(self.request.user)
 		
-		# Check if delete button should be shown
-		# Managers always see delete button, submitters only within 30 minutes
+		# Check if officer assessment exists
+		if response:
+			try:
+				_ = response.officer_assessment
+			except BorderOfficerAssessment.DoesNotExist:
+				# Assessment doesn't exist, it's ok
+				pass
+		
+		# Check if delete button should be shown (only managers can delete)
 		if response:
 			if is_manager(self.request.user):
 				context['can_delete'] = True
 			else:
-				# Submitters can delete only within 30 minutes
-				time_since_creation = timezone.now() - response.created_at
-				context['can_delete'] = time_since_creation < timedelta(minutes=30)
+				context['can_delete'] = False
 		else:
 			context['can_delete'] = False
 		
+		# Check if edit button should be shown
+		# Managers can always edit, submitters only within 30 minutes
+		if response:
+			if is_manager(self.request.user):
+				context['can_edit'] = True
+			else:
+				# Submitters can edit only within 30 minutes
+				time_since_creation = timezone.now() - response.created_at
+				context['can_edit'] = time_since_creation < timedelta(minutes=30)
+		else:
+			context['can_edit'] = False
+		
 		return context
+
+
+@method_decorator(login_required, name='dispatch')
+class EditFormResponseView(View):
+	"""
+	View for editing form responses.
+	Managers can always edit, submitters only within 30 minutes.
+	"""
+	template_name = 'platform_manager/form_submit.html'
+	
+	def dispatch(self, request, *args, **kwargs):
+		# Get the response object
+		self.response = get_object_or_404(FormResponse, pk=kwargs['pk'])
+		
+		# Check permissions
+		if is_manager(request.user):
+			# Managers can always edit
+			pass
+		elif self.response.created_by == request.user:
+			# Submitters can edit only within 30 minutes
+			time_since_creation = timezone.now() - self.response.created_at
+			if time_since_creation >= timedelta(minutes=30):
+				# Redirect to detail view if time expired
+				return redirect('platform_manager:form_response_detail', pk=self.response.pk)
+		else:
+			# Not authorized to edit this response
+			return redirect('platform_manager:form_responses')
+		
+		return super().dispatch(request, *args, **kwargs)
+	
+	def get(self, request, pk):
+		step = int(request.GET.get('step', 1))
+		
+		# Initialize form data from existing response
+		if 'form_data' not in request.session:
+			form_data = {}
+			# Get all field names from the model (not form meta)
+			for field in self.response._meta.fields:
+				field_name = field.name
+				# Skip file fields, primary keys, and foreign keys
+				if field_name in ['id', 'created_at', 'updated_at', 'created_by', 'full_name_photo']:
+					continue
+				value = getattr(self.response, field_name, None)
+				if value is not None:
+					# Convert to string for JSON serialization
+					if hasattr(value, '__str__'):
+						form_data[field_name] = str(value) if not isinstance(value, (bool, int, float)) else value
+			request.session['form_data'] = form_data
+		else:
+			form_data = request.session.get('form_data', {})
+		
+		form = FormResponseForm(instance=self.response)
+		
+		# Get or create assessment
+		try:
+			assessment = self.response.officer_assessment
+			assessment_form = BorderOfficerAssessmentForm(instance=assessment)
+		except BorderOfficerAssessment.DoesNotExist:
+			assessment_form = BorderOfficerAssessmentForm()
+		
+		context = {
+			'form': form,
+			'assessment_form': assessment_form,
+			'current_step': step,
+			'total_steps': 22,
+			'is_edit': True,
+			'response_id': self.response.pk,
+		}
+		return render(request, self.template_name, context)
+	
+	def post(self, request, pk):
+		import os
+		import base64
+		from django.core.files.uploadedfile import SimpleUploadedFile
+		
+		current_step = int(request.POST.get('current_step', 1))
+		action = request.POST.get('action', 'next')
+		
+		# Save current step data to session
+		form_data = request.session.get('form_data', {})
+		file_data = request.session.get('file_data', {})
+		
+		# Handle checkbox fields
+		checkbox_fields = [
+			'radical_internet_content', 'radical_internet_sheikhs',
+			'radical_religious_signs', 'document_issues_types',
+			'religious_deviations_types', 'suspicious_mobile_types',
+			'suspicious_behavior_types', 'psychological_types',
+			'relatives_mto_types', 'criminal_element_types', 'violence_traces_types'
+		]
+		
+		for field_name in checkbox_fields:
+			if field_name in request.POST:
+				form_data[field_name] = request.POST.getlist(field_name)
+		
+		# Handle boolean fields explicitly (checkboxes send 'on' when checked)
+		# Map steps to their boolean fields to avoid overwriting values from other steps
+		step_bool_fields = {
+			2: ['name_changed'],
+			4: ['military_service'],
+			5: ['criminal_record'],
+			6: ['detained_abroad'],
+			7: ['relatives_in_countries'],
+			8: ['religious'],
+			9: ['relatives_wanted'],
+			10: ['visited_countries'],
+			11: ['deported']
+		}
+		
+		# Only update boolean fields that belong to the current step
+		if current_step in step_bool_fields:
+			for field in step_bool_fields[current_step]:
+				form_data[field] = request.POST.get(field) == 'on'
+		
+		# Save regular fields
+		for key, value in request.POST.items():
+			if key not in ['csrfmiddlewaretoken', 'current_step', 'action'] and key not in checkbox_fields:
+				# Skip boolean fields and photo fields - they're handled separately
+				if key not in ['name_changed', 'military_service', 'criminal_record', 'detained_abroad',
+					'relatives_in_countries', 'relatives_wanted', 'religious', 'visited_countries', 'deported'] and not key.endswith('_photo'):
+					form_data[key] = value
+		
+		# Handle file uploads
+		for field_name in ['full_name_photo', 'radical_internet_photo', 'suspicious_mobile_photo']:
+			if field_name in request.FILES:
+				uploaded_file = request.FILES[field_name]
+				file_content = uploaded_file.read()
+				file_base64 = base64.b64encode(file_content).decode('utf-8')
+				file_data[field_name] = {
+					'name': uploaded_file.name,
+					'content': file_base64,
+					'content_type': uploaded_file.content_type,
+				}
+		
+		request.session['form_data'] = form_data
+		request.session['file_data'] = file_data
+		
+		# Handle navigation
+		if action == 'previous' and current_step > 1:
+			return redirect(f"{request.path}?step={current_step - 1}")
+		elif action == 'next' and current_step < 22:
+			return redirect(f"{request.path}?step={current_step + 1}")
+		elif action == 'submit':
+			# Update the response using session data
+			# Decode files from base64
+			files_dict = {}
+			for key, file_info in file_data.items():
+				if isinstance(file_info, dict) and 'content' in file_info:
+					file_content = base64.b64decode(file_info['content'])
+					files_dict[key] = SimpleUploadedFile(
+						name=file_info['name'],
+						content=file_content,
+						content_type=file_info['content_type']
+					)
+			
+			# Convert boolean values to 'on' for Django form processing
+			form_data_for_submit = form_data.copy()
+			bool_fields = [
+				'name_changed', 'military_service', 'criminal_record', 'detained_abroad',
+				'relatives_in_countries', 'relatives_wanted', 'religious', 'visited_countries', 'deported'
+			]
+			
+			# Clear dependent fields when checkbox is unchecked
+			dependent_fields = {
+				'name_changed': ['name_change_reason'],
+				'military_service': ['military_details'],
+				'criminal_record': ['criminal_period_where', 'criminal_offenses'],
+				'detained_abroad': ['detained_when_why', 'detained_where'],
+				'relatives_in_countries': ['relatives_full_name', 'relatives_when_left', 'relatives_occupation', 'relatives_details'],
+				'relatives_wanted': ['relatives_wanted_reason'],
+				'religious': ['denomination', 'denomination_other'],
+				'visited_countries': ['visited_when_purpose', 'visited_duration', 'visited_countries_details'],
+				'deported': ['deportation_details']
+			}
+			
+			for field in bool_fields:
+				if form_data_for_submit.get(field) is True:
+					form_data_for_submit[field] = 'on'
+				elif field in form_data_for_submit:
+					# If checkbox is False, clear dependent fields
+					if form_data_for_submit.get(field) is False and field in dependent_fields:
+						for dep_field in dependent_fields[field]:
+							form_data_for_submit[dep_field] = ''
+					del form_data_for_submit[field]
+			
+			form = FormResponseForm(form_data_for_submit, files_dict, instance=self.response)
+			assessment_form = BorderOfficerAssessmentForm(form_data_for_submit, files_dict)
+			
+			if form.is_valid():
+				instance = form.save(commit=False)
+				
+				instance.calculate_score()
+				instance.save()
+				
+				# Update or create assessment
+				try:
+					assessment = self.response.officer_assessment
+					assessment_form = BorderOfficerAssessmentForm(request.POST, request.FILES, instance=assessment)
+				except BorderOfficerAssessment.DoesNotExist:
+					assessment_form = BorderOfficerAssessmentForm(request.POST, request.FILES)
+				
+				if assessment_form.is_valid():
+					assessment = assessment_form.save(commit=False)
+					assessment.form_response = instance
+					if not assessment.assessed_by:
+						assessment.assessed_by = request.user
+					assessment.calculate_score()
+					assessment.save()
+				else:
+					# Create or update empty assessment
+					try:
+						assessment = self.response.officer_assessment
+						assessment.calculate_score()
+						assessment.save()
+					except BorderOfficerAssessment.DoesNotExist:
+						assessment = BorderOfficerAssessment.objects.create(
+							form_response=instance,
+							assessed_by=request.user
+						)
+						assessment.calculate_score()
+						assessment.save()
+				
+				# Update response with assessment score
+				instance.total_score = assessment.total_score
+				instance.threat_level = assessment.threat_level
+				instance.save()
+				
+				request.session.pop('form_data', None)
+				request.session.pop('file_data', None)
+				return redirect('platform_manager:form_response_detail', pk=instance.pk)
+			else:
+				return redirect(f"{request.path}?step=1")
+		
+		return redirect(f"{request.path}?step={current_step}")
 
 
 @method_decorator(user_passes_test(is_manager), name='dispatch')
@@ -280,6 +652,401 @@ class OfficerAssessmentView(View):
 			'response': response,
 		}
 		return render(request, self.template_name, context)
+
+
+@login_required
+@user_passes_test(is_manager)
+def export_response_pdf(request, pk):
+	"""Export form response to PDF (managers only)."""
+	from django.http import HttpResponse
+	from reportlab.lib.pagesizes import A4
+	from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+	from reportlab.lib.units import cm
+	from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+	from reportlab.lib import colors
+	from reportlab.lib.enums import TA_LEFT, TA_CENTER
+	from reportlab.pdfbase import pdfmetrics
+	from reportlab.pdfbase.ttfonts import TTFont
+	import os
+	from django.conf import settings
+	
+	# Register fonts for Cyrillic support
+	fonts_dir = os.path.join(settings.BASE_DIR, 'fonts')
+	try:
+		pdfmetrics.registerFont(TTFont('DejaVuSans', os.path.join(fonts_dir, 'DejaVuSans.ttf')))
+		pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', os.path.join(fonts_dir, 'DejaVuSans-Bold.ttf')))
+		normal_font = 'DejaVuSans'
+		bold_font = 'DejaVuSans-Bold'
+	except:
+		# Fallback to Helvetica if DejaVu fonts not available
+		normal_font = 'Helvetica'
+		bold_font = 'Helvetica-Bold'
+	
+	response_obj = get_object_or_404(FormResponse, pk=pk)
+	
+	# Create HTTP response with PDF headers
+	response = HttpResponse(content_type='application/pdf')
+	response['Content-Disposition'] = f'attachment; filename="response_{pk}.pdf"'
+	
+	# Create PDF document
+	doc = SimpleDocTemplate(response, pagesize=A4, topMargin=1.5*cm, bottomMargin=1.5*cm, leftMargin=2*cm, rightMargin=2*cm)
+	story = []
+	
+	# Styles
+	styles = getSampleStyleSheet()
+	title_style = ParagraphStyle(
+		'CustomTitle',
+		parent=styles['Heading1'],
+		fontSize=18,
+		textColor=colors.HexColor('#1f2937'),
+		spaceAfter=20,
+		alignment=TA_CENTER,
+		fontName=bold_font
+	)
+	
+	heading_style = ParagraphStyle(
+		'CustomHeading',
+		parent=styles['Heading2'],
+		fontSize=12,
+		textColor=colors.HexColor('#1f2937'),
+		spaceAfter=10,
+		spaceBefore=15,
+		fontName=bold_font
+	)
+	
+	normal_style = ParagraphStyle(
+		'CustomNormal',
+		parent=styles['Normal'],
+		fontSize=9,
+		textColor=colors.HexColor('#1f2937'),
+		fontName=normal_font
+	)
+	
+	# Title
+	story.append(Paragraph("Ответ на форму", title_style))
+	story.append(Spacer(1, 0.5*cm))
+	
+	# Helper function for yes/no with details
+	def add_field(data, question, yes_no_field, details_field=None, details_label=None):
+		yes_no = 'Да' if yes_no_field else 'Нет'
+		data.append([Paragraph(question, normal_style), Paragraph(yes_no, normal_style)])
+		if details_field and details_field.strip():
+			if details_label:
+				data.append([Paragraph(details_label, normal_style), Paragraph(details_field.replace('\n', '<br/>'), normal_style)])
+	
+	# Section 1: Biographical Data
+	story.append(Paragraph("В части биографических данных", heading_style))
+	bio_data = []
+	
+	# Question 1
+	bio_data.append([
+		Paragraph('1. ФИО, дата и место рождения', normal_style),
+		Paragraph(response_obj.full_name_and_birth.replace('\n', '<br/>') if response_obj.full_name_and_birth else '—', normal_style)
+	])
+	
+	# Question 2
+	add_field(bio_data, '2. Изменяли ли фамилию/имя/отчество', response_obj.name_changed, 
+		response_obj.name_change_reason, 'Причина изменения')
+	
+	# Question 3
+	bio_data.append([
+		Paragraph('3. Телефоны и email', normal_style),
+		Paragraph(response_obj.phones_emails.replace('\n', '<br/>') if response_obj.phones_emails else '—', normal_style)
+	])
+	
+	# Question 4
+	add_field(bio_data, '4. Служба в ВС', response_obj.military_service,
+		response_obj.military_details, 'Детали службы')
+	
+	bio_table = Table(bio_data, colWidths=[7*cm, 10*cm])
+	bio_table.setStyle(TableStyle([
+		('BACKGROUND', (0, 0), (-1, -1), colors.white),
+		('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4b5563')),
+		('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#1f2937')),
+		('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+		('VALIGN', (0, 0), (-1, -1), 'TOP'),
+		('FONTSIZE', (0, 0), (-1, -1), 9),
+		('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+		('TOPPADDING', (0, 0), (-1, -1), 8),
+		('LEFTPADDING', (0, 0), (-1, -1), 10),
+		('RIGHTPADDING', (0, 0), (-1, -1), 10),
+		('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb'))
+	]))
+	story.append(bio_table)
+	story.append(Spacer(1, 0.5*cm))
+	
+	# Section 2: Criminal and Legal Information
+	story.append(Paragraph("Уголовная и правовая информация", heading_style))
+	criminal_data = []
+	
+	# Question 5
+	add_field(criminal_data, '5. Судимость', response_obj.criminal_record,
+		(response_obj.criminal_period_where or '') + '\n' + (response_obj.criminal_offenses or '') if response_obj.criminal_period_where or response_obj.criminal_offenses else None,
+		'Период и место отбытия наказания / За какие преступления')
+	
+	# Question 6
+	add_field(criminal_data, '6. Задержания за границей', response_obj.detained_abroad,
+		(response_obj.detained_when_why or '') + ('\n' + response_obj.detained_where if response_obj.detained_where else ''),
+		'Когда и почему / Где содержали')
+	
+	criminal_table = Table(criminal_data, colWidths=[7*cm, 10*cm])
+	criminal_table.setStyle(TableStyle([
+		('BACKGROUND', (0, 0), (-1, -1), colors.white),
+		('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4b5563')),
+		('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#1f2937')),
+		('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+		('VALIGN', (0, 0), (-1, -1), 'TOP'),
+		('FONTSIZE', (0, 0), (-1, -1), 9),
+		('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+		('TOPPADDING', (0, 0), (-1, -1), 8),
+		('LEFTPADDING', (0, 0), (-1, -1), 10),
+		('RIGHTPADDING', (0, 0), (-1, -1), 10),
+		('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb'))
+	]))
+	story.append(criminal_table)
+	story.append(Spacer(1, 0.5*cm))
+	
+	# Section 3: Relatives and Religion
+	story.append(Paragraph("Родственники и религия", heading_style))
+	relatives_data = []
+	
+	# Question 7
+	add_field(relatives_data, '7. Родственники в указанных странах', response_obj.relatives_in_countries,
+		response_obj.relatives_details, 'Детали родственников')
+	
+	# Question 8
+	add_field(relatives_data, '8. Религиозны', response_obj.religious,
+		response_obj.denomination, 'Мазхаб/взгляды')
+	
+	# Question 9 (previously was question 8 about relatives_wanted)
+	if response_obj.relatives_wanted:
+		relatives_data.append([
+			Paragraph('9. Разыскиваются ли родственники', normal_style),
+			Paragraph('Да', normal_style)
+		])
+		if response_obj.relatives_wanted_reason and response_obj.relatives_wanted_reason.strip():
+			relatives_data.append([
+				Paragraph('Причина розыска', normal_style),
+				Paragraph(response_obj.relatives_wanted_reason.replace('\n', '<br/>'), normal_style)
+			])
+	
+	relatives_table = Table(relatives_data, colWidths=[7*cm, 10*cm])
+	relatives_table.setStyle(TableStyle([
+		('BACKGROUND', (0, 0), (-1, -1), colors.white),
+		('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4b5563')),
+		('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#1f2937')),
+		('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+		('VALIGN', (0, 0), (-1, -1), 'TOP'),
+		('FONTSIZE', (0, 0), (-1, -1), 9),
+		('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+		('TOPPADDING', (0, 0), (-1, -1), 8),
+		('LEFTPADDING', (0, 0), (-1, -1), 10),
+		('RIGHTPADDING', (0, 0), (-1, -1), 10),
+		('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb'))
+	]))
+	story.append(relatives_table)
+	story.append(Spacer(1, 0.5*cm))
+	
+	# Section 4: Travel and Deportations
+	story.append(Paragraph("Поездки и депортации", heading_style))
+	travel_data = []
+	
+	# Question 10
+	add_field(travel_data, '10. Посещали указанные страны', response_obj.visited_countries,
+		response_obj.visited_countries_details, 'Детали визитов')
+	
+	# Question 11
+	add_field(travel_data, '11. Депортация/выдворение', response_obj.deported,
+		response_obj.deportation_details, 'Детали депортации')
+	
+	# Question 12
+	if response_obj.not_allowed_reason:
+		travel_data.append([
+			Paragraph('12. Причина не пропуска', normal_style),
+			Paragraph(response_obj.not_allowed_reason.replace('\n', '<br/>'), normal_style)
+		])
+	
+	# Question 13
+	if response_obj.last_time_in_homeland:
+		travel_data.append([
+			Paragraph('13. Когда в последний раз были на родине', normal_style),
+			Paragraph(str(response_obj.last_time_in_homeland), normal_style)
+		])
+	
+	travel_table = Table(travel_data, colWidths=[7*cm, 10*cm])
+	travel_table.setStyle(TableStyle([
+		('BACKGROUND', (0, 0), (-1, -1), colors.white),
+		('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4b5563')),
+		('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#1f2937')),
+		('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+		('VALIGN', (0, 0), (-1, -1), 'TOP'),
+		('FONTSIZE', (0, 0), (-1, -1), 9),
+		('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+		('TOPPADDING', (0, 0), (-1, -1), 8),
+		('LEFTPADDING', (0, 0), (-1, -1), 10),
+		('RIGHTPADDING', (0, 0), (-1, -1), 10),
+		('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb'))
+	]))
+	story.append(travel_table)
+	story.append(Spacer(1, 0.8*cm))
+	
+	# Section 5: Officer Assessment (Questions 14-23)
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment:
+		story.append(Paragraph("Оценка пограничного офицера", heading_style))
+		assessment = response_obj.officer_assessment
+		assessment_data = []
+		
+		# Helper function to add checkbox selections
+		def add_checkbox_field(data, question, yes_no_field, labels_method, details_field=None):
+			yes_no = 'Да' if yes_no_field else 'Нет'
+			data.append([Paragraph(question, normal_style), Paragraph(yes_no, normal_style)])
+			if yes_no_field and labels_method:
+				labels = labels_method()
+				if labels:
+					items_html = '<br/>'.join([f'• {label}' for label in labels])
+					data.append([Paragraph('Выявленные проблемы:', normal_style), Paragraph(items_html, normal_style)])
+			if details_field and details_field.strip():
+				data.append([Paragraph('Доп. детали:', normal_style), Paragraph(details_field.replace('\n', '<br/>'), normal_style)])
+		
+		# Question 14 & 15 - Radical Internet
+		add_checkbox_field(assessment_data, '14. Радикальный контент в интернете', 
+			assessment.radical_internet, assessment.get_radical_internet_content_labels,
+			assessment.radical_internet_details)
+		
+		if assessment.radical_internet_sheikhs:
+			labels = assessment.get_radical_internet_sheikhs_labels()
+			if labels:
+				items_html = '<br/>'.join([f'• {label}' for label in labels])
+				assessment_data.append([Paragraph('15. Радикальные шейхи:', normal_style), Paragraph(items_html, normal_style)])
+		
+		# Question 16 - Radical Religious Ideology
+		add_checkbox_field(assessment_data, '16. Радикальная религиозная идеология',
+			assessment.radical_religious_ideology, assessment.get_radical_religious_signs_labels,
+			assessment.radical_religious_details)
+		
+		# Question 17 - Document Issues
+		add_checkbox_field(assessment_data, '17. Проблемы с документами',
+			assessment.document_issues, assessment.get_document_issues_types_labels,
+			assessment.document_issues_details)
+		
+		# Question 18 - Religious Deviations
+		add_checkbox_field(assessment_data, '18. Отклонение от религиозных норм',
+			assessment.religious_deviations, assessment.get_religious_deviations_types_labels,
+			assessment.religious_deviations_details)
+		
+		# Question 19 - Suspicious Mobile Content
+		add_checkbox_field(assessment_data, '19. Подозрительный контент на телефоне',
+			assessment.suspicious_mobile_content, assessment.get_suspicious_mobile_types_labels,
+			assessment.suspicious_mobile_details)
+		
+		# Question 20 - Suspicious Behavior
+		add_checkbox_field(assessment_data, '20. Подозрительное поведение',
+			assessment.suspicious_behavior, assessment.get_suspicious_behavior_types_labels,
+			assessment.suspicious_behavior_details)
+		
+		# Question 21 - Psychological Issues
+		add_checkbox_field(assessment_data, '21. Психологические отклонения',
+			assessment.psychological_issues, assessment.get_psychological_types_labels,
+			assessment.psychological_details)
+		
+		# Question 22 - Relatives MTO
+		add_checkbox_field(assessment_data, '22. Родственники в МТО',
+			assessment.relatives_mto, assessment.get_relatives_mto_types_labels,
+			assessment.relatives_mto_details)
+		
+		# Question 23 - Criminal Element
+		add_checkbox_field(assessment_data, '23. Криминальный элемент',
+			assessment.criminal_element, assessment.get_criminal_element_types_labels,
+			assessment.criminal_element_details)
+		
+		# Question 23b - Violence Traces
+		if assessment.violence_traces:
+			add_checkbox_field(assessment_data, '23. Следы насилия',
+				assessment.violence_traces, assessment.get_violence_traces_types_labels,
+				assessment.violence_traces_details)
+		
+		assessment_table = Table(assessment_data, colWidths=[7*cm, 10*cm])
+		assessment_table.setStyle(TableStyle([
+			('BACKGROUND', (0, 0), (-1, -1), colors.white),
+			('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#4b5563')),
+			('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#1f2937')),
+			('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+			('VALIGN', (0, 0), (-1, -1), 'TOP'),
+			('FONTSIZE', (0, 0), (-1, -1), 9),
+			('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+			('TOPPADDING', (0, 0), (-1, -1), 8),
+			('LEFTPADDING', (0, 0), (-1, -1), 10),
+			('RIGHTPADDING', (0, 0), (-1, -1), 10),
+			('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb'))
+		]))
+		story.append(assessment_table)
+		story.append(Spacer(1, 0.5*cm))
+	
+	# Section 6: Attached Photos (at the end)
+	from reportlab.platypus import Image as RLImage
+	photos = []
+	
+	# Check for full_name_photo (Question 1)
+	if response_obj.full_name_photo:
+		photos.append(('Фото документа (Вопрос 1)', response_obj.full_name_photo))
+	
+	# Check for suspicious_mobile_photo (Question 13)
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
+		photos.append(('Фото подозрительного контента на телефоне (Вопрос 13)', response_obj.officer_assessment.suspicious_mobile_photo))
+
+	# Check for radical_internet_photo (Question 17)
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.radical_internet_photo:
+		photos.append(('Фото радикального контента в интернете (Вопрос 17)', response_obj.officer_assessment.radical_internet_photo))
+	
+	if photos:
+		story.append(Paragraph("Прикрепленные фотографии", heading_style))
+		
+		for photo_title, photo_field in photos:
+			story.append(Paragraph(photo_title, normal_style))
+			story.append(Spacer(1, 0.2*cm))
+			
+			try:
+				# Get absolute path to the image
+				photo_path = photo_field.path
+				
+				# Create image with max width to fit page
+				img = RLImage(photo_path, width=15*cm, height=15*cm, kind='proportional')
+				story.append(img)
+				story.append(Spacer(1, 0.5*cm))
+			except Exception as e:
+				# If image can't be loaded, just show a note
+				story.append(Paragraph(f"[Фото недоступно: {str(e)}]", normal_style))
+				story.append(Spacer(1, 0.3*cm))
+	
+	# Footer with metadata
+	footer_data = [
+		['Создан:', response_obj.created_at.strftime('%d.%m.%Y %H:%M')],
+		['Общий балл:', f"{response_obj.total_score} баллов"],
+		['Уровень угрозы:', response_obj.threat_level],
+	]
+	if response_obj.created_by:
+		footer_data.insert(0, ['Создал:', f"{response_obj.created_by.first_name} {response_obj.created_by.last_name}"])
+	
+	footer_table = Table(footer_data, colWidths=[4*cm, 13*cm])
+	footer_table.setStyle(TableStyle([
+		('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f3f4f6')),
+		('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#1f2937')),
+		('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+		('FONTNAME', (0, 0), (0, -1), bold_font),
+		('FONTNAME', (1, 0), (-1, -1), normal_font),
+		('FONTSIZE', (0, 0), (-1, -1), 9),
+		('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+		('TOPPADDING', (0, 0), (-1, -1), 6),
+		('LEFTPADDING', (0, 0), (-1, -1), 10),
+		('RIGHTPADDING', (0, 0), (-1, -1), 10),
+		('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb'))
+	]))
+	story.append(footer_table)
+	
+	# Build PDF
+	doc.build(story)
+	
+	return response
 
 
 @login_required

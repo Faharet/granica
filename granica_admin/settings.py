@@ -190,18 +190,20 @@ STATIC_URL = '/static/'
 # ]
 # STATIC_ROOT = './static_files/'
 
-DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
-MINIO_STORAGE_ENDPOINT = os.getenv('MINIO_STORAGE_ENDPOINT', 'localhost:9000')
-MINIO_STORAGE_ACCESS_KEY = os.getenv('MINIO_STORAGE_ACCESS_KEY', '')
-MINIO_STORAGE_SECRET_KEY = os.getenv('MINIO_STORAGE_SECRET_KEY', '')
-MINIO_STORAGE_USE_HTTPS = os.getenv('MINIO_STORAGE_USE_HTTPS', 'False').lower() == 'true'
-MINIO_STORAGE_MEDIA_OBJECT_METADATA = {"Cache-Control": "max-age=1000"}
-MINIO_STORAGE_MEDIA_BUCKET_NAME = os.getenv('MINIO_STORAGE_MEDIA_BUCKET_NAME', 'deli-bikes')
+# MinIO storage (commented out for faster local development)
+# DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
+# MINIO_STORAGE_ENDPOINT = os.getenv('MINIO_STORAGE_ENDPOINT', 'localhost:9000')
+# MINIO_STORAGE_ACCESS_KEY = os.getenv('MINIO_STORAGE_ACCESS_KEY', '')
+# MINIO_STORAGE_SECRET_KEY = os.getenv('MINIO_STORAGE_SECRET_KEY', '')
+# MINIO_STORAGE_USE_HTTPS = os.getenv('MINIO_STORAGE_USE_HTTPS', 'False').lower() == 'true'
+# MINIO_STORAGE_MEDIA_OBJECT_METADATA = {"Cache-Control": "max-age=1000"}
+# MINIO_STORAGE_MEDIA_BUCKET_NAME = os.getenv('MINIO_STORAGE_MEDIA_BUCKET_NAME', 'deli-bikes')
 
 
+# Use local filesystem storage (much faster)
 STORAGES = {
     "default": {
-        "BACKEND": "minio_storage.storage.MinioMediaStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
@@ -210,7 +212,7 @@ STORAGES = {
 
 MEDIA_URL = '/media/'
 # Directory where uploaded media files are stored
-MEDIA_ROOT = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 # Default primary key field type

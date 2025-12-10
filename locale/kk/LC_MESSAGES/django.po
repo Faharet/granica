@@ -215,14 +215,8 @@ msgstr "a) қашан және қандай себеппен ұсталдыңы�
 msgid "b) where were you held?"
 msgstr "b) қайда ұсталдыңыз?"
 
-msgid "7. Are any of your relatives or acquaintances in the listed countries?"
-msgstr "7. Туыстарыңыздың немесе таныстарыңыздың тізімделген елдерде біреуі бар ма?"
-
-msgid "a) state full name, b) when did they leave, c) what do they do"
-msgstr "a) толық аты-жөнін атаңыз, b) қашан кеткен, c) немен айналысады"
-
-msgid "8. Is any of your relatives wanted by law enforcement agencies?"
-msgstr "8. Туыстарыңыздың біреуі құқық қорғау органдары іздеп жүр ме?"
+msgid "7. Are any of your relatives sought by police?"
+msgstr "7. Туыстарыңыздың біреуі құқық қорғау органдары іздеп жүр ме?"
 
 msgid "If yes: For what reason?"
 msgstr "Оң жауап болса: Қандай себеппен?"
@@ -230,8 +224,8 @@ msgstr "Оң жауап болса: Қандай себеппен?"
 msgid "Religion"
 msgstr "Дін"
 
-msgid "9. Are you religious?"
-msgstr "9. Дінге сенесіз бе?"
+msgid "8. Are you religious?"
+msgstr "8. Дінге сенесіз бе?"
 
 msgid "If yes: which madhhab do you follow?"
 msgstr "Иә болса: қандай мәзһабқа жатасыз?"
@@ -239,23 +233,23 @@ msgstr "Иә болса: қандай мәзһабқа жатасыз?"
 msgid "Places of stay and travel"
 msgstr "Болу орындары мен сапарлар"
 
-msgid "10. Have you visited the listed countries?"
-msgstr "10. Тізімделген елдерге бардыңыз ба?"
+msgid "9. Have you visited the listed countries?"
+msgstr "9. Тізімделген елдерге бардыңыз ба?"
 
 msgid "a) when and purpose of the trip; b) duration of stay"
 msgstr "a) қашан және сапардың мақсаты; b) болу мерзімі"
 
-msgid "11. Have you been deported / expelled?"
-msgstr "11. Сізді депортациялаған / шығарып жіберген бе?"
+msgid "10. Have you been deported / expelled?"
+msgstr "10. Сізді депортациялаған / шығарып жіберген бе?"
 
 msgid "If yes: when and reasons for deportation"
 msgstr "Оң жауап болса: қашан және депортация себептері"
 
-msgid "12. If not allowed entry to the destination state - state the reason for not being allowed"
-msgstr "12. Егер бару мемлекетінің аумағына өткізілмесе - өткізілмеу себебін атаңыз"
+msgid "11. If not allowed entry to the destination state - state the reason for not being allowed"
+msgstr "11. Егер бару мемлекетінің аумағына өткізілмесе - өткізілмеу себебін атаңыз"
 
-msgid "13. When was the last time you were in your homeland?"
-msgstr "13. Соңғы рет отанда қашан болдыңыз?"
+msgid "12. When was the last time you were in your homeland?"
+msgstr "12. Соңғы рет отанда қашан болдыңыз?"
 
 msgid "Question"
 msgstr "Сұрақ"
@@ -275,32 +269,35 @@ msgstr "Барлығы"
 msgid "Border Officer Assessment. The following questions are filled in by the border officer based on inspection."
 msgstr "Шекарашының бағалауы. Келесі сұрақтарды шекарашы тексеру негізінде толтырады."
 
-msgid "14. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content"
-msgstr "14. Радикалдық интернет қауымдастықтарына және мессенджерлерге қатысады, радикалдық идеологтарға бағдарланған, телефонда радикалдық мазмұндағы фото/видео файлдар бар"
+msgid "13. In mobile devices:"
+msgstr "13. Мобильді құрылғыларда:"
 
-msgid "15. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)"
-msgstr "15. Дінге сенуші, радикалдық идеялар жақтаушысының белгілері бар (немадхалиттік идеологияны жақтаушының айқын белгілері, сондай-ақ терроризм мен діни экстремизм идеологиясын қолдайтын тұлға)"
+msgid "14. Religious, with signs of supporting radical ideas (clear signs of supporting non-Madhalist ideology, as well as supporting the ideology of terrorism and religious extremism)"
+msgstr "14. Дінге сенуші, радикалдық идеялар жақтаушысының белгілері бар (немадхалиттік идеологияны жақтаушының айқын белгілері, сондай-ақ терроризм мен діни экстремизм идеологиясын қолдайтын тұлға)"
 
-msgid "16. Signs in documents:"
-msgstr "16. Құжаттардағы белгілер:"
+msgid "15. Signs in documents:"
+msgstr "15. Құжаттардағы белгілер:"
 
-msgid "17. In personal belongings:"
-msgstr "17. Жеке заттарда:"
+msgid "16. Deviation from traditional religious norms:"
+msgstr "16. Діни нормалардан ауытқулар:"
 
-msgid "18. In mobile devices:"
-msgstr "18. Мобильді құрылғыларда:"
+msgid "17. Member of radical Internet communities and messengers, focused on radical ideologues, phone contains photo/video files of radical content"
+msgstr "17. Радикалдық интернет қауымдастықтарына және мессенджерлерге қатысады, радикалдық идеологтарға бағдарланған, телефонда радикалдық мазмұндағы фото/видео файлдар бар"
 
-msgid "19. In behavior:"
-msgstr "19. Мінез-құлықта:"
+msgid "18. In behavior:"
+msgstr "18. Мінез-құлықта:"
 
-msgid "20. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person."
-msgstr "20. Психологиялық ауытқулар байқалады (тұлғаның психикалық ауруларының мүмкіндігін куәландыратын) тұлғаның терең дінге сенімділігімен бірге."
+msgid "19. Psychological deviations are observed (indicating possible mental illnesses of the person) in combination with deep religiosity of the person."
+msgstr "19. Психологиялық ауытқулар байқалады (тұлғаның психикалық ауруларының мүмкіндігін куәландыратын) тұлғаның терең дінге сенімділігімен бірге."
 
-msgid "22. Presence of contacts with Kazakhstani 'non-Madhalists'"
-msgstr "22. Қазақстандық «немадхалиттермен» байланыстары бар"
+msgid "20. Criminally-oriented elements"
+msgstr "20. Қылмысқа бағытталған элементтер"
 
-msgid "23. On exposed parts of the body, there are traces of gunshot and shrapnel wounds."
-msgstr "23. Денесінің ашық бөліктерінде оқтан және сынықтан жарақат іздері бар."
+msgid "21. Presence of contacts with Kazakhstani 'non-Madhalists'"
+msgstr "21. Қазақстандық \"Мадхалистермен\" байланыстың болуы"
+
+msgid "22. On exposed parts of the body, there are traces of gunshot and shrapnel wounds."
+msgstr "22. Денесінің ашық бөліктерінде оқтан және сынықтан жарақат іздері бар."
 
 msgid "External signs:"
 msgstr "Сыртқы белгілер:"
@@ -326,6 +323,9 @@ msgstr "Толығырақ:"
 msgid "Details:"
 msgstr "Толығырақ:"
 
+msgid "Additional details:"
+msgstr "Қосымша мәліметтер:"
+
 msgid "Дополнительные заметки:"
 msgstr "Қосымша ескертпелер:"
 
@@ -338,6 +338,12 @@ msgstr "Барлығы"
 
 msgid "Reset"
 msgstr "Тазалау"
+
+msgid "Search by name"
+msgstr "Аты-жөні бойынша іздеу"
+
+msgid "Enter full name..."
+msgstr "Толық аты-жөнін енгізіңіз..."
 
 msgid "Date from"
 msgstr "Күні бастап"
@@ -417,6 +423,9 @@ msgstr "Форма жауаптары"
 msgid "Created at"
 msgstr "Жасалған күні"
 
+msgid "Export PDF"
+msgstr "PDF-ке экспорттау"
+
 msgid "View your submitted forms"
 msgstr "Жіберілген формаларды қарау"
 
@@ -440,3 +449,51 @@ msgstr "Форма жауаптары"
 
 msgid "Created at"
 msgstr "Жасалған күні"
+
+msgid "Export PDF"
+msgstr "PDF экспорттау"
+
+msgid "Attach photo of document (optional)"
+msgstr "Құжаттың фотосуретін тіркеңіз (міндетті емес)"
+
+msgid "a) state full name"
+msgstr "а) мемлекеттің толық атауы"
+
+msgid "b) when did they leave"
+msgstr "б) олар қашан кетті"
+
+msgid "c) what do they do"
+msgstr "в) олар не істейді"
+
+msgid "a) when and purpose of the trip"
+msgstr "а) сапардың қашан және мақсаты"
+
+msgid "b) duration of stay"
+msgstr "б) болу ұзақтығы"
+
+msgid "Attach photo (optional):"
+msgstr "Фото тіркеңіз (қосымша)"
+
+msgid "Attach photo of document (optional)"
+msgstr "Құжат фотосын тіркеңіз (қосымша)"
+
+msgid "a) state full name"
+msgstr "а) толық аты-жөнін көрсетіңіз"
+
+msgid "b) when did they leave"
+msgstr "б) қашан шығып кеткен"
+
+msgid "c) what do they do"
+msgstr "в) немен айналысады"
+
+msgid "a) when and purpose of the trip"
+msgstr "а) қашан және сапардың мақсаты"
+
+msgid "b) duration of stay"
+msgstr "б) болу мерзімі"
+
+msgid "Attach photo (optional):"
+msgstr "Фото тіркеңіз (қосымша):"
+
+msgid "Supported formats: JPG, PNG, PDF"
+msgstr "Қолдау көрсетілетін форматтар: JPG, PNG, PDF"
