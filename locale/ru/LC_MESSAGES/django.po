@@ -465,3 +465,180 @@ msgstr "Место рождения"
 
 msgid "Full name:"
 msgstr "Полное имя:"
+
+msgid "Content type:"
+msgstr "Тип контента:"
+
+msgid "Sheikh names:"
+msgstr "Имена шейхов:"
+
+msgid "Additional details:"
+msgstr "Доп. детали:"
+
+msgid "Attached photo"
+msgstr "Прикрепленное фото"
+
+msgid "Signs:"
+msgstr "Признаки:"
+
+msgid "Problems:"
+msgstr "Проблемы:"
+
+msgid "Deviations:"
+msgstr "Отклонения:"
+
+msgid "Types:"
+msgstr "Типы:"
+
+msgid "Behavior:"
+msgstr "Поведение:"
+
+msgid "Connection type:"
+msgstr "Тип связи:"
+
+msgid "Activity type:"
+msgstr "Тип активности:"
+
+msgid "Trace type:"
+msgstr "Тип следов:"
+
+msgid "Total score:"
+msgstr "Общий балл:"
+
+msgid "out of"
+msgstr "из"
+
+msgid "0-49 points - Low threat level"
+msgstr "0-49 баллов - Низкий уровень опасности"
+
+msgid "50-119 points - Medium threat level"
+msgstr "50-119 баллов - Средний уровень опасности"
+
+msgid "120+ points - High threat level"
+msgstr "120+ баллов - Высокий уровень опасности"
+
+msgid "Response Details"
+msgstr "Детали ответа"
+
+msgid "Biographical Data"
+msgstr "Биографические данные"
+
+msgid "1. Full name, date and place of birth"
+msgstr "1. ФИО, дата и место рождения"
+
+msgid "Document Photo"
+msgstr "Фото документа"
+
+msgid "Person Photo"
+msgstr "Фото человека"
+
+msgid "2. Changed last name/first name/patronymic"
+msgstr "2. Изменяли ли имя/фамилию/отчество"
+
+msgid "Reason for change"
+msgstr "Причина изменения"
+
+msgid "3. Phones and email"
+msgstr "3. Телефоны и email"
+
+msgid "4. Military service"
+msgstr "4. Служба в ВС"
+
+msgid "Service details"
+msgstr "Детали службы"
+
+msgid "Criminal and Legal Information"
+msgstr "Уголовная и правовая информация"
+
+msgid "5. Criminal record"
+msgstr "5. Судимость"
+
+msgid "Period and place of serving sentence"
+msgstr "Период и место отбытия наказания"
+
+msgid "For what crimes"
+msgstr "За какие преступления"
+
+msgid "6. Detained abroad"
+msgstr "6. Задержание за рубежом"
+
+msgid "When and why detained"
+msgstr "Когда и почему задержали"
+
+msgid "Where held"
+msgstr "Где содержали"
+
+msgid "Relatives and Religion"
+msgstr "Родственники и вероисповедание"
+
+msgid "7. Relatives in specified countries"
+msgstr "7. Родственники в указанных странах"
+
+msgid "Details about relatives"
+msgstr "Сведения о родственниках"
+
+msgid "8. Religious"
+msgstr "8. Религиозность"
+
+msgid "Religious views/madhhab"
+msgstr "Религиозные взгляды/мазхаб"
+
+msgid "9. Are relatives wanted"
+msgstr "9. Розыск родственников"
+
+msgid "Reason for search"
+msgstr "Причина розыска"
+
+msgid "Trips and Deportations"
+msgstr "Поездки и депортации"
+
+msgid "10. Visited specified countries"
+msgstr "10. Посещение указанных стран"
+
+msgid "Details of visits"
+msgstr "Детали визитов"
+
+msgid "11. Deportation/expulsion"
+msgstr "11. Депортация/выдворение"
+
+msgid "Deportation details"
+msgstr "Детали депортации"
+
+msgid "12. Reason for not being allowed entry"
+msgstr "12. Причина недопуска"
+
+msgid "13. When was the last time you were in your homeland"
+msgstr "13. Когда последний раз были на родине"
+
+msgid "Border Officer Assessment"
+msgstr "Оценка пограничного офицера"
+
+msgid "14. Member of radical internet communities"
+msgstr "14. Член радикальных интернет-сообществ"
+
+msgid "15. Supporter of radical religious movements"
+msgstr "15. Сторонник радикальных религиозных течений"
+
+msgid "16. Document issues"
+msgstr "16. Проблемы с документами"
+
+msgid "17. Religious deviations"
+msgstr "17. Религиозные отклонения"
+
+msgid "18. Suspicious content on mobile devices"
+msgstr "18. Подозрительный контент на мобильных устройствах"
+
+msgid "19. Suspicious behavior"
+msgstr "19. Подозрительное поведение"
+
+msgid "20. Psychological deviations"
+msgstr "20. Психологические отклонения"
+
+msgid "21. Relatives with close ties to terrorist organizations"
+msgstr "21. Родственники со связями с террористическими организациями"
+
+msgid "22. Criminally-oriented element"
+msgstr "22. Криминально-ориентированный элемент"
+
+msgid "23. Traces of violent actions on the body"
+msgstr "23. Следы насильственных действий на теле"
