@@ -387,7 +387,7 @@ class EditFormResponseView(View):
 			for field in self.response._meta.fields:
 				field_name = field.name
 				# Skip file fields, primary keys, and foreign keys
-				if field_name in ['id', 'created_at', 'updated_at', 'created_by', 'full_name_photo']:
+				if field_name in ['id', 'created_at', 'updated_at', 'created_by', 'full_name_photo', 'person_photo']:
 					continue
 				value = getattr(self.response, field_name, None)
 				if value is not None:
@@ -470,7 +470,7 @@ class EditFormResponseView(View):
 					form_data[key] = value
 		
 		# Handle file uploads
-		for field_name in ['full_name_photo', 'radical_internet_photo', 'suspicious_mobile_photo']:
+		for field_name in ['full_name_photo', 'person_photo', 'radical_internet_photo', 'suspicious_mobile_photo']:
 			if field_name in request.FILES:
 				uploaded_file = request.FILES[field_name]
 				file_content = uploaded_file.read()
@@ -990,13 +990,17 @@ def export_response_pdf(request, pk):
 	if response_obj.full_name_photo:
 		photos.append(('Фото документа (Вопрос 1)', response_obj.full_name_photo))
 	
-	# Check for suspicious_mobile_photo (Question 13)
-	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
-		photos.append(('Фото подозрительного контента на телефоне (Вопрос 13)', response_obj.officer_assessment.suspicious_mobile_photo))
-
-	# Check for radical_internet_photo (Question 17)
+	# Check for person_photo (Question 1)
+	if response_obj.person_photo:
+		photos.append(('Фото человека (Вопрос 1)', response_obj.person_photo))
+	
+	# Check for radical_internet_photo (Question 14-15)
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.radical_internet_photo:
-		photos.append(('Фото радикального контента в интернете (Вопрос 17)', response_obj.officer_assessment.radical_internet_photo))
+		photos.append(('Фото радикального контента в интернете (Вопрос 14-15)', response_obj.officer_assessment.radical_internet_photo))
+	
+	# Check for suspicious_mobile_photo (Question 19)
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
+		photos.append(('Фото подозрительного контента на телефоне (Вопрос 19)', response_obj.officer_assessment.suspicious_mobile_photo))
 	
 	if photos:
 		story.append(Paragraph("Прикрепленные фотографии", heading_style))

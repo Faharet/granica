@@ -447,3 +447,21 @@ msgstr "Прикрепите фото (опционально):"
 
 msgid "Supported formats: JPG, PNG, PDF"
 msgstr "Поддерживаемые форматы: JPG, PNG, PDF"
+
+msgid "Last name"
+msgstr "Фамилия"
+
+msgid "First name"
+msgstr "Имя"
+
+msgid "Patronymic"
+msgstr "Отчество"
+
+msgid "Date of birth"
+msgstr "Дата рождения"
+
+msgid "Place of birth"
+msgstr "Место рождения"
+
+msgid "Full name:"
+msgstr "Полное имя:"

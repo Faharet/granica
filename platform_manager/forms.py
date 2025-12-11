@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from .models import FormResponse, BorderOfficerAssessment
 from .choices import *
 
@@ -8,8 +9,13 @@ class FormResponseForm(forms.ModelForm):
         model = FormResponse
         # include all questionnaire fields
         fields = [
-            'full_name_and_birth',
+            'last_name',
+            'first_name',
+            'patronymic',
+            'birth_date',
+            'birth_place',
             'full_name_photo',
+            'person_photo',
             'name_changed',
             'name_change_reason',
             'phones_emails',
@@ -42,8 +48,13 @@ class FormResponseForm(forms.ModelForm):
         ]
 
         widgets = {
-            'full_name_and_birth': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 3}),
+            'last_name': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
+            'first_name': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
+            'patronymic': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
+            'birth_date': forms.TextInput(attrs={'class': 'input input-bordered w-full', 'placeholder': 'Например: 01.01.1990'}),
+            'birth_place': forms.TextInput(attrs={'class': 'input input-bordered w-full', 'placeholder': 'Например: г. Алматы, Казахстан'}),
             'full_name_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
+            'person_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
             'name_change_reason': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'phones_emails': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'military_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
@@ -88,76 +99,76 @@ class BorderOfficerAssessmentForm(forms.ModelForm):
         choices=RADICAL_CONTENT_CHOICES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Тип радикального контента"
+        label=_("Тип радикального контента")
     )
     radical_internet_sheikhs = forms.MultipleChoiceField(
         choices=RADICAL_SHEIKH_CHOICES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Какие шейхи"
+        label=_("Какие шейхи")
     )
     
     radical_religious_signs = forms.MultipleChoiceField(
         choices=RADICAL_RELIGIOUS_SIGNS,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Внешние признаки"
+        label=_("Внешние признаки")
     )
     
     document_issues_types = forms.MultipleChoiceField(
         choices=DOCUMENT_ISSUES_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы проблем в документах"
+        label=_("Типы проблем в документах")
     )
     
     religious_deviations_types = forms.MultipleChoiceField(
         choices=RELIGIOUS_DEVIATIONS_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы религиозных отклонений"
+        label=_("Типы религиозных отклонений")
     )
     
     suspicious_mobile_types = forms.MultipleChoiceField(
         choices=SUSPICIOUS_MOBILE_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы сомнительного контента"
+        label=_("Типы сомнительного контента")
     )
     
     suspicious_behavior_types = forms.MultipleChoiceField(
         choices=SUSPICIOUS_BEHAVIOR_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы подозрительного поведения"
+        label=_("Типы подозрительного поведения")
     )
     
     psychological_types = forms.MultipleChoiceField(
         choices=PSYCHOLOGICAL_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы психологических отклонений"
+        label=_("Типы психологических отклонений")
     )
     
     relatives_mto_types = forms.MultipleChoiceField(
         choices=RELATIVES_MTO_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы связей с МТО"
+        label=_("Типы связей с МТО")
     )
     
     criminal_element_types = forms.MultipleChoiceField(
         choices=CRIMINAL_ELEMENT_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы криминала"
+        label=_("Типы криминала")
     )
     
     violence_traces_types = forms.MultipleChoiceField(
         choices=VIOLENCE_TRACES_TYPES,
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox checkbox-sm'}),
         required=False,
-        label="Типы следов насилия"
+        label=_("Типы следов насилия")
     )
     
     class Meta:

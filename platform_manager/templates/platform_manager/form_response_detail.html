@@ -6,7 +6,7 @@
     {% if response %}
       <header class="flex items-start justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold">Ответ на форму</h1>
+          <h1 class="text-2xl font-bold">{% trans 'Response Details' %}</h1>
         </div>
         <div class="flex items-center space-x-3">
           <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost btn-sm"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Back to list' %}</a>
@@ -24,12 +24,33 @@
 
       <main class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <section class="bg-base-200 p-6 rounded-lg shadow-sm">
-          <h2 class="text-lg font-semibold mb-4">В части биографических данных</h2>
+          <h2 class="text-lg font-semibold mb-4">{% trans 'Biographical Data' %}</h2>
           <dl class="space-y-3 text-sm">
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">1. ФИО, дата и место рождения</dt>
+              <dt class="w-44 text-gray-600">{% trans '1. Full name, date and place of birth' %}</dt>
               <dd class="flex-1 text-gray-800">
-                {% if response.full_name_and_birth %}
+                {% if response.last_name or response.first_name or response.patronymic or response.birth_date or response.birth_place %}
+                  <div class="space-y-1">
+                    {% if response.last_name or response.first_name or response.patronymic %}
+                      <div>
+                        <strong>{% trans 'Full name:' %}</strong>
+                        {{ response.last_name }} {{ response.first_name }} {{ response.patronymic }}
+                      </div>
+                    {% endif %}
+                    {% if response.birth_date %}
+                      <div>
+                        <strong>{% trans 'Date of birth:' %}</strong>
+                        {{ response.birth_date }}
+                      </div>
+                    {% endif %}
+                    {% if response.birth_place %}
+                      <div>
+                        <strong>{% trans 'Place of birth:' %}</strong>
+                        {{ response.birth_place }}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% elif response.full_name_and_birth %}
                   {{ response.full_name_and_birth|linebreaksbr }}
                 {% else %}
                   <span class="text-gray-400">—</span>
@@ -37,7 +58,14 @@
                 {% if response.full_name_photo %}
                   <div class="mt-2">
                     <a href="{{ response.full_name_photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
-                      <i class="fa fa-paperclip mr-1"></i>Прикрепленное фото
+                      <i class="fa fa-paperclip mr-1"></i>{% trans 'Document Photo' %}
+                    </a>
+                  </div>
+                {% endif %}
+                {% if response.person_photo %}
+                  <div class="mt-2">
+                    <a href="{{ response.person_photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
+                      <i class="fa fa-user mr-1"></i>{% trans 'Person Photo' %}
                     </a>
                   </div>
                 {% endif %}
@@ -45,18 +73,18 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">2. Изменяли ли фамилию/имя/отчество</dt>
+              <dt class="w-44 text-gray-600">{% trans '2. Changed last name/first name/patronymic' %}</dt>
               <dd class="flex-1">
                 {% if response.name_changed %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Причина изменения</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Reason for change' %}</dt>
               <dd class="flex-1 text-gray-800">
                 {% if response.name_change_reason %}
                   {{ response.name_change_reason|linebreaksbr }}
@@ -67,7 +95,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">3. Телефоны и email</dt>
+              <dt class="w-44 text-gray-600">{% trans '3. Phones and email' %}</dt>
               <dd class="flex-1 text-gray-800">
                 {% if response.phones_emails %}
                   {{ response.phones_emails|linebreaksbr }}
@@ -78,18 +106,18 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">4. Служба в ВС</dt>
+              <dt class="w-44 text-gray-600">{% trans '4. Military service' %}</dt>
               <dd class="flex-1">
                 {% if response.military_service %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Детали службы</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Service details' %}</dt>
               <dd class="flex-1 text-gray-800">
                 {% if response.military_details %}
                   {{ response.military_details|linebreaksbr }}
@@ -102,21 +130,21 @@
         </section>
 
         <section class="bg-base-200 p-6 rounded-lg shadow-sm">
-          <h2 class="text-lg font-semibold mb-4">Уголовная и правовая информация</h2>
+          <h2 class="text-lg font-semibold mb-4">{% trans 'Criminal and Legal Information' %}</h2>
           <dl class="space-y-3 text-sm">
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">5. Судимость</dt>
+              <dt class="w-44 text-gray-600">{% trans '5. Criminal record' %}</dt>
               <dd class="flex-1">
                 {% if response.criminal_record %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Период и место отбытия наказания</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Period and place of serving sentence' %}</dt>
               <dd class="flex-1">
                 {% if response.criminal_period_where %}
                   {{ response.criminal_period_where|linebreaksbr }}
@@ -127,7 +155,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">За какие преступления</dt>
+              <dt class="w-44 text-gray-600">{% trans 'For what crimes' %}</dt>
               <dd class="flex-1">
                 {% if response.criminal_offenses %}
                   {{ response.criminal_offenses|linebreaksbr }}
@@ -138,18 +166,18 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">6. Задержания за границей</dt>
+              <dt class="w-44 text-gray-600">{% trans '6. Detained abroad' %}</dt>
               <dd class="flex-1">
                 {% if response.detained_abroad %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Когда и почему</dt>
+              <dt class="w-44 text-gray-600">{% trans 'When and why detained' %}</dt>
               <dd class="flex-1">
                 {% if response.detained_when_why %}
                   {{ response.detained_when_why|linebreaksbr }}
@@ -160,7 +188,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Где содержали</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Where held' %}</dt>
               <dd class="flex-1">
                 {% if response.detained_where %}
                   {{ response.detained_where|linebreaksbr }}
@@ -173,21 +201,21 @@
         </section>
 
         <section class="bg-base-200 p-6 rounded-lg shadow-sm">
-          <h2 class="text-lg font-semibold mb-4">Родственники и религия</h2>
+          <h2 class="text-lg font-semibold mb-4">{% trans 'Relatives and Religion' %}</h2>
           <dl class="space-y-3 text-sm">
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">7. Родственники в указанных странах</dt>
+              <dt class="w-44 text-gray-600">{% trans '7. Relatives in specified countries' %}</dt>
               <dd class="flex-1">
                 {% if response.relatives_in_countries %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Детали родственников</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Details about relatives' %}</dt>
               <dd class="flex-1">
                 {% if response.relatives_details %}
                   {{ response.relatives_details|linebreaksbr }}
@@ -198,18 +226,18 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">8. Религиозны</dt>
+              <dt class="w-44 text-gray-600">{% trans '8. Religious' %}</dt>
               <dd class="flex-1">
                 {% if response.religious %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Мазхаб/взгляды</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Religious views/madhhab' %}</dt>
               <dd class="flex-1">
                 {% if response.denomination %}
                   {{ response.get_denomination_display }}
@@ -223,18 +251,18 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">9. Разыскиваются ли родственники</dt>
+              <dt class="w-44 text-gray-600">{% trans '9. Are relatives wanted' %}</dt>
               <dd class="flex-1">
                 {% if response.relatives_wanted %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Причина розыска</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Reason for search' %}</dt>
               <dd class="flex-1">
                 {% if response.relatives_wanted_reason %}
                   {{ response.relatives_wanted_reason|linebreaksbr }}
@@ -247,21 +275,21 @@
         </section>
 
         <section class="bg-base-200 p-6 rounded-lg shadow-sm">
-          <h2 class="text-lg font-semibold mb-4">Поездки и депортации</h2>
+          <h2 class="text-lg font-semibold mb-4">{% trans 'Trips and Deportations' %}</h2>
           <dl class="space-y-3 text-sm">
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">10. Посещали указанные страны</dt>
+              <dt class="w-44 text-gray-600">{% trans '10. Visited specified countries' %}</dt>
               <dd class="flex-1">
                 {% if response.visited_countries %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Детали визитов</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Details of visits' %}</dt>
               <dd class="flex-1">
                 {% if response.visited_countries_details %}
                   {{ response.visited_countries_details|linebreaksbr }}
@@ -272,18 +300,18 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">11. Депортация/выдворение</dt>
+              <dt class="w-44 text-gray-600">{% trans '11. Deportation/expulsion' %}</dt>
               <dd class="flex-1">
                 {% if response.deported %}
-                  <span class="badge badge-success badge-sm">Да</span>
+                  <span class="badge badge-success badge-sm">{% trans 'Yes' %}</span>
                 {% else %}
-                  <span class="badge badge-outline badge-sm">Нет</span>
+                  <span class="badge badge-outline badge-sm">{% trans 'No' %}</span>
                 {% endif %}
               </dd>
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">Детали депортации</dt>
+              <dt class="w-44 text-gray-600">{% trans 'Deportation details' %}</dt>
               <dd class="flex-1">
                 {% if response.deportation_details %}
                   {{ response.deportation_details|linebreaksbr }}
@@ -294,7 +322,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">12. Причина не пропуска</dt>
+              <dt class="w-44 text-gray-600">{% trans '12. Reason for not being allowed entry' %}</dt>
               <dd class="flex-1">
                 {% if response.not_allowed_reason %}
                   {{ response.not_allowed_reason|linebreaksbr }}
@@ -305,7 +333,7 @@
             </div>
 
             <div class="flex items-start gap-4">
-              <dt class="w-44 text-gray-600">13. Когда в последний раз были на родине</dt>
+              <dt class="w-44 text-gray-600">{% trans '13. When was the last time you were in your homeland' %}</dt>
               <dd class="flex-1">
                 {% if response.last_time_in_homeland %}
                   {{ response.last_time_in_homeland }}
@@ -320,7 +348,7 @@
         <!-- Border Officer Assessment Section -->
         {% if response.officer_assessment %}
           <section class="bg-base-200 p-6 rounded-lg shadow-sm md:col-span-2">
-            <h2 class="text-lg font-semibold mb-4">Оценка пограничника</h2>
+            <h2 class="text-lg font-semibold mb-4">{% trans 'Border Officer Assessment' %}</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Question 14: Radical Internet (65 points) -->
               <div class="border-l-4 {% if response.officer_assessment.radical_internet %}
@@ -329,7 +357,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">14. Состоит в радикальных интернет-сообществах</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '14. Member of radical internet communities' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.radical_internet %}
                         badge-error
@@ -337,9 +365,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.radical_internet %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -347,7 +375,7 @@
                         +65
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
@@ -355,7 +383,7 @@
                   <dd class="text-sm mt-2 space-y-2">
                     {% if response.officer_assessment.radical_internet_content %}
                       <div>
-                        <strong class="text-gray-700">Тип контента:</strong>
+                        <strong class="text-gray-700">{% trans 'Content type:' %}</strong>
                         <ul class="list-disc list-inside ml-2 text-gray-600">
                           {% for item in response.officer_assessment.get_radical_internet_content_labels %}
                             <li>{{ item }}</li>
@@ -365,7 +393,7 @@
                     {% endif %}
                     {% if response.officer_assessment.radical_internet_sheikhs %}
                       <div>
-                        <strong class="text-gray-700">Имена шейхов:</strong>
+                        <strong class="text-gray-700">{% trans 'Sheikh names:' %}</strong>
                         <ul class="list-disc list-inside ml-2 text-gray-600">
                           {% for item in response.officer_assessment.get_radical_internet_sheikhs_labels %}
                             <li>{{ item }}</li>
@@ -376,12 +404,12 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.radical_internet_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.radical_internet_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.radical_internet_details|linebreaksbr }}</dd>
                 {% endif %}
                 {% if response.officer_assessment.radical_internet_photo %}
                   <dd class="mt-2">
                     <a href="{{ response.officer_assessment.radical_internet_photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
-                      <i class="fa fa-paperclip mr-1"></i>Прикрепленное фото
+                      <i class="fa fa-paperclip mr-1"></i>{% trans 'Attached photo' %}
                     </a>
                   </dd>
                 {% endif %}
@@ -394,7 +422,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">15. Сторонник радикальных религиозных течений</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '15. Supporter of radical religious movements' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.radical_religious_ideology %}
                         badge-error
@@ -402,9 +430,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.radical_religious_ideology %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -418,7 +446,7 @@
                 </div>
                 {% if response.officer_assessment.radical_religious_signs %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Признаки:</strong>
+                    <strong class="text-gray-700">{% trans 'Signs:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_radical_religious_signs_labels %}
                         <li>{{ item }}</li>
@@ -427,7 +455,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.radical_religious_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.radical_religious_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.radical_religious_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -438,7 +466,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">16. Признаки в документах</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '16. Document issues' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.document_issues %}
                         badge-warning
@@ -446,9 +474,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.document_issues %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -456,13 +484,13 @@
                         +20
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.document_issues_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Проблемы:</strong>
+                    <strong class="text-gray-700">{% trans 'Problems:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_document_issues_types_labels %}
                         <li>{{ item }}</li>
@@ -471,7 +499,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.document_issues_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.document_issues_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.document_issues_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -482,7 +510,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">17. Религиозные отклонения</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '17. Religious deviations' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.religious_deviations %}
                         badge-warning
@@ -490,9 +518,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.religious_deviations %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -500,13 +528,13 @@
                         +15
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.religious_deviations_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Отклонения:</strong>
+                    <strong class="text-gray-700">{% trans 'Deviations:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_religious_deviations_types_labels %}
                         <li>{{ item }}</li>
@@ -515,7 +543,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.religious_deviations_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.religious_deviations_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.religious_deviations_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -526,7 +554,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">18. Сомнительный контент на мобильных устройствах</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '18. Suspicious content on mobile devices' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.suspicious_mobile_content %}
                         badge-warning
@@ -534,9 +562,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.suspicious_mobile_content %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -544,13 +572,13 @@
                         +15
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.suspicious_mobile_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Типы:</strong>
+                    <strong class="text-gray-700">{% trans 'Types:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_suspicious_mobile_types_labels %}
                         <li>{{ item }}</li>
@@ -559,7 +587,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.suspicious_mobile_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.suspicious_mobile_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.suspicious_mobile_details|linebreaksbr }}</dd>
                 {% endif %}
                 {% if response.officer_assessment.suspicious_mobile_photo %}
                   <dd class="text-sm text-gray-600 mt-2">
@@ -575,7 +603,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">19. Подозрительное поведение</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '19. Suspicious behavior' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.suspicious_behavior %}
                         badge-warning
@@ -583,9 +611,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.suspicious_behavior %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -593,13 +621,13 @@
                         +15
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.suspicious_behavior_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Поведение:</strong>
+                    <strong class="text-gray-700">{% trans 'Behavior:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_suspicious_behavior_types_labels %}
                         <li>{{ item }}</li>
@@ -608,7 +636,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.suspicious_behavior_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.suspicious_behavior_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.suspicious_behavior_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -619,7 +647,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">20. Психологические отклонения</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '20. Psychological deviations' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.psychological_issues %}
                         badge-warning
@@ -627,9 +655,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.psychological_issues %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -637,13 +665,13 @@
                         +15
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.psychological_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Отклонения:</strong>
+                    <strong class="text-gray-700">{% trans 'Deviations:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_psychological_types_labels %}
                         <li>{{ item }}</li>
@@ -652,7 +680,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.psychological_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.psychological_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.psychological_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -663,7 +691,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">21. Родственники с близкими связями с МТО</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '21. Relatives with close ties to terrorist organizations' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.relatives_mto %}
                         badge-info
@@ -671,9 +699,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.relatives_mto %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -681,13 +709,13 @@
                         +10
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.relatives_mto_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Тип связи:</strong>
+                    <strong class="text-gray-700">{% trans 'Connection type:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_relatives_mto_types_labels %}
                         <li>{{ item }}</li>
@@ -696,7 +724,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.relatives_mto_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.relatives_mto_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.relatives_mto_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -707,7 +735,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">22. Криминально-ориентированный элемент</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '22. Criminally-oriented element' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.criminal_element %}
                         badge-info
@@ -715,9 +743,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.criminal_element %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -725,13 +753,13 @@
                         +10
                       {% else %}
                         0
-                      {% endif %}баллов
+                      {% endif %} {% trans 'points' %}
                     </span>
                   </div>
                 </div>
                 {% if response.officer_assessment.criminal_element_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Тип активности:</strong>
+                    <strong class="text-gray-700">{% trans 'Activity type:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_criminal_element_types_labels %}
                         <li>{{ item }}</li>
@@ -740,7 +768,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.criminal_element_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.criminal_element_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.criminal_element_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
 
@@ -751,7 +779,7 @@
                   border-gray-300
                 {% endif %} pl-4 py-2">
                 <div class="flex items-center justify-between mb-1">
-                  <dt class="text-sm font-medium text-gray-700">23. Следы насильственных действий на теле</dt>
+                  <dt class="text-sm font-medium text-gray-700">{% trans '23. Traces of violent actions on the body' %}</dt>
                   <div class="flex items-center gap-2">
                     <span class="badge badge-sm {% if response.officer_assessment.violence_traces %}
                         badge-info
@@ -759,9 +787,9 @@
                         badge-outline
                       {% endif %}">
                       {% if response.officer_assessment.violence_traces %}
-                        Да
+                        {% trans 'Yes' %}
                       {% else %}
-                        Нет
+                        {% trans 'No' %}
                       {% endif %}
                     </span>
                     <span class="text-xs font-bold text-gray-500">
@@ -775,7 +803,7 @@
                 </div>
                 {% if response.officer_assessment.violence_traces_types %}
                   <dd class="text-sm mt-2">
-                    <strong class="text-gray-700">Тип следов:</strong>
+                    <strong class="text-gray-700">{% trans 'Trace type:' %}</strong>
                     <ul class="list-disc list-inside ml-2 text-gray-600">
                       {% for item in response.officer_assessment.get_violence_traces_types_labels %}
                         <li>{{ item }}</li>
@@ -784,7 +812,7 @@
                   </dd>
                 {% endif %}
                 {% if response.officer_assessment.violence_traces_details %}
-                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>Доп. детали:</strong> {{ response.officer_assessment.violence_traces_details|linebreaksbr }}</dd>
+                  <dd class="text-sm text-gray-600 mt-2 bg-white p-2 rounded"><strong>{% trans 'Additional details:' %}</strong> {{ response.officer_assessment.violence_traces_details|linebreaksbr }}</dd>
                 {% endif %}
               </div>
             </div>
@@ -816,15 +844,15 @@
             <div>
               <h3 class="font-bold text-lg">Уровень опасности: {{ response.threat_level }}</h3>
               <div class="text-sm">
-                Общий балл: <span class="font-bold">{{ response.total_score }}</span> из 220
+                {% trans 'Total score:' %} <span class="font-bold">{{ response.total_score }}</span> {% trans 'out of' %} 220
               </div>
               <div class="text-xs mt-1 opacity-80">
                 {% if response.threat_level == 'Низкий' %}
-                  0-49 баллов - Низкий уровень опасности
+                  {% trans '0-49 points - Low threat level' %}
                 {% elif response.threat_level == 'Средний' %}
-                  50-119 баллов - Средний уровень опасности
+                  {% trans '50-119 points - Medium threat level' %}
                 {% else %}
-                  120+ баллов - Высокий уровень опасности
+                  {% trans '120+ points - High threat level' %}
                 {% endif %}
               </div>
             </div>
@@ -845,3 +873,5 @@
     {% endif %}
   </div>
 {% endblock %}
+
+

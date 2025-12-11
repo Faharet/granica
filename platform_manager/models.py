@@ -275,8 +275,14 @@ class FormResponse(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, help_text="", verbose_name="Идентификатор")
 
     # 1. Biographical: full name, date and place of birth
-    full_name_and_birth = models.TextField(blank=True, verbose_name="ФИО, дата и место рождения")
+    last_name = models.CharField(max_length=255, blank=True, verbose_name="Фамилия")
+    first_name = models.CharField(max_length=255, blank=True, verbose_name="Имя")
+    patronymic = models.CharField(max_length=255, blank=True, verbose_name="Отчество")
+    birth_date = models.CharField(max_length=255, blank=True, verbose_name="Дата рождения")
+    birth_place = models.CharField(max_length=500, blank=True, verbose_name="Место рождения")
+    full_name_and_birth = models.TextField(blank=True, verbose_name="ФИО, дата и место рождения (старое поле)")
     full_name_photo = models.ImageField(upload_to='form_responses/q1/', blank=True, null=True, verbose_name="Фото документа (вопрос 1)")
+    person_photo = models.ImageField(upload_to='form_responses/q1_person/', blank=True, null=True, verbose_name="Фото человека (вопрос 1)")
 
     # 2. Name changes
     name_changed = models.BooleanField(default=False, verbose_name="Изменяли ли имя/фамилию/отчество")
@@ -380,10 +386,10 @@ class FormResponse(models.Model):
         # Update total score
         self.total_score = score
         
-        # Determine threat level: 0-49 Low, 50-119 Medium, 120+ High
-        if score >= 120:
+        # Determine threat level: 0=Low, 1-74=Medium, 75+=High
+        if score >= 75:
             self.threat_level = "Высокий"
-        elif score >= 50:
+        elif score >= 1:
             self.threat_level = "Средний"
         else:
             self.threat_level = "Низкий"
@@ -391,7 +397,12 @@ class FormResponse(models.Model):
         return score
 
     def __str__(self):
-        name = self.full_name_and_birth.split(',')[0] if self.full_name_and_birth else "Неизвестно"
+        if self.last_name or self.first_name:
+            name = f"{self.last_name} {self.first_name}".strip()
+        elif self.full_name_and_birth:
+            name = self.full_name_and_birth.split(',')[0]
+        else:
+            name = "Неизвестно"
         return f"{name} ({self.created_at:%Y-%m-%d %H:%M}) - {self.threat_level} ({self.total_score} баллов)"
 
 
@@ -494,10 +505,10 @@ class BorderOfficerAssessment(models.Model):
         
         self.total_score = score
         
-        # Determine threat level: 0-49 Low, 50-120 Medium, 121+ High
-        if score >= 121:
+        # Determine threat level: 0=Low, 1-74=Medium, 75+=High
+        if score >= 75:
             self.threat_level = "Высокий"
-        elif score >= 50:
+        elif score >= 1:
             self.threat_level = "Средний"
         else:
             self.threat_level = "Низкий"
