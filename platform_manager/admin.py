@@ -2,8 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from .models import User, Profile, AdminUser, NotificationTemplate, EventLog, FormResponse
+from .models import User, Profile, AdminUser, NotificationTemplate, EventLog, FormResponse, BorderOfficerAssessment
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -91,12 +92,104 @@ class ProfileAdmin(admin.ModelAdmin):
 #     """
 #     list_display = ('first_name', 'last_name', 'phone', 'email', 'is_staff', 'is_active')
 
+
+class BorderOfficerAssessmentInline(admin.StackedInline):
+    model = BorderOfficerAssessment
+    extra = 0
+    can_delete = True
+    readonly_fields = ['assessed_by', 'assessed_at', 'total_score']
+    fieldsets = (
+        ('Оценка пограничника', {
+            'fields': (
+                'question_14', 'question_15', 'question_16', 'question_17',
+                'question_18', 'question_19', 'question_20', 'question_21',
+                'question_22', 'question_23', 'total_score', 'assessed_by', 'assessed_at'
+            )
+        }),
+    )
+
+
+@admin.register(FormResponse)
+class FormResponseAdmin(admin.ModelAdmin):
+    list_display = ['get_full_name', 'get_country_display', 'threat_level_badge', 'total_score', 'created_by', 'created_at']
+    list_filter = ['threat_level', 'created_at', 'birth_place']
+    search_fields = ['last_name', 'first_name', 'patronymic', 'full_name_and_birth', 'id']
+    readonly_fields = ['id', 'created_at', 'total_score', 'threat_level']
+    date_hierarchy = 'created_at'
+    inlines = [BorderOfficerAssessmentInline]
+    actions = ['delete_selected_responses']
+    
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('id', 'last_name', 'first_name', 'patronymic', 'birth_date', 'birth_place')
+        }),
+        ('Фотографии', {
+            'fields': ('full_name_photo', 'name_changed_documents')
+        }),
+        ('Вопросы 2-13', {
+            'fields': (
+                'name_changed', 'military_service', 'criminal_record', 'detained_abroad',
+                'relatives_in_countries', 'radical_internet_content', 'radical_internet_sheikhs',
+                'radical_religious_signs', 'document_issues', 'document_issues_types',
+                'religious_deviations', 'religious_deviations_types', 'suspicious_mobile',
+                'suspicious_mobile_types', 'suspicious_behavior', 'suspicious_behavior_types',
+                'psychological_issues', 'psychological_types', 'relatives_mto',
+                'relatives_mto_types', 'criminal_element', 'criminal_element_types',
+                'violence_traces', 'violence_traces_types'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Оценка и метаданные', {
+            'fields': ('total_score', 'threat_level', 'created_by', 'created_at')
+        }),
+    )
+    
+    def get_full_name(self, obj):
+        if obj.last_name or obj.first_name:
+            return f"{obj.last_name} {obj.first_name} {obj.patronymic}".strip()
+        return obj.full_name_and_birth[:50] if obj.full_name_and_birth else "—"
+    get_full_name.short_description = 'ФИО'
+    
+    def get_country_display(self, obj):
+        if obj.birth_place and '|' in obj.birth_place:
+            country_name, country_code = obj.birth_place.split('|')
+            return format_html(
+                '<img src="https://flagcdn.com/w40/{}.png" style="width: 20px; height: auto; border-radius: 2px; vertical-align: middle; margin-right: 5px;"> {}',
+                country_code.lower(), country_name
+            )
+        return obj.birth_place or "—"
+    get_country_display.short_description = 'Страна'
+    
+    def threat_level_badge(self, obj):
+        colors = {
+            'Низкий': '#36d399',
+            'Средний': '#fbbd23', 
+            'Высокий': '#f87272'
+        }
+        color = colors.get(obj.threat_level, '#gray')
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">{}</span>',
+            color, obj.threat_level
+        )
+    threat_level_badge.short_description = 'Уровень угрозы'
+    
+    def delete_selected_responses(self, request, queryset):
+        """Custom action for deleting selected responses with confirmation"""
+        count = queryset.count()
+        queryset.delete()
+        self.message_user(request, f'Удалено записей: {count}')
+    delete_selected_responses.short_description = 'Удалить выбранные ответы'
+    
+    def has_delete_permission(self, request, obj=None):
+        """Only superusers and staff can delete"""
+        return request.user.is_superuser or request.user.is_staff
+
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(AdminUser)
 admin.site.register(NotificationTemplate)  
-admin.site.register(EventLog)  
-admin.site.register(FormResponse)
+admin.site.register(EventLog)
 
 
 # Allow adding/removing users directly from Group admin page

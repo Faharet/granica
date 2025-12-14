@@ -408,6 +408,9 @@ msgstr "Менің формаларым"
 msgid "Full Name"
 msgstr "Толық аты-жөні"
 
+msgid "Country"
+msgstr "Ел"
+
 msgid "Score"
 msgstr "Ұпай"
 
@@ -1009,6 +1012,12 @@ msgstr "120+ ұпай - Жоғары қауіп деңгейі"
 
 msgid "Full name:"
 msgstr "Толық аты-жөні:"
+
+msgid "Date of birth:"
+msgstr "Туған күні:"
+
+msgid "Place of birth:"
+msgstr "Туған жері:"
 
 msgid "Problems:"
 msgstr "Мәселелер:"

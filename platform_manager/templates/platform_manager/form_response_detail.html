@@ -1,5 +1,21 @@
 {% extends 'platform_manager/base_with_navbar.html' %}
 {% load i18n %}
+{% load custom_filters %}
+
+{% block extrahead %}
+<style>
+  .country-flag {
+    display: inline-block;
+    width: 24px;
+    height: 16px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
   <div class="p-6">
@@ -46,7 +62,12 @@
                     {% if response.birth_place %}
                       <div>
                         <strong>{% trans 'Place of birth:' %}</strong>
-                        {{ response.birth_place }}
+                        {% if '|' in response.birth_place %}
+                          <span class="country-flag" style="background-image: url('https://flagcdn.com/w40/{{ response.birth_place|get_country_code }}.png');"></span>
+                          {{ response.birth_place|get_country_name }}
+                        {% else %}
+                          {{ response.birth_place }}
+                        {% endif %}
                       </div>
                     {% endif %}
                   </div>

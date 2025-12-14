@@ -11,14 +11,27 @@ from .models import FormResponse, BorderOfficerAssessment
 from .forms import FormResponseForm, BorderOfficerAssessmentForm
 
 
-def is_manager(user):
-	"""Return True only if the user is in the 'manager' group.
-
-	Note: superusers and staff are intentionally NOT granted implicit manager
-	rights here so group-based permissions are enforced consistently.
+def is_admin(user):
+	"""Return True only if user is superuser or staff.
+	
+	This is used for actions that require admin privileges like deleting data.
 	"""
 	if not user or not user.is_authenticated:
 		return False
+	return user.is_superuser
+
+
+def is_manager(user):
+	"""Return True if the user is in the 'manager' group or is a superuser/staff.
+
+	Superusers and staff members have full access to all manager functions.
+	"""
+	if not user or not user.is_authenticated:
+		return False
+	# Superusers and staff have full manager rights
+	if user.is_superuser or user.is_staff:
+		return True
+	# Otherwise check for manager group membership
 	return user.groups.filter(name='manager').exists()
 
 
@@ -217,15 +230,26 @@ class ResponsesListView(ListView):
 		
 		# Apply filters
 		# Filter by search (full name) - case-insensitive search with proper Unicode handling
-		from django.db.models import Q
-		from django.db.models.functions import Lower
+		from django.db.models import Q, Value, CharField
+		from django.db.models.functions import Lower, Concat
 		search = self.request.GET.get('search')
 		if search:
 			search_term = search.strip().lower()
-			# Use annotate with Lower for proper case-insensitive Unicode search
+			# Create a combined full name field and search in it along with individual fields
+			# Using Lower() for proper case-insensitive Unicode search
 			queryset = queryset.annotate(
-				full_name_lower=Lower('full_name_and_birth')
-			).filter(full_name_lower__contains=search_term)
+				full_name_combined=Lower(Concat('last_name', Value(' '), 'first_name', Value(' '), 'patronymic', output_field=CharField())),
+				last_name_lower=Lower('last_name'),
+				first_name_lower=Lower('first_name'),
+				patronymic_lower=Lower('patronymic'),
+				full_name_and_birth_lower=Lower('full_name_and_birth')
+			).filter(
+				Q(last_name_lower__contains=search_term) |
+				Q(first_name_lower__contains=search_term) |
+				Q(patronymic_lower__contains=search_term) |
+				Q(full_name_combined__contains=search_term) |
+				Q(full_name_and_birth_lower__contains=search_term)
+			)
 		
 		# Filter by date range
 		date_from = self.request.GET.get('date_from')
@@ -246,6 +270,11 @@ class ResponsesListView(ListView):
 		if threat_level:
 			queryset = queryset.filter(threat_level=threat_level)
 		
+		# Filter by country
+		country = self.request.GET.get('country')
+		if country:
+			queryset = queryset.filter(birth_place=country)
+		
 		return queryset.order_by('-created_at')
 	
 	def get_context_data(self, **kwargs):
@@ -258,6 +287,11 @@ class ResponsesListView(ListView):
 		context['date_to'] = self.request.GET.get('date_to', '')
 		context['created_by'] = self.request.GET.get('created_by', '')
 		context['threat_level'] = self.request.GET.get('threat_level', '')
+		context['country'] = self.request.GET.get('country', '')
+		
+		# Add country choices for filter dropdown
+		from .forms import COUNTRY_CHOICES
+		context['country_choices'] = COUNTRY_CHOICES
 		
 		# Get list of users for creator filter (only for managers)
 		if is_manager(self.request.user):
@@ -325,9 +359,9 @@ class FormResponseDetailView(TemplateView):
 				# Assessment doesn't exist, it's ok
 				pass
 		
-		# Check if delete button should be shown (only managers can delete)
+		# Check if delete button should be shown (only admins can delete)
 		if response:
-			if is_manager(self.request.user):
+			if is_admin(self.request.user):
 				context['can_delete'] = True
 			else:
 				context['can_delete'] = False
@@ -583,7 +617,7 @@ class EditFormResponseView(View):
 		return redirect(f"{request.path}?step={current_step}")
 
 
-@method_decorator(user_passes_test(is_manager), name='dispatch')
+@method_decorator(user_passes_test(is_admin), name='dispatch')
 class FormResponseDeleteView(DeleteView):
 	model = FormResponse
 	template_name = 'platform_manager/form_response_confirm_delete.html'

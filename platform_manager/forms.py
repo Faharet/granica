@@ -3,6 +3,39 @@ from django.utils.translation import gettext_lazy as _
 from .models import FormResponse, BorderOfficerAssessment
 from .choices import *
 
+# Country choices with flag-icons CSS classes
+COUNTRY_CHOICES = [
+    ('', '-- Выберите страну --'),
+    ('Казахстан|kz', 'Казахстан'),
+    ('Россия|ru', 'Россия'),
+    ('Узбекистан|uz', 'Узбекистан'),
+    ('Кыргызстан|kg', 'Кыргызстан'),
+    ('Таджикистан|tj', 'Таджикистан'),
+    ('Туркменистан|tm', 'Туркменистан'),
+    ('Украина|ua', 'Украина'),
+    ('Беларусь|by', 'Беларусь'),
+    ('Азербайджан|az', 'Азербайджан'),
+    ('Армения|am', 'Армения'),
+    ('Грузия|ge', 'Грузия'),
+    ('Турция|tr', 'Турция'),
+    ('Саудовская Аравия|sa', 'Саудовская Аравия'),
+    ('ОАЭ|ae', 'ОАЭ'),
+    ('Катар|qa', 'Катар'),
+    ('Иран|ir', 'Иран'),
+    ('Ирак|iq', 'Ирак'),
+    ('Сирия|sy', 'Сирия'),
+    ('Афганистан|af', 'Афганистан'),
+    ('Пакистан|pk', 'Пакистан'),
+    ('Египет|eg', 'Египет'),
+    ('Китай|cn', 'Китай'),
+    ('Индия|in', 'Индия'),
+    ('Германия|de', 'Германия'),
+    ('Франция|fr', 'Франция'),
+    ('Великобритания|gb', 'Великобритания'),
+    ('США|us', 'США'),
+    ('Канада|ca', 'Канада'),
+]
+
 
 class FormResponseForm(forms.ModelForm):
     class Meta:
@@ -51,8 +84,8 @@ class FormResponseForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'first_name': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'patronymic': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
-            'birth_date': forms.TextInput(attrs={'class': 'input input-bordered w-full', 'placeholder': 'Например: 01.01.1990'}),
-            'birth_place': forms.TextInput(attrs={'class': 'input input-bordered w-full', 'placeholder': 'Например: г. Алматы, Казахстан'}),
+            'birth_date': forms.DateInput(attrs={'class': 'input input-bordered w-full', 'type': 'date'}),
+            'birth_place': forms.Select(attrs={'class': 'select select-bordered w-full'}),
             'full_name_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
             'person_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
             'name_change_reason': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
@@ -79,6 +112,10 @@ class FormResponseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Set choices for birth_place
+        self.fields['birth_place'].widget.choices = COUNTRY_CHOICES
+        
         # Add common class to boolean fields (checkboxes)
         bool_fields = [
             'name_changed', 'military_service', 'criminal_record', 'detained_abroad',

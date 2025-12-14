@@ -1,5 +1,6 @@
 {% extends 'platform_manager/base_with_navbar.html' %}
 {% load i18n %}
+{% load custom_filters %}
 
 {% block content %}
   <div class="flex items-center justify-between mb-4">
@@ -21,72 +22,96 @@
   </div>
   
   <!-- Filters -->
-  <div class="bg-base-200 p-4 rounded-lg mb-6">
-    <div class="flex items-start gap-4">
-      <form method="get" id="filter-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1">
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">{% trans "Search by name" %}</span>
-          </label>
-          <input type="text" name="search" value="{{ search }}" placeholder="{% trans 'Enter full name...' %}" class="input input-bordered input-sm filter-input" />
+  <div class="bg-base-200 p-6 rounded-lg mb-6 shadow-sm">
+    <div class="flex items-end gap-4">
+      <form method="get" id="filter-form" class="flex-1">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">{% trans "Search by name" %}</span>
+            </label>
+            <input type="text" name="search" value="{{ search }}" placeholder="{% trans 'Enter full name...' %}" class="input input-bordered w-full filter-input" />
+          </div>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">{% trans "Date from" %}</span>
+            </label>
+            <input type="date" name="date_from" value="{{ date_from }}" class="input input-bordered w-full filter-input" />
+          </div>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">{% trans "Date to" %}</span>
+            </label>
+            <input type="date" name="date_to" value="{{ date_to }}" class="input input-bordered w-full filter-input" />
+          </div>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">{% trans "Country" %}</span>
+            </label>
+            <select name="country" id="country-filter" class="select select-bordered w-full filter-input">
+              <option value="">{% trans "All" %}</option>
+              {% for choice in country_choices %}
+                {% if choice.0 %}
+                  <option value="{{ choice.0 }}" {% if country == choice.0 %}selected{% endif %}>
+                    {{ choice.1 }}
+                  </option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          
+          {% if is_manager %}
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">{% trans "Created by" %}</span>
+            </label>
+            <select name="created_by" class="select select-bordered w-full filter-input">
+              <option value="">{% trans "All" %}</option>
+              {% for user in users %}
+                <option value="{{ user.id }}" {% if created_by == user.id|stringformat:'s' %}selected{% endif %}>
+                  {{ user.first_name }} {{ user.last_name }}{% if not user.first_name %} {{ user.get_username }}{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
         </div>
         
         <div class="form-control">
           <label class="label">
-            <span class="label-text">{% trans "Date from" %}</span>
+            <span class="label-text font-semibold">{% trans "Threat level" %}</span>
           </label>
-          <input type="date" name="date_from" value="{{ date_from }}" class="input input-bordered input-sm filter-input" />
-        </div>
-        
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">{% trans "Date to" %}</span>
-          </label>
-          <input type="date" name="date_to" value="{{ date_to }}" class="input input-bordered input-sm filter-input" />
-        </div>
-        
-        {% if is_manager %}
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">{% trans "Created by" %}</span>
-          </label>
-          <select name="created_by" class="select select-bordered select-sm filter-input">
-            <option value="">{% trans "All" %}</option>
-            {% for user in users %}
-              <option value="{{ user.id }}" {% if created_by == user.id|stringformat:'s' %}selected{% endif %}>
-                {{ user.first_name }} {{ user.last_name }}{% if not user.first_name %} {{ user.get_username }}{% endif %}
-              </option>
-            {% endfor %}
-          </select>
-        </div>
-        {% endif %}
-        
-        <div class="form-control col-span-2">
-          <label class="label">
-            <span class="label-text">{% trans "Threat level" %}</span>
-          </label>
-          <div class="flex gap-2 items-center">
-            <input type="radio" name="threat_level" value="" id="level_all" class="radio radio-sm filter-input" {% if not threat_level %}checked{% endif %} />
-            <label for="level_all" class="cursor-pointer text-sm">{% trans "All" %}</label>
+          <div class="flex flex-wrap gap-4 items-center bg-base-100 p-3 rounded-lg">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="threat_level" value="" id="level_all" class="radio radio-sm filter-input" {% if not threat_level %}checked{% endif %} />
+              <span class="text-sm font-medium">{% trans "All" %}</span>
+            </label>
             
-            <input type="radio" name="threat_level" value="Низкий" id="level_low" class="radio radio-sm radio-success ml-3 filter-input" {% if threat_level == 'Низкий' %}checked{% endif %} />
-            <label for="level_low" class="cursor-pointer text-sm text-success font-semibold">{% trans "Low" %}</label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="threat_level" value="Низкий" id="level_low" class="radio radio-sm radio-success filter-input" {% if threat_level == 'Низкий' %}checked{% endif %} />
+              <span class="text-sm font-semibold text-success">{% trans "Low" %}</span>
+            </label>
             
-            <input type="radio" name="threat_level" value="Средний" id="level_medium" class="radio radio-sm radio-warning ml-3 filter-input" {% if threat_level == 'Средний' %}checked{% endif %} />
-            <label for="level_medium" class="cursor-pointer text-sm text-warning font-semibold">{% trans "Medium" %}</label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="threat_level" value="Средний" id="level_medium" class="radio radio-sm radio-warning filter-input" {% if threat_level == 'Средний' %}checked{% endif %} />
+              <span class="text-sm font-semibold text-warning">{% trans "Medium" %}</span>
+            </label>
             
-            <input type="radio" name="threat_level" value="Высокий" id="level_high" class="radio radio-sm radio-error ml-3 filter-input" {% if threat_level == 'Высокий' %}checked{% endif %} />
-            <label for="level_high" class="cursor-pointer text-sm text-error font-semibold">{% trans "High" %}</label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="threat_level" value="Высокий" id="level_high" class="radio radio-sm radio-error filter-input" {% if threat_level == 'Высокий' %}checked{% endif %} />
+              <span class="text-sm font-semibold text-error">{% trans "High" %}</span>
+            </label>
           </div>
         </div>
       </form>
       
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">&nbsp;</span>
-        </label>
-        <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost btn-sm">
-          <i class="fa fa-times mr-1"></i>{% trans "Reset" %}
+      <div class="form-control flex-shrink-0">
+        <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost gap-2">
+          <i class="fa fa-times"></i>
+          <span>{% trans "Reset" %}</span>
         </a>
       </div>
     </div>
@@ -102,6 +127,47 @@
           form.submit();
         });
       });
+      
+      // Add flags to country filter select
+      const countrySelect = document.getElementById('country-filter');
+      if (countrySelect) {
+        Array.from(countrySelect.options).forEach((option, index) => {
+          if (option.value && option.value.includes('|')) {
+            const parts = option.value.split('|');
+            const countryCode = parts[1];
+            const flagUrl = `https://flagcdn.com/w40/${countryCode}.png`;
+            
+            option.style.backgroundImage = `url('${flagUrl}')`;
+            option.style.backgroundRepeat = 'no-repeat';
+            option.style.backgroundPosition = '8px center';
+            option.style.backgroundSize = '24px auto';
+            option.style.paddingLeft = '40px';
+          }
+        });
+        
+        // Style the select itself when a country is selected
+        countrySelect.addEventListener('change', function() {
+          if (this.value && this.value.includes('|')) {
+            const parts = this.value.split('|');
+            const countryCode = parts[1];
+            const flagUrl = `https://flagcdn.com/w40/${countryCode}.png`;
+            
+            this.style.backgroundImage = `url('${flagUrl}')`;
+            this.style.backgroundRepeat = 'no-repeat';
+            this.style.backgroundPosition = '8px center';
+            this.style.backgroundSize = '24px auto';
+            this.style.paddingLeft = '40px';
+          } else {
+            this.style.backgroundImage = 'none';
+            this.style.paddingLeft = '';
+          }
+        });
+        
+        // Trigger change event if there's a selected value on page load
+        if (countrySelect.value) {
+          countrySelect.dispatchEvent(new Event('change'));
+        }
+      }
     })();
   </script>
   
@@ -195,6 +261,7 @@
     <thead>
       <tr>
         <th>{% trans "Full Name" %}</th>
+        <th>{% trans "Country" %}</th>
         <th>{% trans "Score" %}</th>
         {% if is_manager %}
         <th>{% trans "Created by" %}</th>
@@ -207,8 +274,31 @@
         <tr class="cursor-pointer hover:bg-base-300" onclick="window.location='{% url 'platform_manager:form_response_detail' r.id %}'">
           <td>
             <span class="font-semibold">
-              {{ r.full_name_and_birth|truncatechars:50|default:"—" }}
+              {% if r.last_name or r.first_name %}
+                {{ r.last_name }} {{ r.first_name }} {{ r.patronymic }}
+              {% elif r.full_name_and_birth %}
+                {{ r.full_name_and_birth|truncatechars:50 }}
+              {% else %}
+                —
+              {% endif %}
             </span>
+          </td>
+          <td>
+            {% if r.birth_place %}
+              {% if '|' in r.birth_place %}
+                <div class="flex items-center gap-2">
+                  <img src="https://flagcdn.com/w40/{{ r.birth_place|get_country_code }}.png" 
+                       alt="{{ r.birth_place|get_country_name }}" 
+                       class="inline-block" 
+                       style="width: 28px; height: auto; border-radius: 2px;" />
+                  <span>{{ r.birth_place|get_country_name }}</span>
+                </div>
+              {% else %}
+                {{ r.birth_place }}
+              {% endif %}
+            {% else %}
+              —
+            {% endif %}
           </td>
           <td>
             <span class="badge {% if r.threat_level == 'Высокий' %}badge-error{% elif r.threat_level == 'Средний' %}badge-warning{% else %}badge-success{% endif %}">
@@ -229,7 +319,7 @@
           <td>{{ r.created_at|date:"d.m.Y H:i" }}</td>
         </tr>
       {% empty %}
-        <tr><td colspan="{% if is_manager %}4{% else %}3{% endif %}">
+        <tr><td colspan="{% if is_manager %}5{% else %}4{% endif %}">
           {% if is_manager %}
             {% trans "No responses yet" %}
           {% else %}

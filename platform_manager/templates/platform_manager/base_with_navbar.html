@@ -2,45 +2,94 @@
 {% load i18n %}
 
 {% block top-navbar %}
-<header class="w-full bg-base-100 border-b p-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-        <a href="{% url 'manager_panel' %}" class="text-lg font-semibold">{{ site_title|default:_('Site Panel') }}</a>
-    </div>
-
-    <div class="flex items-center gap-3">
-        <!-- Language Selector -->
-        {% get_current_language as CURRENT_LANGUAGE %}
-        <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2">
-                <i class="fa-solid fa-language"></i>
-                <span>{% if CURRENT_LANGUAGE == 'ru' %}RU{% elif CURRENT_LANGUAGE == 'kk' %}KK{% else %}EN{% endif %}</span>
-                <i class="fa-solid fa-chevron-down text-xs"></i>
+<header class="w-full bg-base-100 border-b border-base-300 shadow-sm">
+    <div class="container mx-auto px-4 py-2">
+        <!-- Main Navigation Row -->
+        <div class="flex items-center justify-between">
+            <!-- Left Side - User Info -->
+            <div class="flex items-center gap-2 min-w-[150px]">
+                {% if user.is_authenticated %}
+                    <div class="avatar placeholder">
+                        <div class="bg-primary text-primary-content rounded-full w-8 h-8 flex items-center justify-center">
+                            <span class="text-xs font-semibold">{{ user.get_username|first|upper }}</span>
+                        </div>
+                    </div>
+                    <span class="text-sm font-medium hidden md:inline">{{ user.get_username }}</span>
+                {% endif %}
             </div>
-            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1000] w-52 p-2 shadow-lg border border-base-300">
-                <li><a href="/ru{{ request.path|slice:'3:' }}" class="{% if CURRENT_LANGUAGE == 'ru' %}active{% endif %}">
-                    <i class="fa-solid fa-globe"></i> Русский
-                    {% if CURRENT_LANGUAGE == 'ru' %}<i class="fa-solid fa-check ml-auto"></i>{% endif %}
-                </a></li>
-                <li><a href="/kk{{ request.path|slice:'3:' }}" class="{% if CURRENT_LANGUAGE == 'kk' %}active{% endif %}">
-                    <i class="fa-solid fa-globe"></i> Қазақша
-                    {% if CURRENT_LANGUAGE == 'kk' %}<i class="fa-solid fa-check ml-auto"></i>{% endif %}
-                </a></li>
-                <li><a href="/en{{ request.path|slice:'3:' }}" class="{% if CURRENT_LANGUAGE == 'en' %}active{% endif %}">
-                    <i class="fa-solid fa-globe"></i> English
-                    {% if CURRENT_LANGUAGE == 'en' %}<i class="fa-solid fa-check ml-auto"></i>{% endif %}
-                </a></li>
-            </ul>
+
+            <!-- Center - Logo -->
+            <div class="flex-shrink-0">
+                <a href="{% url 'manager_panel' %}" class="group flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-base-200/50 transition-all duration-200">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center font-black text-base shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200" style="background-color: #1e40af;">
+                        {% get_current_language as CURRENT_LANGUAGE %}
+                        <span class="tracking-wide text-white">
+                            {% if CURRENT_LANGUAGE == 'kk' %}ҚАЖ{% elif CURRENT_LANGUAGE == 'ru' %}КАЯ{% else %}KAZH{% endif %}
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Right Side - Controls -->
+            <div class="flex items-center gap-2 min-w-[150px] justify-end">
+                <!-- Language Selector -->
+                {% get_current_language as CURRENT_LANGUAGE %}
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost btn-sm btn-circle">
+                        <i class="fa-solid fa-language text-lg"></i>
+                    </label>
+                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1000] w-48 p-2 shadow-xl border border-base-300 mt-2">
+                        <li><a href="/ru{{ request.path|slice:'3:' }}" class="{% if CURRENT_LANGUAGE == 'ru' %}active{% endif %}">
+                            <i class="fa-solid fa-globe"></i> Русский
+                            {% if CURRENT_LANGUAGE == 'ru' %}<i class="fa-solid fa-check ml-auto text-success"></i>{% endif %}
+                        </a></li>
+                        <li><a href="/kk{{ request.path|slice:'3:' }}" class="{% if CURRENT_LANGUAGE == 'kk' %}active{% endif %}">
+                            <i class="fa-solid fa-globe"></i> Қазақша
+                            {% if CURRENT_LANGUAGE == 'kk' %}<i class="fa-solid fa-check ml-auto text-success"></i>{% endif %}
+                        </a></li>
+                        <li><a href="/en{{ request.path|slice:'3:' }}" class="{% if CURRENT_LANGUAGE == 'en' %}active{% endif %}">
+                            <i class="fa-solid fa-globe"></i> English
+                            {% if CURRENT_LANGUAGE == 'en' %}<i class="fa-solid fa-check ml-auto text-success"></i>{% endif %}
+                        </a></li>
+                    </ul>
+                </div>
+                
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'platform_manager:logout' %}" class="inline-block">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost btn-sm gap-1" title="{% trans 'Log out' %}">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span class="hidden lg:inline">{% trans "Log out" %}</span>
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'admin:login' %}" class="btn btn-primary btn-sm gap-2">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        {% trans "Log in" %}
+                    </a>
+                {% endif %}
+            </div>
         </div>
-        
-        {% if user.is_authenticated %}
-            <span class="text-sm">{{ user.get_username }}</span>
-            <form method="post" action="{% url 'platform_manager:logout' %}" class="inline-block">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-outline btn-sm">{% trans "Log out" %}</button>
-            </form>
-        {% else %}
-            <a href="{% url 'admin:login' %}" class="btn btn-primary btn-sm">{% trans "Log in" %}</a>
-        {% endif %}
     </div>
 </header>
+
+<!-- Background Watermark -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">
+        {% get_current_language as CURRENT_LANGUAGE %}
+        <div class="text-[20rem] lg:text-[28rem] font-black leading-none opacity-[0.12] whitespace-nowrap transform rotate-[-12deg]" 
+             style="font-family: 'Inter', 'Arial Black', sans-serif; 
+                    color: #1e40af;
+                    letter-spacing: 0.3em;
+                    filter: drop-shadow(0 0 60px rgba(30, 64, 175, 0.15));">
+            {% if CURRENT_LANGUAGE == 'kk' %}
+                ҚАЖ
+            {% elif CURRENT_LANGUAGE == 'ru' %}
+                КАЯ
+            {% else %}
+                KAZH
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

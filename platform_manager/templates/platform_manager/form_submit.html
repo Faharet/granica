@@ -1,8 +1,30 @@
 {% extends 'platform_manager/base_with_navbar.html' %}
 {% load i18n %}
 
+{% block extrahead %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"/>
+<style>
+  .flag-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .fi {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 2px;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
   <style>
+    /* Ensure emoji flags render properly */
+    select option {
+      font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+      font-size: 1rem;
+    }
+    
     input[type='checkbox'] {
       width: 1.25rem;
       height: 1.25rem;
@@ -1154,4 +1176,46 @@
       cursor: pointer;
     }
   </style>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add flags to country select options
+      const birthPlaceSelect = document.querySelector('select[name="birth_place"]');
+      if (birthPlaceSelect) {
+        Array.from(birthPlaceSelect.options).forEach(option => {
+          if (option.value && option.value.includes('|')) {
+            const [country, code] = option.value.split('|');
+            option.setAttribute('data-flag', code);
+            option.textContent = country;
+            option.style.backgroundImage = `url('https://flagcdn.com/w40/${code}.png')`;
+            option.style.backgroundRepeat = 'no-repeat';
+            option.style.backgroundPosition = '8px center';
+            option.style.backgroundSize = '28px auto';
+            option.style.paddingLeft = '44px';
+          }
+        });
+        
+        // Style the select itself when a country is selected
+        birthPlaceSelect.addEventListener('change', function() {
+          const selectedOption = this.options[this.selectedIndex];
+          const code = selectedOption.getAttribute('data-flag');
+          if (code) {
+            this.style.backgroundImage = `url('https://flagcdn.com/w40/${code}.png')`;
+            this.style.backgroundRepeat = 'no-repeat';
+            this.style.backgroundPosition = '12px center';
+            this.style.backgroundSize = '28px auto';
+            this.style.paddingLeft = '52px';
+          } else {
+            this.style.backgroundImage = 'none';
+            this.style.paddingLeft = '12px';
+          }
+        });
+        
+        // Trigger change on load if a value is already selected
+        if (birthPlaceSelect.value) {
+          birthPlaceSelect.dispatchEvent(new Event('change'));
+        }
+      }
+    });
+  </script>
 {% endblock %}

@@ -406,6 +406,9 @@ msgstr "Мои формы"
 msgid "Full Name"
 msgstr "ФИО"
 
+msgid "Country"
+msgstr "Страна"
+
 msgid "Score"
 msgstr "Балл"
 
@@ -465,6 +468,12 @@ msgstr "Место рождения"
 
 msgid "Full name:"
 msgstr "Полное имя:"
+
+msgid "Date of birth:"
+msgstr "Дата рождения:"
+
+msgid "Place of birth:"
+msgstr "Место рождения:"
 
 msgid "Content type:"
 msgstr "Тип контента:"
