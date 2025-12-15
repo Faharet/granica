@@ -654,6 +654,175 @@ msgstr "22. Қылмыстық-бағытталған элемент"
 msgid "23. Traces of violent actions on the body"
 msgstr "23. Денедегі зорлық-зомбылық іс-әрекеттерінің іздері"
 
+# PDF Export translations
+msgid "Form Response"
+msgstr "Нысанға жауап"
+
+msgid "Yes"
+msgstr "Иә"
+
+msgid "No"
+msgstr "Жоқ"
+
+msgid "Biographical Data"
+msgstr "Биографиялық деректер бөлімінде"
+
+msgid "1. Full name, date and place of birth"
+msgstr "1. ТАӘ, туған күні және жері"
+
+msgid "Birth date"
+msgstr "Туған күні"
+
+msgid "Birth place"
+msgstr "Туған жері"
+
+msgid "2. Changed surname/name/patronymic"
+msgstr "2. Тегін/атын/әкесінің атын өзгерткені"
+
+msgid "Reason for change"
+msgstr "Өзгерту себебі"
+
+msgid "3. Phones and email"
+msgstr "3. Телефондар мен email"
+
+msgid "4. Military service"
+msgstr "4. ҚҚ-де қызметі"
+
+msgid "Service details"
+msgstr "Қызмет туралы толық ақпарат"
+
+msgid "Сriminal and Legal Information"
+msgstr "Қылмыстық және құқықтық ақпарат"
+
+msgid "5. Criminal record"
+msgstr "5. Сотталғандығы"
+
+msgid "Period and place of imprisonment / For which crimes"
+msgstr "Жазаны өтеген кезеңі мен жері / Қандай қылмыстар үшін"
+
+msgid "6. Detentions abroad"
+msgstr "6. Шетелде ұсталуы"
+
+msgid "When and why / Where detained"
+msgstr "Қашан және неліктен / Қайда ұсталды"
+
+msgid "Relatives and Religion"
+msgstr "Туыстар және дін"
+
+msgid "7. Relatives in specified countries"
+msgstr "7. Көрсетілген елдерде туыстары"
+
+msgid "Relatives details"
+msgstr "Туыстары туралы толық ақпарат"
+
+msgid "8. Religious"
+msgstr "8. Діндарлығы"
+
+msgid "Denomination/views"
+msgstr "Мазһабы/көзқарастары"
+
+msgid "9. Are relatives wanted"
+msgstr "9. Туыстары іздестірілуде ме"
+
+msgid "Reason for search"
+msgstr "Іздестіру себебі"
+
+msgid "Travel and Deportations"
+msgstr "Сапарлар мен депортациялар"
+
+msgid "10. Visited specified countries"
+msgstr "10. Көрсетілген елдерді аралағаны"
+
+msgid "Visit details"
+msgstr "Сапарлар туралы толық ақпарат"
+
+msgid "11. Deportation/expulsion"
+msgstr "11. Депортация/шығару"
+
+msgid "Deportation details"
+msgstr "Депортация туралы толық ақпарат"
+
+msgid "12. Reason for not allowing entry"
+msgstr "12. Өткізбеу себебі"
+
+msgid "13. Last time in homeland"
+msgstr "13. Отанында соңғы рет қашан болғаны"
+
+msgid "Border Officer Assessment"
+msgstr "Шекара офицерінің бағалауы"
+
+msgid "Identified issues:"
+msgstr "Анықталған мәселелер:"
+
+msgid "Additional details:"
+msgstr "Қосымша толық ақпарат:"
+
+msgid "14. Radical content on internet"
+msgstr "14. Интернеттегі радикалды мазмұн"
+
+msgid "15. Radical sheikhs:"
+msgstr "15. Радикалды шейхтер:"
+
+msgid "16. Radical religious ideology"
+msgstr "16. Радикалды діни идеология"
+
+msgid "17. Document issues"
+msgstr "17. Құжаттармен мәселелер"
+
+msgid "18. Deviation from religious norms"
+msgstr "18. Діни нормалардан ауытқу"
+
+msgid "19. Suspicious mobile content"
+msgstr "19. Телефондағы күдікті мазмұн"
+
+msgid "20. Suspicious behavior"
+msgstr "20. Күдікті мінез-құлық"
+
+msgid "21. Psychological deviations"
+msgstr "21. Психологиялық ауытқулар"
+
+msgid "22. Relatives in MTO"
+msgstr "22. ХТҰ-дағы туыстары"
+
+msgid "23. Criminal element"
+msgstr "23. Қылмыстық элемент"
+
+msgid "23. Traces of violence"
+msgstr "23. Зорлық-зомбылық іздері"
+
+msgid "Attached Photos"
+msgstr "Тіркелген фотосуреттер"
+
+msgid "Document photo (Question 1)"
+msgstr "Құжат фотосы (Сұрақ 1)"
+
+msgid "Person photo (Question 1)"
+msgstr "Адам фотосы (Сұрақ 1)"
+
+msgid "Radical internet content photo (Question 14-15)"
+msgstr "Интернеттегі радикалды мазмұн фотосы (Сұрақ 14-15)"
+
+msgid "Suspicious mobile content photo (Question 19)"
+msgstr "Телефондағы күдікті мазмұн фотосы (Сұрақ 19)"
+
+msgid "Photo unavailable"
+msgstr "Фото қолжетімсіз"
+
+msgid "Created:"
+msgstr "Жасалған:"
+
+msgid "Total score:"
+msgstr "Жалпы ұпай:"
+
+msgid "points"
+msgstr "ұпай"
+
+msgid "Threat level:"
+msgstr "Қауіп деңгейі:"
+
+msgid "Created by:"
+msgstr "Жасаған:"
+
 msgid "Yes"
 msgstr "Иә"
 

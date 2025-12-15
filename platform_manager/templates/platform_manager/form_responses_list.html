@@ -122,9 +122,15 @@
       const form = document.getElementById('filter-form');
       const inputs = document.querySelectorAll('.filter-input');
       
+      // Track if we're in the middle of styling to prevent form submission
+      let isStylingUpdate = false;
+      
       inputs.forEach(input => {
         input.addEventListener('change', function() {
-          form.submit();
+          // Only submit form if it's not a styling update
+          if (!isStylingUpdate) {
+            form.submit();
+          }
         });
       });
       
@@ -145,27 +151,32 @@
           }
         });
         
-        // Style the select itself when a country is selected
-        countrySelect.addEventListener('change', function() {
-          if (this.value && this.value.includes('|')) {
-            const parts = this.value.split('|');
+        // Update select styling when selection changes
+        function updateSelectStyle() {
+          if (countrySelect.value && countrySelect.value.includes('|')) {
+            const parts = countrySelect.value.split('|');
             const countryCode = parts[1];
             const flagUrl = `https://flagcdn.com/w40/${countryCode}.png`;
             
-            this.style.backgroundImage = `url('${flagUrl}')`;
-            this.style.backgroundRepeat = 'no-repeat';
-            this.style.backgroundPosition = '8px center';
-            this.style.backgroundSize = '24px auto';
-            this.style.paddingLeft = '40px';
+            countrySelect.style.backgroundImage = `url('${flagUrl}')`;
+            countrySelect.style.backgroundRepeat = 'no-repeat';
+            countrySelect.style.backgroundPosition = '8px center';
+            countrySelect.style.backgroundSize = '24px auto';
+            countrySelect.style.paddingLeft = '40px';
           } else {
-            this.style.backgroundImage = 'none';
-            this.style.paddingLeft = '';
+            countrySelect.style.backgroundImage = 'none';
+            countrySelect.style.paddingLeft = '';
           }
-        });
+        }
         
-        // Trigger change event if there's a selected value on page load
+        // Style the select itself when a country is selected
+        countrySelect.addEventListener('change', updateSelectStyle);
+        
+        // Initialize styling on page load without triggering form submission
         if (countrySelect.value) {
-          countrySelect.dispatchEvent(new Event('change'));
+          isStylingUpdate = true;
+          updateSelectStyle();
+          isStylingUpdate = false;
         }
       }
     })();

@@ -651,3 +651,172 @@ msgstr "22. Криминально-ориентированный элемент
 
 msgid "23. Traces of violent actions on the body"
 msgstr "23. Следы насильственных действий на теле"
+
+# PDF Export translations
+msgid "Form Response"
+msgstr "Ответ на форму"
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "No"
+msgstr "Нет"
+
+msgid "Biographical Data"
+msgstr "В части биографических данных"
+
+msgid "1. Full name, date and place of birth"
+msgstr "1. ФИО, дата и место рождения"
+
+msgid "Birth date"
+msgstr "Дата рождения"
+
+msgid "Birth place"
+msgstr "Место рождения"
+
+msgid "2. Changed surname/name/patronymic"
+msgstr "2. Изменяли ли фамилию/имя/отчество"
+
+msgid "Reason for change"
+msgstr "Причина изменения"
+
+msgid "3. Phones and email"
+msgstr "3. Телефоны и email"
+
+msgid "4. Military service"
+msgstr "4. Служба в ВС"
+
+msgid "Service details"
+msgstr "Детали службы"
+
+msgid "Сriminal and Legal Information"
+msgstr "Уголовная и правовая информация"
+
+msgid "5. Criminal record"
+msgstr "5. Судимость"
+
+msgid "Period and place of imprisonment / For which crimes"
+msgstr "Период и место отбытия наказания / За какие преступления"
+
+msgid "6. Detentions abroad"
+msgstr "6. Задержания за границей"
+
+msgid "When and why / Where detained"
+msgstr "Когда и почему / Где содержали"
+
+msgid "Relatives and Religion"
+msgstr "Родственники и религия"
+
+msgid "7. Relatives in specified countries"
+msgstr "7. Родственники в указанных странах"
+
+msgid "Relatives details"
+msgstr "Детали родственников"
+
+msgid "8. Religious"
+msgstr "8. Религиозны"
+
+msgid "Denomination/views"
+msgstr "Мазхаб/взгляды"
+
+msgid "9. Are relatives wanted"
+msgstr "9. Разыскиваются ли родственники"
+
+msgid "Reason for search"
+msgstr "Причина розыска"
+
+msgid "Travel and Deportations"
+msgstr "Поездки и депортации"
+
+msgid "10. Visited specified countries"
+msgstr "10. Посещали указанные страны"
+
+msgid "Visit details"
+msgstr "Детали визитов"
+
+msgid "11. Deportation/expulsion"
+msgstr "11. Депортация/выдворение"
+
+msgid "Deportation details"
+msgstr "Детали депортации"
+
+msgid "12. Reason for not allowing entry"
+msgstr "12. Причина не пропуска"
+
+msgid "13. Last time in homeland"
+msgstr "13. Когда в последний раз были на родине"
+
+msgid "Border Officer Assessment"
+msgstr "Оценка пограничного офицера"
+
+msgid "Identified issues:"
+msgstr "Выявленные проблемы:"
+
+msgid "Additional details:"
+msgstr "Доп. детали:"
+
+msgid "14. Radical content on internet"
+msgstr "14. Радикальный контент в интернете"
+
+msgid "15. Radical sheikhs:"
+msgstr "15. Радикальные шейхи:"
+
+msgid "16. Radical religious ideology"
+msgstr "16. Радикальная религиозная идеология"
+
+msgid "17. Document issues"
+msgstr "17. Проблемы с документами"
+
+msgid "18. Deviation from religious norms"
+msgstr "18. Отклонение от религиозных норм"
+
+msgid "19. Suspicious mobile content"
+msgstr "19. Подозрительный контент на телефоне"
+
+msgid "20. Suspicious behavior"
+msgstr "20. Подозрительное поведение"
+
+msgid "21. Psychological deviations"
+msgstr "21. Психологические отклонения"
+
+msgid "22. Relatives in MTO"
+msgstr "22. Родственники в МТО"
+
+msgid "23. Criminal element"
+msgstr "23. Криминальный элемент"
+
+msgid "23. Traces of violence"
+msgstr "23. Следы насилия"
+
+msgid "Attached Photos"
+msgstr "Прикрепленные фотографии"
+
+msgid "Document photo (Question 1)"
+msgstr "Фото документа (Вопрос 1)"
+
+msgid "Person photo (Question 1)"
+msgstr "Фото человека (Вопрос 1)"
+
+msgid "Radical internet content photo (Question 14-15)"
+msgstr "Фото радикального контента в интернете (Вопрос 14-15)"
+
+msgid "Suspicious mobile content photo (Question 19)"
+msgstr "Фото подозрительного контента на телефоне (Вопрос 19)"
+
+msgid "Photo unavailable"
+msgstr "Фото недоступно"
+
+msgid "Created:"
+msgstr "Создан:"
+
+msgid "Total score:"
+msgstr "Общий балл:"
+
+msgid "points"
+msgstr "баллов"
+
+msgid "Threat level:"
+msgstr "Уровень угрозы:"
+
+msgid "Created by:"
+msgstr "Создал:"

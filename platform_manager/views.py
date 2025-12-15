@@ -229,27 +229,30 @@ class ResponsesListView(ListView):
 			queryset = FormResponse.objects.filter(created_by=self.request.user)
 		
 		# Apply filters
-		# Filter by search (full name) - case-insensitive search with proper Unicode handling
-		from django.db.models import Q, Value, CharField
-		from django.db.models.functions import Lower, Concat
+		# Filter by search (full name) - case-insensitive search
+		from django.db.models import Q
 		search = self.request.GET.get('search')
 		if search:
-			search_term = search.strip().lower()
-			# Create a combined full name field and search in it along with individual fields
-			# Using Lower() for proper case-insensitive Unicode search
-			queryset = queryset.annotate(
-				full_name_combined=Lower(Concat('last_name', Value(' '), 'first_name', Value(' '), 'patronymic', output_field=CharField())),
-				last_name_lower=Lower('last_name'),
-				first_name_lower=Lower('first_name'),
-				patronymic_lower=Lower('patronymic'),
-				full_name_and_birth_lower=Lower('full_name_and_birth')
-			).filter(
-				Q(last_name_lower__contains=search_term) |
-				Q(first_name_lower__contains=search_term) |
-				Q(patronymic_lower__contains=search_term) |
-				Q(full_name_combined__contains=search_term) |
-				Q(full_name_and_birth_lower__contains=search_term)
-			)
+			search_term = search.strip()
+			# For Cyrillic, icontains in SQLite is case-sensitive, so we search for multiple variants
+			search_variants = [
+				search_term,
+				search_term.lower(),
+				search_term.upper(),
+				search_term.capitalize(),
+				search_term.title()
+			]
+			
+			q_objects = Q()
+			for variant in search_variants:
+				q_objects |= (
+					Q(last_name__contains=variant) |
+					Q(first_name__contains=variant) |
+					Q(patronymic__contains=variant) |
+					Q(full_name_and_birth__contains=variant)
+				)
+			
+			queryset = queryset.filter(q_objects)
 		
 		# Filter by date range
 		date_from = self.request.GET.get('date_from')
@@ -696,13 +699,26 @@ def export_response_pdf(request, pk):
 	from reportlab.lib.pagesizes import A4
 	from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 	from reportlab.lib.units import cm
-	from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+	from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageTemplate, BaseDocTemplate, Frame
 	from reportlab.lib import colors
 	from reportlab.lib.enums import TA_LEFT, TA_CENTER
 	from reportlab.pdfbase import pdfmetrics
 	from reportlab.pdfbase.ttfonts import TTFont
 	import os
 	from django.conf import settings
+	from django.utils.translation import gettext as _
+	from django.utils import translation
+	
+	# Get current language from request
+	current_language = translation.get_language()
+	
+	# Determine watermark text based on language
+	if current_language == 'kk':
+		watermark_text = 'ҚАЖ'
+	elif current_language == 'ru':
+		watermark_text = 'КАЯ'
+	else:
+		watermark_text = 'KAZH'
 	
 	# Register fonts for Cyrillic support
 	fonts_dir = os.path.join(settings.BASE_DIR, 'fonts')
@@ -722,8 +738,27 @@ def export_response_pdf(request, pk):
 	response = HttpResponse(content_type='application/pdf')
 	response['Content-Disposition'] = f'attachment; filename="response_{pk}.pdf"'
 	
-	# Create PDF document
-	doc = SimpleDocTemplate(response, pagesize=A4, topMargin=1.5*cm, bottomMargin=1.5*cm, leftMargin=2*cm, rightMargin=2*cm)
+	# Custom page template with watermark
+	def add_watermark(canvas, doc):
+		canvas.saveState()
+		# Draw watermark text in center
+		canvas.setFont(bold_font, 180)
+		canvas.setFillColor(colors.HexColor('#1e40af'))
+		canvas.setFillAlpha(0.08)
+		# Rotate and position watermark
+		canvas.translate(A4[0]/2, A4[1]/2)
+		canvas.rotate(-12)
+		# Draw text centered
+		text_width = canvas.stringWidth(watermark_text, bold_font, 180)
+		canvas.drawString(-text_width/2, -90, watermark_text)
+		canvas.restoreState()
+	
+	# Create PDF document with custom page template
+	doc = BaseDocTemplate(response, pagesize=A4, topMargin=1.5*cm, bottomMargin=1.5*cm, leftMargin=2*cm, rightMargin=2*cm)
+	frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='normal')
+	template = PageTemplate(id='watermark', frames=frame, onPage=add_watermark)
+	doc.addPageTemplates([template])
+	
 	story = []
 	
 	# Styles
@@ -757,40 +792,58 @@ def export_response_pdf(request, pk):
 	)
 	
 	# Title
-	story.append(Paragraph("Ответ на форму", title_style))
+	story.append(Paragraph(_("Form Response"), title_style))
 	story.append(Spacer(1, 0.5*cm))
 	
 	# Helper function for yes/no with details
 	def add_field(data, question, yes_no_field, details_field=None, details_label=None):
-		yes_no = 'Да' if yes_no_field else 'Нет'
+		yes_no = _('Yes') if yes_no_field else _('No')
 		data.append([Paragraph(question, normal_style), Paragraph(yes_no, normal_style)])
 		if details_field and details_field.strip():
 			if details_label:
 				data.append([Paragraph(details_label, normal_style), Paragraph(details_field.replace('\n', '<br/>'), normal_style)])
 	
 	# Section 1: Biographical Data
-	story.append(Paragraph("В части биографических данных", heading_style))
+	story.append(Paragraph(_("Biographical Data"), heading_style))
 	bio_data = []
 	
 	# Question 1
+	full_name_parts = []
+	if response_obj.last_name:
+		full_name_parts.append(response_obj.last_name)
+	if response_obj.first_name:
+		full_name_parts.append(response_obj.first_name)
+	if response_obj.patronymic:
+		full_name_parts.append(response_obj.patronymic)
+	full_name = ' '.join(full_name_parts) if full_name_parts else ''
+	
+	birth_info_parts = []
+	if response_obj.birth_date:
+		birth_info_parts.append(f'{_("Birth date")}: {response_obj.birth_date.strftime("%d.%m.%Y")}')
+	if response_obj.birth_place:
+		birth_info_parts.append(f'{_("Birth place")}: {response_obj.birth_place}')
+	birth_info = '<br/>'.join(birth_info_parts) if birth_info_parts else ''
+	
+	q1_answer = '<br/>'.join(filter(None, [full_name, birth_info])) if full_name or birth_info else '—'
+	
 	bio_data.append([
-		Paragraph('1. ФИО, дата и место рождения', normal_style),
-		Paragraph(response_obj.full_name_and_birth.replace('\n', '<br/>') if response_obj.full_name_and_birth else '—', normal_style)
+		Paragraph(_('1. Full name, date and place of birth'), normal_style),
+		Paragraph(q1_answer, normal_style)
 	])
 	
 	# Question 2
-	add_field(bio_data, '2. Изменяли ли фамилию/имя/отчество', response_obj.name_changed, 
-		response_obj.name_change_reason, 'Причина изменения')
+	add_field(bio_data, _('2. Changed surname/name/patronymic'), response_obj.name_changed, 
+		response_obj.name_change_reason, _('Reason for change'))
 	
 	# Question 3
 	bio_data.append([
-		Paragraph('3. Телефоны и email', normal_style),
+		Paragraph(_('3. Phones and email'), normal_style),
 		Paragraph(response_obj.phones_emails.replace('\n', '<br/>') if response_obj.phones_emails else '—', normal_style)
 	])
 	
 	# Question 4
-	add_field(bio_data, '4. Служба в ВС', response_obj.military_service,
-		response_obj.military_details, 'Детали службы')
+	add_field(bio_data, _('4. Military service'), response_obj.military_service,
+		response_obj.military_details, _('Service details'))
 	
 	bio_table = Table(bio_data, colWidths=[7*cm, 10*cm])
 	bio_table.setStyle(TableStyle([
@@ -810,18 +863,18 @@ def export_response_pdf(request, pk):
 	story.append(Spacer(1, 0.5*cm))
 	
 	# Section 2: Criminal and Legal Information
-	story.append(Paragraph("Уголовная и правовая информация", heading_style))
+	story.append(Paragraph(_("Сriminal and Legal Information"), heading_style))
 	criminal_data = []
 	
 	# Question 5
-	add_field(criminal_data, '5. Судимость', response_obj.criminal_record,
+	add_field(criminal_data, _('5. Criminal record'), response_obj.criminal_record,
 		(response_obj.criminal_period_where or '') + '\n' + (response_obj.criminal_offenses or '') if response_obj.criminal_period_where or response_obj.criminal_offenses else None,
-		'Период и место отбытия наказания / За какие преступления')
+		_('Period and place of imprisonment / For which crimes'))
 	
 	# Question 6
-	add_field(criminal_data, '6. Задержания за границей', response_obj.detained_abroad,
+	add_field(criminal_data, _('6. Detentions abroad'), response_obj.detained_abroad,
 		(response_obj.detained_when_why or '') + ('\n' + response_obj.detained_where if response_obj.detained_where else ''),
-		'Когда и почему / Где содержали')
+		_('When and why / Where detained'))
 	
 	criminal_table = Table(criminal_data, colWidths=[7*cm, 10*cm])
 	criminal_table.setStyle(TableStyle([
@@ -841,26 +894,26 @@ def export_response_pdf(request, pk):
 	story.append(Spacer(1, 0.5*cm))
 	
 	# Section 3: Relatives and Religion
-	story.append(Paragraph("Родственники и религия", heading_style))
+	story.append(Paragraph(_("Relatives and Religion"), heading_style))
 	relatives_data = []
 	
 	# Question 7
-	add_field(relatives_data, '7. Родственники в указанных странах', response_obj.relatives_in_countries,
-		response_obj.relatives_details, 'Детали родственников')
+	add_field(relatives_data, _('7. Relatives in specified countries'), response_obj.relatives_in_countries,
+		response_obj.relatives_details, _('Relatives details'))
 	
 	# Question 8
-	add_field(relatives_data, '8. Религиозны', response_obj.religious,
-		response_obj.denomination, 'Мазхаб/взгляды')
+	add_field(relatives_data, _('8. Religious'), response_obj.religious,
+		response_obj.denomination, _('Denomination/views'))
 	
 	# Question 9 (previously was question 8 about relatives_wanted)
 	if response_obj.relatives_wanted:
 		relatives_data.append([
-			Paragraph('9. Разыскиваются ли родственники', normal_style),
-			Paragraph('Да', normal_style)
+			Paragraph(_('9. Are relatives wanted'), normal_style),
+			Paragraph(_('Yes'), normal_style)
 		])
 		if response_obj.relatives_wanted_reason and response_obj.relatives_wanted_reason.strip():
 			relatives_data.append([
-				Paragraph('Причина розыска', normal_style),
+				Paragraph(_('Reason for search'), normal_style),
 				Paragraph(response_obj.relatives_wanted_reason.replace('\n', '<br/>'), normal_style)
 			])
 	
@@ -882,28 +935,28 @@ def export_response_pdf(request, pk):
 	story.append(Spacer(1, 0.5*cm))
 	
 	# Section 4: Travel and Deportations
-	story.append(Paragraph("Поездки и депортации", heading_style))
+	story.append(Paragraph(_("Travel and Deportations"), heading_style))
 	travel_data = []
 	
 	# Question 10
-	add_field(travel_data, '10. Посещали указанные страны', response_obj.visited_countries,
-		response_obj.visited_countries_details, 'Детали визитов')
+	add_field(travel_data, _('10. Visited specified countries'), response_obj.visited_countries,
+		response_obj.visited_countries_details, _('Visit details'))
 	
 	# Question 11
-	add_field(travel_data, '11. Депортация/выдворение', response_obj.deported,
-		response_obj.deportation_details, 'Детали депортации')
+	add_field(travel_data, _('11. Deportation/expulsion'), response_obj.deported,
+		response_obj.deportation_details, _('Deportation details'))
 	
 	# Question 12
 	if response_obj.not_allowed_reason:
 		travel_data.append([
-			Paragraph('12. Причина не пропуска', normal_style),
+			Paragraph(_('12. Reason for not allowing entry'), normal_style),
 			Paragraph(response_obj.not_allowed_reason.replace('\n', '<br/>'), normal_style)
 		])
 	
 	# Question 13
 	if response_obj.last_time_in_homeland:
 		travel_data.append([
-			Paragraph('13. Когда в последний раз были на родине', normal_style),
+			Paragraph(_('13. Last time in homeland'), normal_style),
 			Paragraph(str(response_obj.last_time_in_homeland), normal_style)
 		])
 	
@@ -926,24 +979,24 @@ def export_response_pdf(request, pk):
 	
 	# Section 5: Officer Assessment (Questions 14-23)
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment:
-		story.append(Paragraph("Оценка пограничного офицера", heading_style))
+		story.append(Paragraph(_("Border Officer Assessment"), heading_style))
 		assessment = response_obj.officer_assessment
 		assessment_data = []
 		
 		# Helper function to add checkbox selections
 		def add_checkbox_field(data, question, yes_no_field, labels_method, details_field=None):
-			yes_no = 'Да' if yes_no_field else 'Нет'
+			yes_no = _('Yes') if yes_no_field else _('No')
 			data.append([Paragraph(question, normal_style), Paragraph(yes_no, normal_style)])
 			if yes_no_field and labels_method:
 				labels = labels_method()
 				if labels:
 					items_html = '<br/>'.join([f'• {label}' for label in labels])
-					data.append([Paragraph('Выявленные проблемы:', normal_style), Paragraph(items_html, normal_style)])
+					data.append([Paragraph(_('Identified issues:'), normal_style), Paragraph(items_html, normal_style)])
 			if details_field and details_field.strip():
-				data.append([Paragraph('Доп. детали:', normal_style), Paragraph(details_field.replace('\n', '<br/>'), normal_style)])
+				data.append([Paragraph(_('Additional details:'), normal_style), Paragraph(details_field.replace('\n', '<br/>'), normal_style)])
 		
 		# Question 14 & 15 - Radical Internet
-		add_checkbox_field(assessment_data, '14. Радикальный контент в интернете', 
+		add_checkbox_field(assessment_data, _('14. Radical content on internet'), 
 			assessment.radical_internet, assessment.get_radical_internet_content_labels,
 			assessment.radical_internet_details)
 		
@@ -951,51 +1004,51 @@ def export_response_pdf(request, pk):
 			labels = assessment.get_radical_internet_sheikhs_labels()
 			if labels:
 				items_html = '<br/>'.join([f'• {label}' for label in labels])
-				assessment_data.append([Paragraph('15. Радикальные шейхи:', normal_style), Paragraph(items_html, normal_style)])
+				assessment_data.append([Paragraph(_('15. Radical sheikhs:'), normal_style), Paragraph(items_html, normal_style)])
 		
 		# Question 16 - Radical Religious Ideology
-		add_checkbox_field(assessment_data, '16. Радикальная религиозная идеология',
+		add_checkbox_field(assessment_data, _('16. Radical religious ideology'),
 			assessment.radical_religious_ideology, assessment.get_radical_religious_signs_labels,
 			assessment.radical_religious_details)
 		
 		# Question 17 - Document Issues
-		add_checkbox_field(assessment_data, '17. Проблемы с документами',
+		add_checkbox_field(assessment_data, _('17. Document issues'),
 			assessment.document_issues, assessment.get_document_issues_types_labels,
 			assessment.document_issues_details)
 		
 		# Question 18 - Religious Deviations
-		add_checkbox_field(assessment_data, '18. Отклонение от религиозных норм',
+		add_checkbox_field(assessment_data, _('18. Deviation from religious norms'),
 			assessment.religious_deviations, assessment.get_religious_deviations_types_labels,
 			assessment.religious_deviations_details)
 		
 		# Question 19 - Suspicious Mobile Content
-		add_checkbox_field(assessment_data, '19. Подозрительный контент на телефоне',
+		add_checkbox_field(assessment_data, _('19. Suspicious mobile content'),
 			assessment.suspicious_mobile_content, assessment.get_suspicious_mobile_types_labels,
 			assessment.suspicious_mobile_details)
 		
 		# Question 20 - Suspicious Behavior
-		add_checkbox_field(assessment_data, '20. Подозрительное поведение',
+		add_checkbox_field(assessment_data, _('20. Suspicious behavior'),
 			assessment.suspicious_behavior, assessment.get_suspicious_behavior_types_labels,
 			assessment.suspicious_behavior_details)
 		
 		# Question 21 - Psychological Issues
-		add_checkbox_field(assessment_data, '21. Психологические отклонения',
+		add_checkbox_field(assessment_data, _('21. Psychological deviations'),
 			assessment.psychological_issues, assessment.get_psychological_types_labels,
 			assessment.psychological_details)
 		
 		# Question 22 - Relatives MTO
-		add_checkbox_field(assessment_data, '22. Родственники в МТО',
+		add_checkbox_field(assessment_data, _('22. Relatives in MTO'),
 			assessment.relatives_mto, assessment.get_relatives_mto_types_labels,
 			assessment.relatives_mto_details)
 		
 		# Question 23 - Criminal Element
-		add_checkbox_field(assessment_data, '23. Криминальный элемент',
+		add_checkbox_field(assessment_data, _('23. Criminal element'),
 			assessment.criminal_element, assessment.get_criminal_element_types_labels,
 			assessment.criminal_element_details)
 		
 		# Question 23b - Violence Traces
 		if assessment.violence_traces:
-			add_checkbox_field(assessment_data, '23. Следы насилия',
+			add_checkbox_field(assessment_data, _('23. Traces of violence'),
 				assessment.violence_traces, assessment.get_violence_traces_types_labels,
 				assessment.violence_traces_details)
 		
@@ -1022,22 +1075,22 @@ def export_response_pdf(request, pk):
 	
 	# Check for full_name_photo (Question 1)
 	if response_obj.full_name_photo:
-		photos.append(('Фото документа (Вопрос 1)', response_obj.full_name_photo))
+		photos.append((_('Document photo (Question 1)'), response_obj.full_name_photo))
 	
 	# Check for person_photo (Question 1)
 	if response_obj.person_photo:
-		photos.append(('Фото человека (Вопрос 1)', response_obj.person_photo))
+		photos.append((_('Person photo (Question 1)'), response_obj.person_photo))
 	
 	# Check for radical_internet_photo (Question 14-15)
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.radical_internet_photo:
-		photos.append(('Фото радикального контента в интернете (Вопрос 14-15)', response_obj.officer_assessment.radical_internet_photo))
+		photos.append((_('Radical internet content photo (Question 14-15)'), response_obj.officer_assessment.radical_internet_photo))
 	
 	# Check for suspicious_mobile_photo (Question 19)
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
-		photos.append(('Фото подозрительного контента на телефоне (Вопрос 19)', response_obj.officer_assessment.suspicious_mobile_photo))
+		photos.append((_('Suspicious mobile content photo (Question 19)'), response_obj.officer_assessment.suspicious_mobile_photo))
 	
 	if photos:
-		story.append(Paragraph("Прикрепленные фотографии", heading_style))
+		story.append(Paragraph(_("Attached Photos"), heading_style))
 		
 		for photo_title, photo_field in photos:
 			story.append(Paragraph(photo_title, normal_style))
@@ -1053,17 +1106,17 @@ def export_response_pdf(request, pk):
 				story.append(Spacer(1, 0.5*cm))
 			except Exception as e:
 				# If image can't be loaded, just show a note
-				story.append(Paragraph(f"[Фото недоступно: {str(e)}]", normal_style))
+				story.append(Paragraph(f"[{_('Photo unavailable')}: {str(e)}]", normal_style))
 				story.append(Spacer(1, 0.3*cm))
 	
 	# Footer with metadata
 	footer_data = [
-		['Создан:', response_obj.created_at.strftime('%d.%m.%Y %H:%M')],
-		['Общий балл:', f"{response_obj.total_score} баллов"],
-		['Уровень угрозы:', response_obj.threat_level],
+		[_('Created:'), response_obj.created_at.strftime('%d.%m.%Y %H:%M')],
+		[_('Total score:'), f"{response_obj.total_score} {_('points')}"],
+		[_('Threat level:'), response_obj.threat_level],
 	]
 	if response_obj.created_by:
-		footer_data.insert(0, ['Создал:', f"{response_obj.created_by.first_name} {response_obj.created_by.last_name}"])
+		footer_data.insert(0, [_('Created by:'), f"{response_obj.created_by.first_name} {response_obj.created_by.last_name}"])
 	
 	footer_table = Table(footer_data, colWidths=[4*cm, 13*cm])
 	footer_table.setStyle(TableStyle([
