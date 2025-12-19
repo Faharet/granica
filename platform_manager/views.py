@@ -819,7 +819,11 @@ def export_response_pdf(request, pk):
 	
 	birth_info_parts = []
 	if response_obj.birth_date:
-		birth_info_parts.append(f'{_("Birth date")}: {response_obj.birth_date.strftime("%d.%m.%Y")}')
+		# Handle both date objects and string representations
+		if isinstance(response_obj.birth_date, str):
+			birth_info_parts.append(f'{_("Birth date")}: {response_obj.birth_date}')
+		else:
+			birth_info_parts.append(f'{_("Birth date")}: {response_obj.birth_date.strftime("%d.%m.%Y")}')
 	if response_obj.birth_place:
 		birth_info_parts.append(f'{_("Birth place")}: {response_obj.birth_place}')
 	birth_info = '<br/>'.join(birth_info_parts) if birth_info_parts else ''
