@@ -22,10 +22,7 @@
             <div class="flex-shrink-0">
                 <a href="{% url 'manager_panel' %}" class="group flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-base-200/50 transition-all duration-200">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center font-black text-base shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200" style="background-color: #1e40af;">
-                        {% get_current_language as CURRENT_LANGUAGE %}
-                        <span class="tracking-wide text-white">
-                            {% if CURRENT_LANGUAGE == 'kk' %}ҚАЖ{% elif CURRENT_LANGUAGE == 'ru' %}КАЯ{% else %}KAZH{% endif %}
-                        </span>
+                        <span class="tracking-wide text-white">АБАЙ</span>
                     </div>
                 </a>
             </div>
@@ -82,13 +79,7 @@
                     color: #1e40af;
                     letter-spacing: 0.3em;
                     filter: drop-shadow(0 0 60px rgba(30, 64, 175, 0.15));">
-            {% if CURRENT_LANGUAGE == 'kk' %}
-                ҚАЖ
-            {% elif CURRENT_LANGUAGE == 'ru' %}
-                КАЯ
-            {% else %}
-                KAZH
-            {% endif %}
+            АБАЙ
         </div>
     </div>
 </div>

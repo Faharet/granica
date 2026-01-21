@@ -712,13 +712,8 @@ def export_response_pdf(request, pk):
 	# Get current language from request
 	current_language = translation.get_language()
 	
-	# Determine watermark text based on language
-	if current_language == 'kk':
-		watermark_text = 'ҚАЖ'
-	elif current_language == 'ru':
-		watermark_text = 'КАЯ'
-	else:
-		watermark_text = 'KAZH'
+	# Watermark text
+	watermark_text = 'АБАЙ'
 	
 	# Register fonts for Cyrillic support
 	fonts_dir = os.path.join(settings.BASE_DIR, 'fonts')
