@@ -22,14 +22,14 @@ def is_admin(user):
 
 
 def is_manager(user):
-	"""Return True if the user is in the 'manager' group or is a superuser/staff.
+	"""Return True if the user is in the 'manager' group or is a superuser.
 
-	Superusers and staff members have full access to all manager functions.
+	Only superusers and users in the 'manager' group have full access to all manager functions.
 	"""
 	if not user or not user.is_authenticated:
 		return False
-	# Superusers and staff have full manager rights
-	if user.is_superuser or user.is_staff:
+	# Only superusers have automatic manager rights
+	if user.is_superuser:
 		return True
 	# Otherwise check for manager group membership
 	return user.groups.filter(name='manager').exists()
