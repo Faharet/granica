@@ -692,9 +692,8 @@ class OfficerAssessmentView(View):
 
 
 @login_required
-@user_passes_test(is_manager)
 def export_response_pdf(request, pk):
-	"""Export form response to PDF (managers only)."""
+	"""Export form response to PDF. Managers can export any, others only their own."""
 	from django.http import HttpResponse
 	from reportlab.lib.pagesizes import A4
 	from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -728,6 +727,11 @@ def export_response_pdf(request, pk):
 		bold_font = 'Helvetica-Bold'
 	
 	response_obj = get_object_or_404(FormResponse, pk=pk)
+	
+	# Check access: managers can export any, others can only export their own
+	if not is_manager(request.user) and response_obj.created_by != request.user:
+		from django.http import HttpResponseForbidden
+		return HttpResponseForbidden("You don't have permission to export this response.")
 	
 	# Create HTTP response with PDF headers
 	response = HttpResponse(content_type='application/pdf')

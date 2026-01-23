@@ -26,9 +26,7 @@
         </div>
         <div class="flex items-center space-x-3">
           <a href="{% url 'platform_manager:form_responses' %}" class="btn btn-ghost btn-sm"><i class="fa fa-arrow-left mr-2"></i>{% trans 'Back to list' %}</a>
-          {% if is_manager %}
           <a href="{% url 'platform_manager:export_response_pdf' response.id %}" class="btn btn-primary btn-sm"><i class="fa fa-file-pdf mr-2"></i>{% trans 'Export PDF' %}</a>
-          {% endif %}
           {% if can_edit %}
           <a href="{% url 'platform_manager:form_response_edit' response.id %}" class="btn btn-warning btn-sm"><i class="fa fa-edit mr-2"></i>{% trans 'Edit' %}</a>
           {% endif %}
