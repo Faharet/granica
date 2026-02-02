@@ -1144,6 +1144,341 @@ def export_response_pdf(request, pk):
 
 
 @login_required
+def export_response_docx(request, pk):
+	"""Export form response to DOCX. Managers can export any, others only their own."""
+	from django.http import HttpResponse
+	from docx import Document
+	from docx.shared import Inches, Pt, RGBColor, Cm
+	from docx.enum.text import WD_ALIGN_PARAGRAPH
+	from docx.oxml.shared import OxmlElement, qn
+	from django.utils.translation import gettext as _
+	from django.utils import translation
+	import io
+	
+	response_obj = get_object_or_404(FormResponse, pk=pk)
+	
+	# Check access: managers can export any, others can only export their own
+	if not is_manager(request.user) and response_obj.created_by != request.user:
+		from django.http import HttpResponseForbidden
+		return HttpResponseForbidden("You don't have permission to export this response.")
+	
+	# Create document
+	doc = Document()
+	
+	# Add watermark in header
+	section = doc.sections[0]
+	header = section.header
+	watermark_para = header.paragraphs[0]
+	watermark_run = watermark_para.add_run('АБАЙ')
+	watermark_run.font.size = Pt(72)
+	watermark_run.font.color.rgb = RGBColor(30, 64, 175)
+	watermark_run.font.bold = True
+	watermark_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+	
+	# Title
+	title = doc.add_heading(_('Form Response'), 0)
+	title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+	
+	# Helper function to create table
+	def create_table(data_rows):
+		"""Create a 2-column table with question and answer"""
+		table = doc.add_table(rows=len(data_rows), cols=2)
+		table.style = 'Light Grid Accent 1'
+		
+		# Set column widths
+		for row in table.rows:
+			row.cells[0].width = Cm(7)
+			row.cells[1].width = Cm(10)
+		
+		# Fill table
+		for i, (question, answer) in enumerate(data_rows):
+			# Question cell
+			cell_q = table.rows[i].cells[0]
+			cell_q.text = question
+			# Make question text gray and smaller
+			for paragraph in cell_q.paragraphs:
+				for run in paragraph.runs:
+					run.font.size = Pt(9)
+					run.font.color.rgb = RGBColor(75, 85, 99)
+			
+			# Answer cell
+			cell_a = table.rows[i].cells[1]
+			cell_a.text = answer
+			# Make answer text darker
+			for paragraph in cell_a.paragraphs:
+				for run in paragraph.runs:
+					run.font.size = Pt(9)
+					run.font.color.rgb = RGBColor(31, 41, 55)
+		
+		return table
+	
+	# Helper function for yes/no fields
+	def add_yes_no_row(question, yes_no_field, details_field=None, details_label=None):
+		rows = []
+		yes_no = _('Yes') if yes_no_field else _('No')
+		rows.append((question, yes_no))
+		if details_field and details_field.strip():
+			if details_label:
+				rows.append((details_label, details_field))
+		return rows
+	
+	# Section 1: Biographical Data
+	doc.add_heading(_('Biographical Data'), 1)
+	bio_data = []
+	
+	# Question 1
+	full_name_parts = []
+	if response_obj.last_name:
+		full_name_parts.append(response_obj.last_name)
+	if response_obj.first_name:
+		full_name_parts.append(response_obj.first_name)
+	if response_obj.patronymic:
+		full_name_parts.append(response_obj.patronymic)
+	full_name = ' '.join(full_name_parts) if full_name_parts else ''
+	
+	birth_info_parts = []
+	if response_obj.birth_date:
+		if isinstance(response_obj.birth_date, str):
+			birth_info_parts.append(f'{_("Birth date")}: {response_obj.birth_date}')
+		else:
+			birth_info_parts.append(f'{_("Birth date")}: {response_obj.birth_date.strftime("%d.%m.%Y")}')
+	if response_obj.birth_place:
+		birth_info_parts.append(f'{_("Birth place")}: {response_obj.birth_place}')
+	birth_info = '\n'.join(birth_info_parts) if birth_info_parts else ''
+	
+	q1_answer = '\n'.join(filter(None, [full_name, birth_info])) if full_name or birth_info else '—'
+	bio_data.append((_('1. Full name, date and place of birth'), q1_answer))
+	
+	# Question 2
+	bio_data.extend(add_yes_no_row(_('2. Changed surname/name/patronymic'), response_obj.name_changed,
+		response_obj.name_change_reason, _('Reason for change')))
+	
+	# Question 3
+	bio_data.append((_('3. Phones and email'), response_obj.phones_emails if response_obj.phones_emails else '—'))
+	
+	# Question 4
+	bio_data.extend(add_yes_no_row(_('4. Military service'), response_obj.military_service,
+		response_obj.military_details, _('Service details')))
+	
+	create_table(bio_data)
+	doc.add_paragraph()  # Spacer
+	
+	# Section 2: Criminal and Legal Information
+	doc.add_heading(_('Criminal and Legal Information'), 1)
+	criminal_data = []
+	
+	# Question 5
+	criminal_details_text = None
+	if response_obj.criminal_period_where or response_obj.criminal_offenses:
+		parts = []
+		if response_obj.criminal_period_where:
+			parts.append(response_obj.criminal_period_where)
+		if response_obj.criminal_offenses:
+			parts.append(response_obj.criminal_offenses)
+		criminal_details_text = '\n'.join(parts)
+	
+	criminal_data.extend(add_yes_no_row(_('5. Criminal record'), response_obj.criminal_record,
+		criminal_details_text, _('Period and place of imprisonment / For which crimes')))
+	
+	# Question 6
+	detained_details_text = None
+	if response_obj.detained_when_why or response_obj.detained_where:
+		parts = []
+		if response_obj.detained_when_why:
+			parts.append(response_obj.detained_when_why)
+		if response_obj.detained_where:
+			parts.append(response_obj.detained_where)
+		detained_details_text = '\n'.join(parts)
+	
+	criminal_data.extend(add_yes_no_row(_('6. Detentions abroad'), response_obj.detained_abroad,
+		detained_details_text, _('When and why / Where detained')))
+	
+	create_table(criminal_data)
+	doc.add_paragraph()
+	
+	# Section 3: Relatives and Religion
+	doc.add_heading(_('Relatives and Religion'), 1)
+	relatives_data = []
+	
+	# Question 7
+	relatives_data.extend(add_yes_no_row(_('7. Relatives in specified countries'), response_obj.relatives_in_countries,
+		response_obj.relatives_details, _('Relatives details')))
+	
+	# Question 8
+	relatives_data.extend(add_yes_no_row(_('8. Religious'), response_obj.religious,
+		response_obj.denomination, _('Denomination/views')))
+	
+	# Question 9
+	if response_obj.relatives_wanted:
+		relatives_data.append((_('9. Are relatives wanted'), _('Yes')))
+		if response_obj.relatives_wanted_reason and response_obj.relatives_wanted_reason.strip():
+			relatives_data.append((_('Reason for search'), response_obj.relatives_wanted_reason))
+	
+	create_table(relatives_data)
+	doc.add_paragraph()
+	
+	# Section 4: Travel and Deportations
+	doc.add_heading(_('Travel and Deportations'), 1)
+	travel_data = []
+	
+	# Question 10
+	travel_data.extend(add_yes_no_row(_('10. Visited specified countries'), response_obj.visited_countries,
+		response_obj.visited_countries_details, _('Visit details')))
+	
+	# Question 11
+	travel_data.extend(add_yes_no_row(_('11. Deportation/expulsion'), response_obj.deported,
+		response_obj.deportation_details, _('Deportation details')))
+	
+	# Question 12
+	if response_obj.not_allowed_reason:
+		travel_data.append((_('12. Reason for not allowing entry'), response_obj.not_allowed_reason))
+	
+	# Question 13
+	if response_obj.last_time_in_homeland:
+		travel_data.append((_('13. Last time in homeland'), str(response_obj.last_time_in_homeland)))
+	
+	create_table(travel_data)
+	doc.add_paragraph()
+	
+	# Section 5: Officer Assessment (Questions 14-23)
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment:
+		doc.add_heading(_('Border Officer Assessment'), 1)
+		assessment = response_obj.officer_assessment
+		assessment_data = []
+		
+		# Helper function for checkbox fields
+		def add_checkbox_rows(question, yes_no_field, labels_method, details_field=None):
+			rows = []
+			yes_no = _('Yes') if yes_no_field else _('No')
+			rows.append((question, yes_no))
+			if yes_no_field and labels_method:
+				labels = labels_method()
+				if labels:
+					items_text = '\n'.join([f'• {label}' for label in labels])
+					rows.append((_('Identified issues:'), items_text))
+			if details_field and details_field.strip():
+				rows.append((_('Additional details:'), details_field))
+			return rows
+		
+		# Question 14 & 15
+		assessment_data.extend(add_checkbox_rows(_('14. Radical content on internet'),
+			assessment.radical_internet, assessment.get_radical_internet_content_labels,
+			assessment.radical_internet_details))
+		
+		if assessment.radical_internet_sheikhs:
+			labels = assessment.get_radical_internet_sheikhs_labels()
+			if labels:
+				items_text = '\n'.join([f'• {label}' for label in labels])
+				assessment_data.append((_('15. Radical sheikhs:'), items_text))
+		
+		# Questions 16-23
+		assessment_data.extend(add_checkbox_rows(_('16. Radical religious ideology'),
+			assessment.radical_religious_ideology, assessment.get_radical_religious_signs_labels,
+			assessment.radical_religious_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('17. Document issues'),
+			assessment.document_issues, assessment.get_document_issues_types_labels,
+			assessment.document_issues_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('18. Deviation from religious norms'),
+			assessment.religious_deviations, assessment.get_religious_deviations_types_labels,
+			assessment.religious_deviations_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('19. Suspicious mobile content'),
+			assessment.suspicious_mobile_content, assessment.get_suspicious_mobile_types_labels,
+			assessment.suspicious_mobile_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('20. Suspicious behavior'),
+			assessment.suspicious_behavior, assessment.get_suspicious_behavior_types_labels,
+			assessment.suspicious_behavior_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('21. Psychological deviations'),
+			assessment.psychological_issues, assessment.get_psychological_types_labels,
+			assessment.psychological_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('22. Relatives in MTO'),
+			assessment.relatives_mto, assessment.get_relatives_mto_types_labels,
+			assessment.relatives_mto_details))
+		
+		assessment_data.extend(add_checkbox_rows(_('23. Criminal element'),
+			assessment.criminal_element, assessment.get_criminal_element_types_labels,
+			assessment.criminal_element_details))
+		
+		if assessment.violence_traces:
+			assessment_data.extend(add_checkbox_rows(_('23. Traces of violence'),
+				assessment.violence_traces, assessment.get_violence_traces_types_labels,
+				assessment.violence_traces_details))
+		
+		create_table(assessment_data)
+		doc.add_paragraph()
+	
+	# Section 6: Attached Photos
+	photos = []
+	if response_obj.full_name_photo:
+		photos.append((_('Document photo (Question 1)'), response_obj.full_name_photo))
+	if response_obj.person_photo:
+		photos.append((_('Person photo (Question 1)'), response_obj.person_photo))
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.radical_internet_photo:
+		photos.append((_('Radical internet content photo (Question 14-15)'), response_obj.officer_assessment.radical_internet_photo))
+	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
+		photos.append((_('Suspicious mobile content photo (Question 19)'), response_obj.officer_assessment.suspicious_mobile_photo))
+	
+	if photos:
+		doc.add_heading(_('Attached Photos'), 1)
+		for photo_title, photo_field in photos:
+			p = doc.add_paragraph()
+			p.add_run(photo_title).bold = True
+			p.paragraph_format.space_after = Pt(6)
+			try:
+				doc.add_picture(photo_field.path, width=Cm(15))
+				doc.add_paragraph()
+			except Exception as e:
+				doc.add_paragraph(f"[{_('Photo unavailable')}: {str(e)}]")
+	
+	# Footer metadata table
+	doc.add_heading(_('Metadata'), 1)
+	
+	footer_data = []
+	if response_obj.created_by:
+		footer_data.append((_('Created by'), f"{response_obj.created_by.first_name} {response_obj.created_by.last_name}"))
+	footer_data.append((_('Created'), response_obj.created_at.strftime('%d.%m.%Y %H:%M')))
+	footer_data.append((_('Total score'), f"{response_obj.total_score} {_('points')}"))
+	footer_data.append((_('Threat level'), response_obj.threat_level))
+	
+	# Create footer table with different style
+	footer_table = doc.add_table(rows=len(footer_data), cols=2)
+	footer_table.style = 'Light List Accent 1'
+	
+	for i, (label, value) in enumerate(footer_data):
+		cell_label = footer_table.rows[i].cells[0]
+		cell_value = footer_table.rows[i].cells[1]
+		
+		cell_label.text = label
+		cell_value.text = value
+		
+		# Make label bold
+		for paragraph in cell_label.paragraphs:
+			for run in paragraph.runs:
+				run.font.bold = True
+				run.font.size = Pt(9)
+		
+		# Style value
+		for paragraph in cell_value.paragraphs:
+			for run in paragraph.runs:
+				run.font.size = Pt(9)
+	
+	# Save to BytesIO and return as response
+	buffer = io.BytesIO()
+	doc.save(buffer)
+	buffer.seek(0)
+	
+	response = HttpResponse(buffer.read(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+	response['Content-Disposition'] = f'attachment; filename="response_{pk}.docx"'
+	
+	return response
+
+
+@login_required
 def logout_view(request):
 	"""Custom logout view that works for all authenticated users."""
 	from django.contrib.auth import logout

@@ -11,6 +11,7 @@ urlpatterns = [
 	path('responses/<uuid:pk>/edit/', views.EditFormResponseView.as_view(), name='form_response_edit'),
 	path('responses/<uuid:pk>/delete/', views.FormResponseDeleteView.as_view(), name='form_response_delete'),
 	path('responses/<uuid:pk>/pdf/', views.export_response_pdf, name='export_response_pdf'),
+	path('responses/<uuid:pk>/docx/', views.export_response_docx, name='export_response_docx'),
 	path('responses/<uuid:pk>/assess/', views.OfficerAssessmentView.as_view(), name='officer_assessment'),
 	path('logout/', views.logout_view, name='logout'),
 ]
