@@ -16,6 +16,11 @@ db.sqlite3-journal
 /media
 /staticfiles
 
+# Generated exports
+*.pdf
+*.docx
+*.doc
+
 # Environment
 .env
 .venv

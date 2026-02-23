@@ -430,6 +430,9 @@ msgstr "Экспорт в PDF"
 msgid "Attach photo of document (optional)"
 msgstr "Прикрепите фото документа (опционально)"
 
+msgid "Attach photo of the person (optional)"
+msgstr "Прикрепите фото человека (опционально)"
+
 msgid "a) state full name"
 msgstr "а) укажите ФИО"
 
@@ -450,6 +453,9 @@ msgstr "Прикрепите фото (опционально):"
 
 msgid "Supported formats: JPG, PNG, PDF"
 msgstr "Поддерживаемые форматы: JPG, PNG, PDF"
+
+msgid "Supported formats: JPG, PNG"
+msgstr "Поддерживаемые форматы: JPG, PNG"
 
 msgid "Last name"
 msgstr "Фамилия"

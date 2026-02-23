@@ -583,3 +583,42 @@ class BorderOfficerAssessment(models.Model):
     
     def __str__(self):
         return f"Оценка для {self.form_response} - {self.threat_level} ({self.total_score} баллов)"
+
+
+# Models for storing multiple photos
+class FormResponsePhoto(models.Model):
+    """Model for storing multiple photos attached to FormResponse"""
+    form_response = models.ForeignKey(FormResponse, on_delete=models.CASCADE, related_name='additional_photos', verbose_name="Ответ формы")
+    photo = models.ImageField(upload_to='form_responses/additional/', verbose_name="Фотография")
+    photo_type = models.CharField(max_length=50, choices=[
+        ('document', 'Документ'),
+        ('person', 'Человек'),
+    ], verbose_name="Тип фотографии")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата загрузки")
+    
+    class Meta:
+        verbose_name = "Дополнительная фотография"
+        verbose_name_plural = "Дополнительные фотографии"
+        ordering = ['uploaded_at']
+    
+    def __str__(self):
+        return f"{self.get_photo_type_display()} - {self.form_response.id}"
+
+
+class AssessmentPhoto(models.Model):
+    """Model for storing multiple photos attached to BorderOfficerAssessment"""
+    assessment = models.ForeignKey(BorderOfficerAssessment, on_delete=models.CASCADE, related_name='additional_photos', verbose_name="Оценка")
+    photo = models.ImageField(upload_to='assessments/additional/', verbose_name="Фотография")
+    photo_type = models.CharField(max_length=50, choices=[
+        ('radical_internet', 'Радикальный контент (вопрос 14)'),
+        ('suspicious_mobile', 'Подозрительный мобильный контент (вопрос 19)'),
+    ], verbose_name="Тип фотографии")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата загрузки")
+    
+    class Meta:
+        verbose_name = "Дополнительная фотография оценки"
+        verbose_name_plural = "Дополнительные фотографии оценки"
+        ordering = ['uploaded_at']
+    
+    def __str__(self):
+        return f"{self.get_photo_type_display()} - {self.assessment.id}"

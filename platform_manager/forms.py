@@ -3,6 +3,11 @@ from django.utils.translation import gettext_lazy as _
 from .models import FormResponse, BorderOfficerAssessment
 from .choices import *
 
+
+# Widget that allows selecting multiple files in a single input
+class MultiFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
 # Country choices with flag-icons CSS classes
 COUNTRY_CHOICES = [
     ('', '-- Выберите страну --'),
@@ -86,8 +91,8 @@ class FormResponseForm(forms.ModelForm):
             'patronymic': forms.TextInput(attrs={'class': 'input input-bordered w-full'}),
             'birth_date': forms.DateInput(attrs={'class': 'input input-bordered w-full', 'type': 'date'}),
             'birth_place': forms.Select(attrs={'class': 'select select-bordered w-full'}),
-            'full_name_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
-            'person_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
+            'full_name_photo': MultiFileInput(attrs={'class': 'file-input file-input-bordered w-full', 'multiple': True}),
+            'person_photo': MultiFileInput(attrs={'class': 'file-input file-input-bordered w-full', 'multiple': True}),
             'name_change_reason': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'phones_emails': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'military_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
@@ -249,12 +254,12 @@ class BorderOfficerAssessmentForm(forms.ModelForm):
         
         widgets = {
             'radical_internet_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
-            'radical_internet_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
+            'radical_internet_photo': MultiFileInput(attrs={'class': 'file-input file-input-bordered w-full', 'multiple': True}),
             'radical_religious_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'document_issues_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'religious_deviations_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'suspicious_mobile_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
-            'suspicious_mobile_photo': forms.FileInput(attrs={'class': 'file-input file-input-bordered w-full'}),
+            'suspicious_mobile_photo': MultiFileInput(attrs={'class': 'file-input file-input-bordered w-full', 'multiple': True}),
             'suspicious_behavior_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'psychological_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),
             'relatives_mto_details': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full', 'rows': 2}),

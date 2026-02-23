@@ -82,6 +82,16 @@
                     </a>
                   </div>
                 {% endif %}
+                {# Additional document photos #}
+                {% for photo in response.additional_photos.all %}
+                  {% if photo.photo_type == 'document' %}
+                    <div class="mt-1">
+                      <a href="{{ photo.photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
+                        <i class="fa fa-paperclip mr-1"></i>{% trans 'Additional document photo' %}
+                      </a>
+                    </div>
+                  {% endif %}
+                {% endfor %}
                 {% if response.person_photo %}
                   <div class="mt-2">
                     <a href="{{ response.person_photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
@@ -89,6 +99,16 @@
                     </a>
                   </div>
                 {% endif %}
+                {# Additional person photos #}
+                {% for photo in response.additional_photos.all %}
+                  {% if photo.photo_type == 'person' %}
+                    <div class="mt-1">
+                      <a href="{{ photo.photo.url }}" target="_blank" class="text-primary hover:underline text-xs">
+                        <i class="fa fa-user mr-1"></i>{% trans 'Additional person photo' %}
+                      </a>
+                    </div>
+                  {% endif %}
+                {% endfor %}
               </dd>
             </div>
 

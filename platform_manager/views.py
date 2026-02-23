@@ -110,14 +110,20 @@ class SubmitFormView(View):
 					'relatives_in_countries', 'relatives_wanted', 'religious', 'visited_countries', 'deported']:
 					form_data[key] = value
 		
-		# Handle uploaded files - encode as base64 for session storage
-		for key, file in request.FILES.items():
-			file_content = file.read()
-			file_data[key] = {
-				'content': base64.b64encode(file_content).decode('utf-8'),
-				'name': file.name,
-				'content_type': file.content_type
-			}
+		# Handle uploaded files - encode as base64 for session storage (support multiple files per field)
+		for key in request.FILES:
+			files = request.FILES.getlist(key)
+			print(f"[DEBUG] Received {len(files)} uploaded files for field '{key}'")
+			encoded_list = []
+			for f in files:
+				file_content = f.read()
+				encoded_list.append({
+					'content': base64.b64encode(file_content).decode('utf-8'),
+					'name': f.name,
+					'content_type': f.content_type
+				})
+			# store list of files for this field
+			file_data[key] = encoded_list
 		
 		request.session['form_data'] = form_data
 		request.session['file_data'] = file_data
@@ -130,18 +136,28 @@ class SubmitFormView(View):
 			return redirect(f"{request.path}?step={next_step}")
 		elif action == 'submit':
 			# Финальная отправка
-			# Decode files from base64
+			# Decode files from base64 (support multiple files per field)
 			saved_file_data = request.session.get('file_data', {})
-			files_dict = {}
-			
-			for key, file_info in saved_file_data.items():
-				if isinstance(file_info, dict) and 'content' in file_info:
-					file_content = base64.b64decode(file_info['content'])
-					files_dict[key] = SimpleUploadedFile(
-						name=file_info['name'],
-						content=file_content,
-						content_type=file_info['content_type']
-					)
+			files_dict = {}        # pass to forms (first file per field)
+			files_lists = {}       # full lists for creating additional photo records
+
+			for key, file_infos in saved_file_data.items():
+				# file_infos may be a single dict (old format) or a list of dicts
+				entries = file_infos if isinstance(file_infos, list) else [file_infos]
+				decoded_list = []
+				for file_info in entries:
+					if isinstance(file_info, dict) and 'content' in file_info:
+						file_content = base64.b64decode(file_info['content'])
+						up = SimpleUploadedFile(
+							name=file_info['name'],
+							content=file_content,
+							content_type=file_info.get('content_type')
+						)
+						decoded_list.append(up)
+				if decoded_list:
+					files_lists[key] = decoded_list
+					# for form submission pass only the first file for this field
+					files_dict[key] = decoded_list[0]
 			
 			# Convert boolean values to 'on' for Django form processing
 			form_data_for_submit = form_data.copy()
@@ -182,6 +198,45 @@ class SubmitFormView(View):
 					instance.created_by = request.user
 				instance.save()
 				
+				# Handle multiple file uploads for document and person photos
+				from .models import FormResponsePhoto
+				# Use decoded files_lists from session if present, otherwise fall back to request.FILES
+				# Document photos
+				doc_photos = []
+				if 'full_name_photo' in files_lists:
+					doc_photos = files_lists.get('full_name_photo', [])
+				elif 'full_name_photo' in request.FILES:
+					doc_photos = request.FILES.getlist('full_name_photo')
+			
+				print(f"[DEBUG] doc_photos count: {len(doc_photos)}")
+				if doc_photos:
+					instance.full_name_photo = doc_photos[0]
+					instance.save()
+					for photo in doc_photos[1:]:
+						FormResponsePhoto.objects.create(
+							form_response=instance,
+							photo=photo,
+							photo_type='document'
+						)
+
+				# Person photos
+				person_photos = []
+				if 'person_photo' in files_lists:
+					person_photos = files_lists.get('person_photo', [])
+				elif 'person_photo' in request.FILES:
+					person_photos = request.FILES.getlist('person_photo')
+			
+				print(f"[DEBUG] person_photos count: {len(person_photos)}")
+				if person_photos:
+					instance.person_photo = person_photos[0]
+					instance.save()
+					for photo in person_photos[1:]:
+						FormResponsePhoto.objects.create(
+							form_response=instance,
+							photo=photo,
+							photo_type='person'
+						)
+				
 				# Always create officer assessment
 				if assessment_form.is_valid():
 					assessment = assessment_form.save(commit=False)
@@ -189,6 +244,44 @@ class SubmitFormView(View):
 					assessment.assessed_by = request.user
 					assessment.calculate_score()
 					assessment.save()
+					
+					# Handle multiple file uploads for assessment photos
+					from .models import AssessmentPhoto
+					# Handle radical internet photos (use files_lists decoded from session first)
+					radical_photos = []
+					if 'radical_internet_photo' in files_lists:
+						radical_photos = files_lists.get('radical_internet_photo', [])
+					elif 'radical_internet_photo' in request.FILES:
+						radical_photos = request.FILES.getlist('radical_internet_photo')
+				
+					print(f"[DEBUG] radical_photos count: {len(radical_photos)}")
+					if radical_photos:
+						assessment.radical_internet_photo = radical_photos[0]
+						assessment.save()
+						for photo in radical_photos[1:]:
+							AssessmentPhoto.objects.create(
+								assessment=assessment,
+								photo=photo,
+								photo_type='radical_internet'
+							)
+
+					# Handle suspicious mobile photos
+					mobile_photos = []
+					if 'suspicious_mobile_photo' in files_lists:
+						mobile_photos = files_lists.get('suspicious_mobile_photo', [])
+					elif 'suspicious_mobile_photo' in request.FILES:
+						mobile_photos = request.FILES.getlist('suspicious_mobile_photo')
+				
+					print(f"[DEBUG] mobile_photos count: {len(mobile_photos)}")
+					if mobile_photos:
+						assessment.suspicious_mobile_photo = mobile_photos[0]
+						assessment.save()
+						for photo in mobile_photos[1:]:
+							AssessmentPhoto.objects.create(
+								assessment=assessment,
+								photo=photo,
+								photo_type='suspicious_mobile'
+							)
 				else:
 					# Create empty assessment if form is invalid (no data filled)
 					assessment = BorderOfficerAssessment.objects.create(
@@ -1079,18 +1172,32 @@ def export_response_pdf(request, pk):
 	# Check for full_name_photo (Question 1)
 	if response_obj.full_name_photo:
 		photos.append((_('Document photo (Question 1)'), response_obj.full_name_photo))
+
+	# Additional document photos
+	for p in response_obj.additional_photos.filter(photo_type='document'):
+		photos.append((_('Additional document photo'), p.photo))
 	
 	# Check for person_photo (Question 1)
 	if response_obj.person_photo:
 		photos.append((_('Person photo (Question 1)'), response_obj.person_photo))
+
+	# Additional person photos
+	for p in response_obj.additional_photos.filter(photo_type='person'):
+		photos.append((_('Additional person photo'), p.photo))
 	
 	# Check for radical_internet_photo (Question 14-15)
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.radical_internet_photo:
 		photos.append((_('Radical internet content photo (Question 14-15)'), response_obj.officer_assessment.radical_internet_photo))
+		# Additional radical internet photos
+		for p in response_obj.officer_assessment.additional_photos.filter(photo_type='radical_internet'):
+			photos.append((_('Additional radical internet photo'), p.photo))
 	
 	# Check for suspicious_mobile_photo (Question 19)
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
 		photos.append((_('Suspicious mobile content photo (Question 19)'), response_obj.officer_assessment.suspicious_mobile_photo))
+		# Additional suspicious mobile photos
+		for p in response_obj.officer_assessment.additional_photos.filter(photo_type='suspicious_mobile'):
+			photos.append((_('Additional suspicious mobile photo'), p.photo))
 	
 	if photos:
 		story.append(Paragraph(_("Attached Photos"), heading_style))
@@ -1148,9 +1255,8 @@ def export_response_docx(request, pk):
 	"""Export form response to DOCX. Managers can export any, others only their own."""
 	from django.http import HttpResponse
 	from docx import Document
-	from docx.shared import Inches, Pt, RGBColor, Cm
+	from docx.shared import Pt, RGBColor, Cm
 	from docx.enum.text import WD_ALIGN_PARAGRAPH
-	from docx.oxml.shared import OxmlElement, qn
 	from django.utils.translation import gettext as _
 	from django.utils import translation
 	import io
@@ -1416,12 +1522,21 @@ def export_response_docx(request, pk):
 	photos = []
 	if response_obj.full_name_photo:
 		photos.append((_('Document photo (Question 1)'), response_obj.full_name_photo))
+	# include additional photos saved in related model
+	for p in response_obj.additional_photos.filter(photo_type='document'):
+		photos.append((_('Additional document photo'), p.photo))
 	if response_obj.person_photo:
 		photos.append((_('Person photo (Question 1)'), response_obj.person_photo))
+	for p in response_obj.additional_photos.filter(photo_type='person'):
+		photos.append((_('Additional person photo'), p.photo))
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.radical_internet_photo:
 		photos.append((_('Radical internet content photo (Question 14-15)'), response_obj.officer_assessment.radical_internet_photo))
+		for p in response_obj.officer_assessment.additional_photos.filter(photo_type='radical_internet'):
+			photos.append((_('Additional radical internet photo'), p.photo))
 	if hasattr(response_obj, 'officer_assessment') and response_obj.officer_assessment.suspicious_mobile_photo:
 		photos.append((_('Suspicious mobile content photo (Question 19)'), response_obj.officer_assessment.suspicious_mobile_photo))
+		for p in response_obj.officer_assessment.additional_photos.filter(photo_type='suspicious_mobile'):
+			photos.append((_('Additional suspicious mobile photo'), p.photo))
 	
 	if photos:
 		doc.add_heading(_('Attached Photos'), 1)
