@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from django.db.models.signals import post_migrate
 
 
 class PlatformManagerConfig(AppConfig):
@@ -9,29 +10,9 @@ class PlatformManagerConfig(AppConfig):
     navigation_path = 'platform_manager.navigation.get_menu_items'
     
     def ready(self):
-        # Create standard groups if they don't exist. If migrations haven't run yet,
-        # some models/permissions may not be available; ignore failures silently.
-        try:
-            from django.contrib.auth.models import Group, Permission
-            from django.contrib.contenttypes.models import ContentType
-            from .models import FormResponse
-
-            ct = ContentType.objects.get_for_model(FormResponse)
-
-            # manager -> view and change permissions
-            manager_group, _ = Group.objects.get_or_create(name='manager')
-            perms = Permission.objects.filter(content_type=ct, codename__in=['view_formresponse', 'change_formresponse', 'delete_formresponse'])
-            for p in perms:
-                manager_group.permissions.add(p)
-
-            # submitter -> add permission only
-            submitter_group, _ = Group.objects.get_or_create(name='submitter')
-            add_perm = Permission.objects.filter(content_type=ct, codename='add_formresponse')
-            for p in add_perm:
-                submitter_group.permissions.add(p)
-        except Exception:
-            # It's ok to fail here during migrate/initial setup — permissions may not exist yet.
-            pass
+        # Connect post_migrate signal to create groups after migrations
+        post_migrate.connect(create_default_groups, sender=self)
+        
         # Connect a signal so we can flag sessions after successful login.
         try:
             from django.contrib.auth.signals import user_logged_in
@@ -49,3 +30,28 @@ class PlatformManagerConfig(AppConfig):
         except Exception:
             # Safety: don't break startup if signals aren't available.
             pass
+
+
+def create_default_groups(sender, **kwargs):
+    # Create standard groups if they don't exist. This runs after migrations.
+    try:
+        from django.contrib.auth.models import Group, Permission
+        from django.contrib.contenttypes.models import ContentType
+        from .models import FormResponse
+
+        ct = ContentType.objects.get_for_model(FormResponse)
+
+        # manager -> view and change permissions
+        manager_group, _ = Group.objects.get_or_create(name='manager')
+        perms = Permission.objects.filter(content_type=ct, codename__in=['view_formresponse', 'change_formresponse', 'delete_formresponse'])
+        for p in perms:
+            manager_group.permissions.add(p)
+
+        # submitter -> add permission only
+        submitter_group, _ = Group.objects.get_or_create(name='submitter')
+        add_perm = Permission.objects.filter(content_type=ct, codename='add_formresponse')
+        for p in add_perm:
+            submitter_group.permissions.add(p)
+    except Exception:
+        # It's ok to fail here during migrate/initial setup — permissions may not exist yet.
+        pass
