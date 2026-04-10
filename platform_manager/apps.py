@@ -2,6 +2,10 @@ from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
 
+# Флаг для избежания повторного подключения сигналов
+_signals_connected = False
+
+
 class PlatformManagerConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'platform_manager'
@@ -10,26 +14,30 @@ class PlatformManagerConfig(AppConfig):
     navigation_path = 'platform_manager.navigation.get_menu_items'
     
     def ready(self):
-        # Connect post_migrate signal to create groups after migrations
+        global _signals_connected
+        
+        # Подключаем post_migrate сигнал для создания групп
         post_migrate.connect(create_default_groups, sender=self)
         
-        # Connect a signal so we can flag sessions after successful login.
-        try:
-            from django.contrib.auth.signals import user_logged_in
+        # Подключаем user_logged_in только один раз
+        if not _signals_connected:
+            try:
+                from django.contrib.auth.signals import user_logged_in
 
-            def _on_user_logged_in(sender, user, request, **kwargs):
-                # Flag the session so middleware can redirect on next request.
-                try:
-                    if user.groups.filter(name__in=['manager', 'submitter']).exists():
-                        request.session['redirect_to_panel'] = True
-                except Exception:
-                    # If anything goes wrong (e.g., during migrations), ignore.
-                    pass
+                def _on_user_logged_in(sender, user, request, **kwargs):
+                    # Flag the session so middleware can redirect on next request.
+                    try:
+                        if user.groups.filter(name__in=['manager', 'submitter']).exists():
+                            request.session['redirect_to_panel'] = True
+                    except Exception:
+                        # If anything goes wrong (e.g., during migrations), ignore.
+                        pass
 
-            user_logged_in.connect(_on_user_logged_in)
-        except Exception:
-            # Safety: don't break startup if signals aren't available.
-            pass
+                user_logged_in.connect(_on_user_logged_in, dispatch_uid='platform_manager_user_logged_in')
+                _signals_connected = True
+            except Exception:
+                # Safety: don't break startup if signals aren't available.
+                pass
 
 
 def create_default_groups(sender, **kwargs):
